@@ -1,0 +1,11 @@
+{
+  "name": "ts-fns",
+  "version": "0.0.2",
+  "description": "Public Functions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node __test__/server.js"
+  },
+  "author": "tangshuang",
+  "license": "ISC"
+}
