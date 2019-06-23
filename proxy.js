@@ -12,7 +12,7 @@ export function createProxy(obj, options = {}) {
         if (isFunction(get)) {
           const chain = [ ...parents, key ]
           const keyPath = makeKeyPathByChain(chain)
-          get(keyPath, target, key, value)
+          get(keyPath, target, key, value, obj)
         }
 
         if (isObject(value) || isArray(value)) {
@@ -31,7 +31,7 @@ export function createProxy(obj, options = {}) {
         if (isFunction(set)) {
           const chain = [ ...parents, key ]
           const keyPath = makeKeyPathByChain(chain)
-          set(keyPath, target, key, value)
+          set(keyPath, target, key, value, obj)
         }
 
         target[key] = value
@@ -41,7 +41,7 @@ export function createProxy(obj, options = {}) {
         if (isFunction(del)) {
           const chain = [ ...parents, key ]
           const keyPath = makeKeyPathByChain(chain)
-          del(keyPath, target, key)
+          del(keyPath, target, key, obj)
         }
 
         delete target[key]
