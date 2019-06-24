@@ -646,7 +646,7 @@ export function calculate(exp, decimal) {
   }
 
   if (!/^[\(\-]?[0-9]+[0-9\+\-\*\/\(\)]*[0-9\)]$/.test(exp)) {
-    throw new Error('算式中包含不允许的内容')
+    throw new Error(`exp contains unexpected content.`)
   }
   if (contains(exp, ['---', '++', '**', '//'])) {
     throw new Error(`exp contains one of ['---', '++', '**', '//'].`)
