@@ -1,3 +1,5 @@
+import { isObject } from './is.js'
+
 export function makeKeyChainByPath(path) {
   let chain = path.toString().split(/\.|\[|\]/).filter(item => !!item)
   return chain
@@ -71,5 +73,29 @@ export function assign(obj, path, value) {
 
   target[key] = value
 
+  return obj
+}
+
+export function remove(obj, path) {
+  let chain = makeKeyChainByPath(path)
+
+  if (!chain.length) {
+    return obj
+  }
+
+  if (chain.length === 1) {
+    delete obj[path]
+    return obj
+  }
+
+  let tail = chain.pop()
+  let keyPath = makeKeyPathByChain(chain)
+  let target = parse(obj, keyPath)
+
+  if (!isObject(target) && !isArray(target)) {
+    return obj
+  }
+
+  delete target[tail]
   return obj
 }
