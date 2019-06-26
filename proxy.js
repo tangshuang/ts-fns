@@ -29,6 +29,7 @@ export function createProxy(obj, options = {}) {
       },
       set(target, key, value) {
         target[key] = value
+        delete subproxies[key]
 
         if (isFunction(set)) {
           const chain = [ ...parents, key ]
