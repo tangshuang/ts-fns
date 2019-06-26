@@ -8,48 +8,56 @@ export function createProxy(obj, options = {}) {
     const handler = {
       get(target, key) {
         const value = target[key]
+        var use
+
+        if (isObject(value) || isArray(value)) {
+          if (subproxies[key]) {
+            use = subproxies[key]
+          }
+          else {
+            const proxy = createProxy(value, [ ...parents, key ])
+            subproxies[key] = proxy
+            use = proxy
+          }
+        }
+        else {
+          use = value
+        }
 
         if (isFunction(get)) {
           const chain = [ ...parents, key ]
           const keyPath = makeKeyPathByChain(chain)
-          get(keyPath, value, key, target, obj)
-        }
-
-        if (isObject(value) || isArray(value)) {
-          if (subproxies[key]) {
-            return subproxies[key]
-          }
-          const proxy = createProxy(value, [ ...parents, key ])
-          subproxies[key] = proxy
-          return proxy
+          return get([obj, keyPath, use], [target, key, use])
         }
         else {
-          return value
+          return use
         }
       },
       set(target, key, value) {
-        target[key] = value
-        delete subproxies[key]
-
         if (isFunction(set)) {
           const chain = [ ...parents, key ]
           const keyPath = makeKeyPathByChain(chain)
-          set(keyPath, value, key, target, obj)
+          set([obj, keyPath, value], [target, key, value])
+          return true
         }
-
-        return true
+        else {
+          target[key] = value
+          return true
+        }
       },
       deleteProperty(target, key) {
-        delete target[key]
-        delete subproxies[key]
-
         if (isFunction(del)) {
           const chain = [ ...parents, key ]
           const keyPath = makeKeyPathByChain(chain)
-          del(keyPath, key, target, obj)
+          del([obj, keyPath], [target, key])
+          delete subproxies[key]
+          return true
         }
-
-        return true
+        else {
+          delete target[key]
+          delete subproxies[key]
+          return true
+        }
       },
     }
     return new Proxy(obj, handler)
