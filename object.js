@@ -130,7 +130,7 @@ export function getObjectHash(obj) {
     return
   }
 
-  let str = stringifyObject(obj)
+  let str = stringify(obj)
   let hash = getStringHash(str)
   return hash
 }
