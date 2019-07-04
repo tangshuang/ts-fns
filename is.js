@@ -158,17 +158,20 @@ export function isPromise (value) {
 }
 
 export function isConstructor(f) {
-  let instance = null
-  try {
-    instance = new f()
+  if (typeof f !== 'function') {
+    return false
   }
-  catch (e) {
-    if (e.message.indexOf('is not a constructor') > -1) {
-      instance = null
-      return false
-    }
+
+  if (f === Symbol) {
+    return false
   }
-  instance = null
+
+  // bond function && arrow function
+  const prototype = f.prototype
+  if (!prototype) {
+    return false
+  }
+
   return true
 }
 
