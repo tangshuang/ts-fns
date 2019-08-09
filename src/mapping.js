@@ -1,6 +1,7 @@
 /**
  * @module mapping
  */
+import { toArray } from './array.js'
 
 export function pickArrayByMapping(arr, key, mapping) {
   let res = arr.filter(item => mapping[item[key]])
@@ -43,16 +44,15 @@ export function pickObjectByMapping(obj, mapping) {
 }
 
 export function createObjectFromList(list, key) {
-  const results = {}
-  const indexes = Object.keys(list)
-  indexes.forEach((i) => {
-    const item = list[i]
+  const res = {}
+  const items = toArray(list)
+  items.forEach((item) => {
     const prop = item[key]
     if (prop) {
-      results[prop] = item
+      res[prop] = item
     }
   })
-  return results
+  return res
 }
 
 export function findParentInTree(key, mapping) {

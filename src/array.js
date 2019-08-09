@@ -2,7 +2,7 @@
  * @module array
  */
 
-import { inArray, isNaN, isString } from './is.js'
+import { inArray, isNaN, isString, isArray } from './is.js'
 
 export function createArray(value, count = 1) {
   return [].fill.call(new Array(count), value);
@@ -75,4 +75,13 @@ export function sortArray(items, by, decs = false) {
 
 export function toArray(arr) {
   return Array.from(arr)
+}
+
+export function flatArray(arr) {
+  const res = []
+  arr.forEach((item) => {
+    const items = isArray(item) ? item : [item]
+    res.push(...items)
+  })
+  return res
 }

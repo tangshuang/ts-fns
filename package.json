@@ -4,7 +4,7 @@
   "description": "Public Functions.",
   "main": "index.js",
   "scripts": {
-    "build": "node build/gulpfile.js",
+    "build": "rm *.js && node build/gulpfile.js",
     "test": "node test/server.js"
   },
   "author": "tangshuang",

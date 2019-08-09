@@ -4,21 +4,14 @@ import { isFunction, isObject, isArray } from './is.js'
 export function createProxy(obj, options = {}) {
   const { get, set, del } = options
   const createProxy = (obj, parents = []) => {
-    const subproxies = {}
     const handler = {
       get(target, key) {
         const value = target[key]
         let use
 
         if (isObject(value) || isArray(value)) {
-          if (subproxies[key]) {
-            use = subproxies[key]
-          }
-          else {
-            const proxy = createProxy(value, [ ...parents, key ])
-            subproxies[key] = proxy
-            use = proxy
-          }
+          const proxy = createProxy(value, [ ...parents, key ])
+          use = proxy
         }
         else {
           use = value
@@ -27,7 +20,7 @@ export function createProxy(obj, options = {}) {
         if (isFunction(get)) {
           const chain = [ ...parents, key ]
           const keyPath = makeKeyPath(chain)
-          return get([obj, keyPath, use], [target, key, use])
+          return get([obj, keyPath, use], [target, key, value])
         }
         else {
           return use
@@ -37,7 +30,10 @@ export function createProxy(obj, options = {}) {
         if (isFunction(set)) {
           const chain = [ ...parents, key ]
           const keyPath = makeKeyPath(chain)
-          set([obj, keyPath, value], [target, key, value])
+          const needto = set([obj, keyPath, value], [target, key, value])
+          if (needto) {
+            target[key] = value
+          }
           return true
         }
         else {
@@ -49,13 +45,14 @@ export function createProxy(obj, options = {}) {
         if (isFunction(del)) {
           const chain = [ ...parents, key ]
           const keyPath = makeKeyPath(chain)
-          del([obj, keyPath], [target, key])
-          delete subproxies[key]
+          const needto = del([obj, keyPath], [target, key])
+          if (needto) {
+            target[key] = value
+          }
           return true
         }
         else {
           delete target[key]
-          delete subproxies[key]
           return true
         }
       },

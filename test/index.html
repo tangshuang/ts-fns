@@ -11,7 +11,8 @@ import {
   createProxy,
   formatDate,
   fixNumber,
-} from '../index.js'
+  merge,
+} from '../src/index.js'
 
 const expect = chai.expect
 mocha.setup('bdd')
@@ -28,16 +29,17 @@ describe('proxy', () => {
       },
     }
     const state = createProxy(data, {
-      get(keyPath, target, key, value) {},
-      set(keyPath, target, key, value) {
+      // get([data, keyPath], [target, key, value]) {},
+      set([data, keyPath], [target, key, value]) {
         if (keyPath === 'age') {
           target.weight = value * 2
         }
         else if (keyPath === 'body.hand') {
           target.foot = value * 2.5
         }
+        return true
       },
-      del(keyPath, target, key) {},
+      // del([data, keyPath], [target, key]) {},
     })
 
     state.age = 4
@@ -73,6 +75,24 @@ describe('number', () => {
     const num = '12.351'
     expect(fixNumber(num)).to.equal('12.35')
     expect(fixNumber(num, 1)).to.equal('12.4')
+  })
+})
+
+describe('merge', () => {
+  it('merge', () => {
+    const obj1 = {
+      body: {
+        left: true,
+      },
+    }
+    const obj2 = {
+      body: {
+        right: true,
+      },
+    }
+    const obj = merge(obj1, obj2)
+    expect(obj.body.left).to.equal(true)
+    expect(obj.body.right).to.equal(true)
   })
 })
 

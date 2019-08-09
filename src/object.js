@@ -4,19 +4,50 @@
 
 import { getStringHash } from './string.js'
 import { isArray, isObject, isFile, isDate, isFunction } from './is.js'
-import { clone } from './clone.js'
 
-export function mergeObjects(obj1, obj2, contactArray = true) {
+export function clone(obj) {
+  const parents = []
+  const clone = function(origin) {
+    if (!isObject(origin) && !isArray(origin)) {
+      return origin
+    }
+
+    const result = isArray(origin) ? [] : {}
+    const keys = Object.keys(origin)
+
+    parents.push({ origin, result })
+
+    for (let i = 0, len = keys.length; i < len; i ++) {
+      const key = keys[i]
+      const value = origin[key]
+      const referer = parents.find(item => item.origin === value)
+
+      if (referer) {
+        result[key] = referer.result
+      }
+      else {
+        result[key] = clone(value)
+      }
+    }
+
+    return result
+  }
+
+  const result = clone(obj)
+  return result
+}
+
+export function merge(obj1, obj2, contactArray = true) {
   obj1 = clone(obj1)
 
-  if (!isArray(obj2) || !isObject(obj2)) {
-    return isArray(obj1) || isObject(obj1) ? obj1 : null
+  if (!isArray(obj2) && !isObject(obj2)) {
+    return isArray(obj1) && isObject(obj1) ? obj1 : null
   }
 
   obj2 = clone(obj2)
 
-  if (!isArray(obj1) || !isObject(obj1)) {
-    return isArray(obj2) || isObject(obj2) ? obj2 : null
+  if (!isArray(obj1) && !isObject(obj1)) {
+    return isArray(obj2) && isObject(obj2) ? obj2 : null
   }
 
   const exists = []
@@ -27,14 +58,14 @@ export function mergeObjects(obj1, obj2, contactArray = true) {
       }
     }
 
-    let result = obj1
-    let keys = Object.keys(obj2)
+    const result = obj1
+    const keys = Object.keys(obj2)
     keys.forEach((key) => {
-      let oldValue = obj1[key]
-      let newValue = obj2[key]
+      const oldValue = obj1[key]
+      const newValue = obj2[key]
 
       if (isObject(newValue) || isArray(newValue)) {
-        let index = exists.indexOf(newValue)
+        const index = exists.indexOf(newValue)
         if (index === -1) {
           exists.push(newValue)
         }
@@ -95,7 +126,7 @@ export function stringify(obj) {
         }
         else {
           exists.push(value)
-          let num = exists.length - 1
+          const num = exists.length - 1
           str += '#' + num + stringifyObjectByKeys(value)
         }
       }
@@ -140,10 +171,8 @@ export function defineProperty(obj, key, value, options = {}) {
 }
 
 export function defineProperties(obj, values, options = {}) {
-  let keys = Object.keys(values)
-  let props = {}
-  keys.forEach((key) => {
-    let value = values[key]
+  const props = {}
+  each(values, (value, key) => {
     props[key] = { ...options, value }
   })
   Object.defineProperties(obj, props)
@@ -153,78 +182,110 @@ export function defineGetter(obj, key, get, options = {}) {
   Object.defineProperty(obj, key, { ...options, get })
 }
 
+export function defineGetters(obj, getters, options = {}) {
+  const props = {}
+  each(getters, (get, key) => {
+    props[key] = { ...options, get }
+  })
+  Object.defineProperties(obj, props)
+}
+
 export function flatObject(obj, determine) {
   const flat = (input, path = '', result = {}) => {
-    if (Array.isArray(input)) {
-      input.forEach((item, i) => flat(item, `${path}[${i}]`, result));
-      return result;
+    if (isArray(input)) {
+      input.forEach((item, i) => flat(item, `${path}[${i}]`, result))
+      return result
     }
     else if (input && typeof input === 'object' && !isFile(input) && !isDate(input)) {
       if (isFunction(determine) && !determine(input)) {
-        result[path] = input;
+        result[path] = input
         return result
       }
 
-      let keys = Object.keys(input);
-      keys.forEach((key) => {
-        let value = input[key];
-        flat(value, !path ? key : `${path}[${key}]`, result);
-      });
-      return result;
+      each(input, (value, key) => {
+        flat(value, !path ? key : `${path}[${key}]`, result)
+      })
+      return result
     }
     else {
-      result[path] = input;
-      return result;
+      result[path] = input
+      return result
     }
-  }
-  if (!obj || typeof obj !== 'object') {
-    return {}
   }
   return flat(obj)
 }
 
 export function each(obj, fn) {
-  const keys = Object.keys(obj)
-  keys.forEach((key) => {
-    const value = obj[key]
-    fn(value, key, obj)
-  })
+  if (isArray(obj)) {
+    obj.forEach(fn)
+  }
+  else {
+    const keys = Object.keys(obj)
+    keys.forEach((key) => {
+      const value = obj[key]
+      fn(value, key, obj)
+    })
+  }
 }
 
 export function map(obj, fn) {
-  const result = isArray(obj) ? [] : {}
-  each(obj, (value, key) => {
-    result[key] = fn(value, key, obj)
-  })
-  return result
+  if (isArray(obj)) {
+    return obj.map(fn)
+  }
+  else {
+    const result = {}
+    each(obj, (value, key) => {
+      result[key] = fn(value, key, obj)
+    })
+    return result
+  }
 }
 
 export function filter(obj, fn) {
-  const isArr = isArray(obj)
-  const result = isArr ? [] : {}
-  each(obj, (value, key) => {
-    const bool = fn(value, key, obj)
-    if (!bool) {
-      return
-    }
-    if (isArr) {
-      result.push(value)
-    }
-    else {
+  if (isArray(obj)) {
+    return obj.filter(fn)
+  }
+  else {
+    const result = {}
+    each(obj, (value, key) => {
+      const bool = fn(value, key, obj)
+      if (!bool) {
+        return
+      }
       result[key] = value
-    }
-  })
-  return result
+    })
+    return result
+  }
 }
 
 export function iterate(obj, fn) {
-  const keys = Object.keys(obj)
-  for (let i = 0, len = keys.length; i < len; i ++) {
-    const key = keys[i]
-    const value = obj[key]
-    const bool = fn(value, key, obj)
-    if (!bool) {
-      return
+  if (isArray(obj)) {
+    for (let i = 0, len = obj.length; i < len; i ++) {
+      const item = obj[i]
+      const res = fn(item, i, obj)
+      if (res !== undefined) {
+        return res
+      }
     }
   }
+  else {
+    const keys = Object.keys(obj)
+    for (let i = 0, len = keys.length; i < len; i ++) {
+      const key = keys[i]
+      const value = obj[key]
+      const res = fn(value, key, obj)
+      if (res !== undefined) {
+        return res
+      }
+    }
+  }
+}
+
+export function find(obj, fn) {
+  return iterate(obj, (value, key) => {
+    const res = fn(value, key, obj)
+    if (res) {
+      return value === undefined ? null : value
+    }
+  })
 }

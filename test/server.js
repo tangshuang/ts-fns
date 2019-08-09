@@ -7,7 +7,7 @@ http.createServer((req, res) => {
   var pathname= url.parse(req.url).pathname
 
   if (pathname === '/') {
-    pathname = '/__test__/index.html'
+    pathname = '/test/index.html'
   }
 
   console.log("Request for "+ pathname + "  received.")
@@ -28,6 +28,6 @@ http.createServer((req, res) => {
       }
       res.end()
   })
-}).listen(8081)
+}).listen(8079)
 
-console.log('Server running at http://127.0.0.1:8081/')
+console.log('Server running at http://127.0.0.1:8079/')

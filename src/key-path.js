@@ -19,7 +19,7 @@ export function makeKeyPath(chain) {
   return path
 }
 
-export function makeKeyPath(path) {
+export function makeKey(path) {
   let chain = makeKeyChain(path)
   let keyPath = makeKeyPath(chain)
   return keyPath
