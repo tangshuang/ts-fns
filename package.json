@@ -4,8 +4,16 @@
   "description": "Public Functions.",
   "main": "index.js",
   "scripts": {
-    "test": "node __test__/server.js"
+    "build": "node build/gulpfile.js",
+    "test": "node test/server.js"
   },
   "author": "tangshuang",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0"
+  }
 }
