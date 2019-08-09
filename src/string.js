@@ -95,7 +95,7 @@ export function createRandomString(length = 16) {
 
 // https://github.com/gillesruppert/node-interpolate/blob/master/lib/interpolate.js
 export function interpolate(template, data, opts) {
-  var regex,
+  let regex,
     lDel,
     rDel,
     delLen,
@@ -117,7 +117,7 @@ export function interpolate(template, data, opts) {
   regex = new RegExp(lDel + "[^" + lDel + rDel + "]+" + rDel, "g");
 
   return template.replace(regex, function (placeholder) {
-    var key = placeholder.slice(lDelLen, -lDelLen),
+    let key = placeholder.slice(lDelLen, -lDelLen),
       keyParts = key.split("."),
       val,
       i = 0,

@@ -143,7 +143,7 @@ export function createDate(dateString, givenFormatter) {
   const m = +(parsedDate.mm || parsedDate.m) || 0
   const s = +(parsedDate.ss || parsedDate.s) || 0
 
-  var M
+  let M
   if (parsedDate.MM || parsedDate.M) {
     M = +(parsedDate.MM || parsedDate.M) - 1 || 0
   }
@@ -157,7 +157,7 @@ export function createDate(dateString, givenFormatter) {
     M = 0
   }
 
-  var H
+  let H
   if (parsedDate.HH || parsedDate.H) {
     H = +(parsedDate.HH || parsedDate.H) || 0
   }

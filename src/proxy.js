@@ -1,4 +1,4 @@
-import { makeKeyPathByChain } from './key-path.js'
+import { makeKeyPath } from './key-path.js'
 import { isFunction, isObject, isArray } from './is.js'
 
 export function createProxy(obj, options = {}) {
@@ -8,7 +8,7 @@ export function createProxy(obj, options = {}) {
     const handler = {
       get(target, key) {
         const value = target[key]
-        var use
+        let use
 
         if (isObject(value) || isArray(value)) {
           if (subproxies[key]) {
@@ -26,7 +26,7 @@ export function createProxy(obj, options = {}) {
 
         if (isFunction(get)) {
           const chain = [ ...parents, key ]
-          const keyPath = makeKeyPathByChain(chain)
+          const keyPath = makeKeyPath(chain)
           return get([obj, keyPath, use], [target, key, use])
         }
         else {
@@ -36,7 +36,7 @@ export function createProxy(obj, options = {}) {
       set(target, key, value) {
         if (isFunction(set)) {
           const chain = [ ...parents, key ]
-          const keyPath = makeKeyPathByChain(chain)
+          const keyPath = makeKeyPath(chain)
           set([obj, keyPath, value], [target, key, value])
           return true
         }
@@ -48,7 +48,7 @@ export function createProxy(obj, options = {}) {
       deleteProperty(target, key) {
         if (isFunction(del)) {
           const chain = [ ...parents, key ]
-          const keyPath = makeKeyPathByChain(chain)
+          const keyPath = makeKeyPath(chain)
           del([obj, keyPath], [target, key])
           delete subproxies[key]
           return true

@@ -2,7 +2,7 @@
  * @module array
  */
 
-import { inArray } from './is.js'
+import { inArray, isNaN, isString } from './is.js'
 
 export function createArray(value, count = 1) {
   return [].fill.call(new Array(count), value);
@@ -51,11 +51,28 @@ export function uniqueArray(arr, prop) {
   })
 }
 
-export function toArray (list, start = 0) {
-  let count = list.length - start
-  let result = new Array(count)
-  while (count--) {
-    result[count] = list[count + start]
-  }
-  return result
+export function sortArray(items, by, decs = false) {
+  const res = [].concat(items)
+  res.sort((a, b) => {
+    let oa = by ? a[by] : a
+    let ob = by ? b[by] : b
+
+    oa = !isNaN(+oa) ? +oa : isString(oa) ? oa : 10
+    ob = !isNaN(+ob) ? +ob : isString(ob) ? ob : 10
+
+    if (oa < ob) {
+      return decs ? 1 : -1
+    }
+    if (oa === ob) {
+      return 0
+    }
+    if (oa > ob) {
+      return decs ? -1 : 1
+    }
+  })
+  return res
+}
+
+export function toArray(arr) {
+  return Array.from(arr)
 }

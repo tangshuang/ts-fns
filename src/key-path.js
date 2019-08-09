@@ -1,11 +1,11 @@
 import { isObject } from './is.js'
 
-export function makeKeyChainByPath(path) {
+export function makeKeyChain(path) {
   let chain = path.toString().split(/\.|\[|\]/).filter(item => !!item)
   return chain
 }
 
-export function makeKeyPathByChain(chain) {
+export function makeKeyPath(chain) {
   let path = ''
   for (let i = 0, len = chain.length; i < len; i ++) {
     let key = chain[i]
@@ -20,13 +20,13 @@ export function makeKeyPathByChain(chain) {
 }
 
 export function makeKeyPath(path) {
-  let chain = makeKeyChainByPath(path)
-  let keyPath = makeKeyPathByChain(chain)
+  let chain = makeKeyChain(path)
+  let keyPath = makeKeyPath(chain)
   return keyPath
 }
 
 export function parse(obj, path) {
-  let chain = makeKeyChainByPath(path)
+  let chain = makeKeyChain(path)
 
   if (!chain.length) {
     return obj
@@ -44,7 +44,7 @@ export function parse(obj, path) {
 }
 
 export function assign(obj, path, value) {
-  let chain = makeKeyChainByPath(path)
+  let chain = makeKeyChain(path)
 
   if (!chain.length) {
     return obj
@@ -77,7 +77,7 @@ export function assign(obj, path, value) {
 }
 
 export function remove(obj, path) {
-  let chain = makeKeyChainByPath(path)
+  let chain = makeKeyChain(path)
 
   if (!chain.length) {
     return obj
@@ -89,7 +89,7 @@ export function remove(obj, path) {
   }
 
   let tail = chain.pop()
-  let keyPath = makeKeyPathByChain(chain)
+  let keyPath = makeKeyPath(chain)
   let target = parse(obj, keyPath)
 
   if (!isObject(target) && !isArray(target)) {

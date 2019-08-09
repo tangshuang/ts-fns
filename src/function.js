@@ -4,7 +4,7 @@
 
 import { getObjectHash } from './object.js'
 
-export function computex(fn, expire = 60000) {
+export function compute_(fn, expire = 60000) {
   const cache = {}
 
   const recycle = () => {
@@ -37,10 +37,10 @@ export function computex(fn, expire = 60000) {
   }
 }
 
-export function getx(fn, expire = 0) {
-  var iscalling = false
-  var cache = null
-  var timer = null
+export function get_(fn, expire = 0) {
+  let iscalling = false
+  let cache = null
+  let timer = null
 
   return function() {
     clearTimeout(timer)
@@ -61,7 +61,7 @@ export function getx(fn, expire = 0) {
   }
 }
 
-export function asyncx(fn, expire = 0) {
+export function async_(fn, expire = 0) {
   const cache = {}
 
   const recycle = () => {
@@ -101,7 +101,7 @@ export function asyncx(fn, expire = 0) {
   }
 }
 
-export function invokex(fn, invoke = 1) {
+export function invoke_(fn, count = 1) {
   const cache = {}
 
   return function(...args) {
@@ -109,17 +109,17 @@ export function invokex(fn, invoke = 1) {
     const item = cache[hash]
 
     if (item) {
-      if (item.invoke > invoke) {
+      if (item.invoked > count) {
         delete cache[hash]
       }
       else {
-        item.invoke ++
+        item.invoked ++
         return item.result
       }
     }
 
     const result = fn.apply(this, args)
-    cache[hash] = { result, invoke: 1 }
+    cache[hash] = { result, invoked: 1 }
 
     return result
   }

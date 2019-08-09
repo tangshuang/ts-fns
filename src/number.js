@@ -81,15 +81,15 @@ export function enumerify(input) {
 
 export function clearNumberZero(input) {
   input = input.toString()
-  var [ integerPart, decimalPart = '' ] = input.split('.')
-  var isNegative = false
+  let [ integerPart, decimalPart = '' ] = input.split('.')
+  let isNegative = false
   if (integerPart.indexOf('-') === 0) {
     isNegative = true
     integerPart = integerPart.substring(1)
   }
   integerPart = integerPart.replace(/^0+/, '')
   decimalPart = decimalPart.replace(/0+$/, '')
-  var value = (isNegative && (integerPart || decimalPart) ? '-' : '') + (integerPart ? integerPart : '0') + (decimalPart ? '.' + decimalPart : '')
+  let value = (isNegative && (integerPart || decimalPart) ? '-' : '') + (integerPart ? integerPart : '0') + (decimalPart ? '.' + decimalPart : '')
   return value
 }
 
@@ -104,11 +104,11 @@ export function plusby(a, b) {
     return a
   }
 
-  var [ ia, da = '0' ] = a.split('.')
-  var [ ib, db = '0' ] = b.split('.')
+  let [ ia, da = '0' ] = a.split('.')
+  let [ ib, db = '0' ] = b.split('.')
 
-  var na = false
-  var nb = false
+  let na = false
+  let nb = false
   if (ia.indexOf('-') === 0) {
     ia = ia.substring(1)
     na = true
@@ -164,11 +164,11 @@ export function plusby(a, b) {
   const ta = ia + da
   const tb = ib + db
 
-  var sum = plus(ta, tb)
+  let sum = plus(ta, tb)
 
-  var sumr = sum.split('')
-  var sumlen = sumr.length
-  var index = sumlen - dlen
+  let sumr = sum.split('')
+  let sumlen = sumr.length
+  let index = sumlen - dlen
   sumr.splice(index, 0, '.')
   sum = sumr.join('')
 
@@ -201,11 +201,11 @@ export function minusby(a, b) {
     return '0'
   }
 
-  var [ ia, da = '0' ] = a.split('.')
-  var [ ib, db = '0' ] = b.split('.')
+  let [ ia, da = '0' ] = a.split('.')
+  let [ ib, db = '0' ] = b.split('.')
 
-  var na = false
-  var nb = false
+  let na = false
+  let nb = false
   if (ia.indexOf('-') === 0) {
     ia = ia.substring(1)
     na = true
@@ -282,11 +282,11 @@ export function minusby(a, b) {
   const ta = ia + da
   const tb = ib + db
 
-  var diff = minus(ta, tb)
+  let diff = minus(ta, tb)
 
-  var diffr = diff.split('')
-  var difflen = diffr.length
-  var index = difflen - dlen
+  let diffr = diff.split('')
+  let difflen = diffr.length
+  let index = difflen - dlen
   diffr.splice(index, 0, '.')
   diff = diffr.join('')
 
@@ -377,11 +377,11 @@ export function multiplyby(a, b) {
     return result.join('')
   }
 
-  var [ ia, da = '0' ] = a.split('.')
-  var [ ib, db = '0' ] = b.split('.')
+  let [ ia, da = '0' ] = a.split('.')
+  let [ ib, db = '0' ] = b.split('.')
 
-  var na = false
-  var nb = false
+  let na = false
+  let nb = false
   if (ia.indexOf('-') === 0) {
     ia = ia.substring(1)
     na = true
@@ -391,17 +391,17 @@ export function multiplyby(a, b) {
     nb = true
   }
 
-  var isNegative = false
+  let isNegative = false
   if ((na && !nb) || (!na && nb)) {
     isNegative = true
   }
 
-  var iProd = multiply(ia, ib)
-  var dProd = multiply(da, db)
+  let iProd = multiply(ia, ib)
+  let dProd = multiply(da, db)
 
   dProd = padLeft(dProd, da.length + db.length, '0')
 
-  var value = iProd + '.' + dProd
+  let value = iProd + '.' + dProd
   value = clearNumberZero(value)
   value = (isNegative ? '-' : '') + value
   value = value === '' ? '0' : value
@@ -448,7 +448,7 @@ export function divideby(a, b, decimal) {
     return value
   }
 
-  var [ ib, db = '' ] = b.split('.')
+  let [ ib, db = '' ] = b.split('.')
 
   if (db.length) {
     let len = db.length
@@ -457,10 +457,10 @@ export function divideby(a, b, decimal) {
     b = multiplyby(b, pow)
   }
 
-  var [ ia, da = '' ] = a.split('.')
+  let [ ia, da = '' ] = a.split('.')
 
-  var na = false
-  var nb = false
+  let na = false
+  let nb = false
   if (ia.indexOf('-') === 0) {
     ia = ia.substring(1)
     na = true
@@ -474,11 +474,11 @@ export function divideby(a, b, decimal) {
     const uselen = y.length
     const result = []
 
-    var waitforcompare = x.substr(0, uselen)
-    var waittouse = x.substring(uselen)
+    let waitforcompare = x.substr(0, uselen)
+    let waittouse = x.substring(uselen)
 
-    var stillhave = waitforcompare
-    var inrange = 0
+    let stillhave = waitforcompare
+    let inrange = 0
 
     do {
       let c
@@ -511,8 +511,8 @@ export function divideby(a, b, decimal) {
       }
     } while (compare(stillhave, y) >= 0)
 
-    var remainder = stillhave || '0'
-    var quotient = result.join('')
+    let remainder = stillhave || '0'
+    let quotient = result.join('')
 
     remainder = clearNumberZero(remainder)
     quotient = clearNumberZero(quotient)
@@ -520,9 +520,9 @@ export function divideby(a, b, decimal) {
     return { remainder, quotient }
   }
 
-  var dvi = divide(ia, b)
-  var { remainder, quotient } = dvi
-  var value = quotient
+  let dvi = divide(ia, b)
+  let { remainder, quotient } = dvi
+  let value = quotient
 
   if (da) {
     remainder = remainder === '0' ? da : remainder + da
@@ -532,8 +532,8 @@ export function divideby(a, b, decimal) {
   }
 
   if (remainder && remainder !== '0') {
-    var result = ''
-    var nextto = remainder
+    let result = ''
+    let nextto = remainder
     while (/[1-9]/.test(nextto)) {
       let dvd = divide(nextto, b)
       let { remainder, quotient } = dvd
@@ -566,8 +566,8 @@ export function compare(a, b) {
   a = numerify(a)
   b = numerify(b)
 
-  var [ ia, da = '' ] = a.split('.')
-  var [ ib, db = '' ] = b.split('.')
+  let [ ia, da = '' ] = a.split('.')
+  let [ ib, db = '' ] = b.split('.')
 
   const compare2 = (n, m) => {
     if (n.length > m.length) {
@@ -771,7 +771,7 @@ export function calculate(exp, decimal) {
       expsrc.push(item)
     })
 
-    var expast = []
+    let expast = []
 
     if (contains(exp, ['+', '-']) && contains(exp, ['*', '/'])) {
       let combine = []
@@ -822,7 +822,7 @@ export function calculate(exp, decimal) {
       exparr.push(item)
     })
 
-    var expres = []
+    let expres = []
     const leftres = []
     const rightres = []
     for (let i = 0, len = exparr.length; i < len; i ++) {
