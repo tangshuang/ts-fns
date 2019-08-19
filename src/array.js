@@ -85,3 +85,13 @@ export function flatArray(arr) {
   })
   return res
 }
+
+export function splitArray(arr, count) {
+  const results = []
+  arr.forEach((item, i) => {
+    const index = parseInt(i / count)
+    results[index] = results[index] || []
+    results[index].push(item)
+  })
+  return results
+}
