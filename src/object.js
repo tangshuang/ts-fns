@@ -37,7 +37,7 @@ export function clone(obj) {
   return result
 }
 
-export function merge(obj1, obj2, contactArray = true) {
+export function merge(obj1, obj2, concatArray = true) {
   obj1 = clone(obj1)
 
   if (!isArray(obj2) && !isObject(obj2)) {
@@ -53,8 +53,8 @@ export function merge(obj1, obj2, contactArray = true) {
   const exists = []
   const merge = (obj1, obj2) => {
     if (isArray(obj1)) {
-      if (isArray(obj2) && contactArray) {
-        return obj1.contact(obj2)
+      if (isArray(obj2) && concatArray) {
+        return [...obj1, ...obj2]
       }
     }
 
