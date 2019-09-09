@@ -2,7 +2,7 @@
  * @module array
  */
 
-import { inArray, isNaN, isString, isArray } from './is.js'
+import { inArray, isNaN, isString, isArray, isFunction } from './is.js'
 
 export function createArray(value, count = 1) {
   return [].fill.call(new Array(count), value);
@@ -86,12 +86,43 @@ export function flatArray(arr) {
   return res
 }
 
-export function splitArray(arr, count) {
+export function groupArray(arr, count) {
   const results = []
   arr.forEach((item, i) => {
     const index = parseInt(i / count)
     results[index] = results[index] || []
     results[index].push(item)
+  })
+  return results
+}
+
+/**
+ * split an array to sevral
+ * @param {*} arr
+ * @param {*|function} split
+ */
+export function splitArray(arr, split) {
+  const results = []
+  let temp = []
+  arr.forEach((item, i) => {
+    if (split === item || (isFunction(split) && split(item, i))) {
+      results.push(temp)
+      temp = []
+    }
+    else {
+      temp.push(item)
+      if (i === arr.length - 1) {
+        results.push(temp)
+      }
+    }
+  })
+  return results
+}
+
+export function joinArray(arr, join) {
+  const results = []
+  arr.forEach((items) => {
+    results.push(...items, join)
   })
   return results
 }
