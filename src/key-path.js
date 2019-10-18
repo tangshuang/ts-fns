@@ -61,7 +61,12 @@ export function assign(obj, path, value) {
 
   for (let i = 0, len = chain.length; i < len; i ++) {
     let key = chain[i]
-    let next = chain[i + 1] || key
+    let next = chain[i + 1]
+    // at the end
+    if (next === undefined && i === len - 1) {
+      next = key
+    }
+
     if (/^[0-9]+$/.test(next) && !Array.isArray(target[key])) {
       target[key] = []
     }

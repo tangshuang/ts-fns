@@ -12,6 +12,8 @@ import {
   formatDate,
   fixNumber,
   merge,
+  assign,
+  parse,
 } from '../src/index.js'
 
 const expect = chai.expect
@@ -93,6 +95,23 @@ describe('merge', () => {
     const obj = merge(obj1, obj2)
     expect(obj.body.left).to.equal(true)
     expect(obj.body.right).to.equal(true)
+  })
+})
+
+describe('assign', () => {
+  it('deep array item object', () => {
+    const data = {
+      data: {
+        books: [
+          {
+            name: 'ok',
+            price: 10,
+          }
+        ]
+      }
+    }
+    assign(data, 'data.books[0].price', 0)
+    expect(parse(data, 'data.books[0].price')).to.equal(0)
   })
 })
 
