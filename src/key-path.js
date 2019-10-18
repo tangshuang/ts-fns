@@ -44,13 +44,13 @@ export function parse(obj, path) {
 }
 
 export function assign(obj, path, value) {
-  let chain = makeKeyChain(path)
+  const chain = makeKeyChain(path)
 
   if (!chain.length) {
     return obj
   }
 
-  let key = chain.pop()
+  const key = chain.pop()
 
   if (!chain.length) {
     obj[key] = value
@@ -60,20 +60,20 @@ export function assign(obj, path, value) {
   let target = obj
 
   for (let i = 0, len = chain.length; i < len; i ++) {
-    let key = chain[i]
+    const current = chain[i]
     let next = chain[i + 1]
     // at the end
     if (next === undefined && i === len - 1) {
       next = key
     }
 
-    if (/^[0-9]+$/.test(next) && !Array.isArray(target[key])) {
-      target[key] = []
+    if (/^[0-9]+$/.test(next) && !Array.isArray(target[current])) {
+      target[current] = []
     }
-    else if (typeof target[key] !== 'object') {
-      target[key] = {}
+    else if (typeof target[current] !== 'object') {
+      target[current] = {}
     }
-    target = target[key]
+    target = target[current]
   }
 
   target[key] = value
