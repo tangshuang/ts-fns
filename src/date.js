@@ -77,21 +77,21 @@ const getFormatterKeys = () => {
   parserKeys.reverse()
   return parserKeys
 }
-const getFormatterString = (formatter) => {
-  const sign = '*.?+$^[](){}|\\/'
-  const signArr = sign.split('')
-  const formatterArr = formatter.split('')
-  const formatterList = formatterArr.map(char => signArr.indexOf(char) > -1 ? '\\' + char : char)
-  const formatterStr = formatterList.join('')
-  return formatterStr
-}
+// const ensureRegExpString = (formatter) => {
+//   const sign = '*.?+$^[](){}|\\/'
+//   const signArr = sign.split('')
+//   const formatterArr = formatter.split('')
+//   const formatterList = formatterArr.map(char => signArr.indexOf(char) > -1 ? '\\' + char : char)
+//   const formatterStr = formatterList.join('')
+//   return formatterStr
+// }
 const parseFormatter = (formatter, fn) => {
   const parserKeys = getFormatterKeys()
+  // the following code allow use to use formatter like `YY-MM\\M`, the last `\\M` will turn out to be `M` in the final output string
   const formatterExp = '(?<!\\\\)(' + parserKeys.join('|') + ')'
   const formatterReg = new RegExp(formatterExp, 'g')
 
-  const formatterStr = getFormatterString(formatter)
-  const output = formatterStr.replace(formatterReg, (matched, found) => {
+  const output = formatter.replace(formatterReg, (matched, found) => {
     if (typeof fn === 'function') {
       return fn(found)
     }
@@ -192,6 +192,7 @@ export function formatDate(datetime, formatter, givenFormatter) {
     }
   })
 
+  // the following code ensure the `\\M` to be `M` in formatter
   const parserKeys = getFormatterKeys()
   const formatterExp = '\\\\\\\\(' + parserKeys.join('|') + ')'
   const formatterReg = new RegExp(formatterExp, 'g')
