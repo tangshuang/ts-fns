@@ -4,6 +4,9 @@
 
 import { createArray } from './array.js'
 
+// the order could never be changed, becuase we use it for number convertion
+export const CHARS = '0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ'
+
 export function formatStringBy(input, separator, segments, alignright) {
   if (typeof input !== 'string' || !input) {
     return ''
@@ -85,10 +88,9 @@ export function getStringHash(str) {
 }
 
 export function createRandomString(length = 16) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let text = ''
   for (let i = 0; i < length; i++) {
-    text += chars.charAt(Math.floor(Math.random() * chars.length))
+    text += CHARS.charAt(Math.floor(Math.random() * CHARS.length))
   }
   return text
 }

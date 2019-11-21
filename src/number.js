@@ -3,7 +3,7 @@
  */
 
 
-import { formatStringBy, padRight, padLeft } from './string.js'
+import { formatStringBy, padRight, padLeft, CHARS } from './string.js'
 import { isString, isNumeric, isNumber, isNaN } from './is.js'
 import { createSafeExp } from './regexp.js'
 
@@ -1110,4 +1110,30 @@ export function formatNumberByMoney(input, decimal, pad, floor) {
   else {
     return formatNumber(input, decimal, pad, floor)
   }
+}
+
+// http://www.softwhy.com/article-4813-1.html
+export function num10to62(num) {
+  const chars = CHARS.split('')
+  const radix = chars.length
+  const arr = []
+  let qutient = +num
+  do {
+    const mod = qutient % radix
+    qutient = (qutient - mod) / radix
+    arr.unshift(chars[mod])
+  }
+  while (qutient)
+  const code = arr.join('')
+  return code
+}
+export function num62to10(code) {
+  const radix = CHARS.length
+  const len = code.length
+  let i = 0
+  let num = 0
+  while (i < len) {
+    num += Math.pow(radix, i++) * CHARS.indexOf(code.charAt(len - i) || 0)
+  }
+  return num
 }
