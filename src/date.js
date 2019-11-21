@@ -2,6 +2,9 @@
  * @module datetime
  */
 
+import { isFunction } from './is.js'
+import { padRight, padLeft } from './string.js'
+
 const pad = num => num < 10 ? '0' + num : num + ''
 export const DATE_MONTHS = [
   'Jan',
@@ -69,7 +72,8 @@ export const DATE_FORMATTERS = {
   mm: date => pad(date.getMinutes()),
   s: date => date.getSeconds() + '',
   ss: date => pad(date.getSeconds()),
-  SSS: date => date.getMilliseconds() + '',
+  S: date => date.getMilliseconds() + '',
+  SSS: date => padLeft(date.getMilliseconds() + '', 3, '0'),
 }
 const getFormatterKeys = () => {
   const parserKeys = Object.keys(DATE_EXPS)
@@ -92,7 +96,7 @@ const parseFormatter = (formatter, fn) => {
   const formatterReg = new RegExp(formatterExp, 'g')
 
   const output = formatter.replace(formatterReg, (matched, found) => {
-    if (typeof fn === 'function') {
+    if (isFunction(fn)) {
       return fn(found)
     }
     return found
@@ -143,7 +147,7 @@ export function createDate(dateString, givenFormatter) {
   const m = +(parsedDate.mm || parsedDate.m) || 0
   const s = +(parsedDate.ss || parsedDate.s) || 0
 
-  let M
+  let M = 0
   if (parsedDate.MM || parsedDate.M) {
     M = +(parsedDate.MM || parsedDate.M) - 1 || 0
   }
@@ -153,11 +157,8 @@ export function createDate(dateString, givenFormatter) {
     i = i === - 1 ? 0 : i
     M = i
   }
-  else {
-    M = 0
-  }
 
-  let H
+  let H = 0
   if (parsedDate.HH || parsedDate.H) {
     H = +(parsedDate.HH || parsedDate.H) || 0
   }
@@ -166,11 +167,16 @@ export function createDate(dateString, givenFormatter) {
     let h = +(parsedDate.hh || parsedDate.h) || 0
     H = a === 'pm' ? h + 12 : h
   }
-  else {
-    H = 0
+
+  let ms = 0
+  if (parsedDate.SSS) {
+    ms = +parsedDate.SSS
+  }
+  else if (parsedDate.S) {
+    ms = +padRight(parsedDate.S, 3, '0')
   }
 
-  return new Date(Y, M, D, H, m, s)
+  return new Date(Y, M, D, H, m, s, ms)
 }
 
 export function formatDate(datetime, formatter, givenFormatter) {
@@ -182,6 +188,7 @@ export function formatDate(datetime, formatter, givenFormatter) {
   }
 
   const date = createDate(datetime, givenFormatter)
+  console.log(datetime, date.getFullYear(), date.getMonth(), date.getDay(), date.getMilliseconds())
   const output = parseFormatter(formatter, (found) => {
     const format = DATE_FORMATTERS[found]
     if (format) {
@@ -191,10 +198,11 @@ export function formatDate(datetime, formatter, givenFormatter) {
       return found
     }
   })
+  console.log(output)
 
   // the following code ensure the `\\M` to be `M` in formatter
   const parserKeys = getFormatterKeys()
-  const formatterExp = '\\\\\\\\(' + parserKeys.join('|') + ')'
+  const formatterExp = '\\\\(' + parserKeys.join('|') + ')'
   const formatterReg = new RegExp(formatterExp, 'g')
 
   const res = output.replace(formatterReg, (matched, found) => {
