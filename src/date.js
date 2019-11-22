@@ -4,6 +4,7 @@
 
 import { isFunction } from './is.js'
 import { padRight, padLeft } from './string.js'
+import { createArray } from './array.js'
 
 const pad = num => num < 10 ? '0' + num : num + ''
 export const DATE_MONTHS = [
@@ -89,18 +90,57 @@ const getFormatterKeys = () => {
 //   const formatterStr = formatterList.join('')
 //   return formatterStr
 // }
+
+/**
+ * convert 'a' to unicode '\uaaa0', 'A' to '\uaaa1'
+ * @param {*} a
+ */
+const convertCharToUnicode = (char) => {
+  const lower = char.toLowerCase()
+  const isLower = char === lower
+  const end = isLower ? 0 : 1
+
+  const arr = createArray(lower, 3)
+  const str = arr.join('') + end
+  const unicode = '\\u' + str
+  const obj = JSON.parse(`["${unicode}"]`)
+  const unichar = obj[0]
+  return unichar
+}
+
+const convertUnicodeToChar = (unichar) => {
+  const code = unichar.charCodeAt(0)
+  const unicode = code.toString(16)
+  const char = unicode.substr(0, 1)
+  const end = unicode.substr(-1)
+  const letter = end === '1' ? char.toUpperCase() : char
+  return letter
+}
 const parseFormatter = (formatter, fn) => {
   const parserKeys = getFormatterKeys()
   // the following code allow use to use formatter like `YY-MM\\M`, the last `\\M` will turn out to be `M` in the final output string
-  const formatterExp = '(?<!\\\\)(' + parserKeys.join('|') + ')'
-  const formatterReg = new RegExp(formatterExp, 'g')
+  const replaceReg = new RegExp('\\\\(' + parserKeys.join('|') + ')', 'g')
+  const replacedChars = []
+  const preFormatted = formatter.replace(replaceReg, (matched, letter) => {
+    const unichar = convertCharToUnicode(letter)
+    replacedChars.push(unichar)
+    return unichar
+  })
 
-  const output = formatter.replace(formatterReg, (matched, found) => {
+  const formatterReg = new RegExp('(' + parserKeys.join('|') + ')', 'g')
+  const afterFormatted = preFormatted.replace(formatterReg, (matched, found) => {
     if (isFunction(fn)) {
       return fn(found)
     }
     return found
   })
+
+  let output = afterFormatted
+  for (let i = 0, len = replacedChars.length; i < len; i ++) {
+    const letter = replacedChars[i]
+    const char = convertUnicodeToChar(letter)
+    output = output.replace(letter, char)
+  }
 
   return output
 }
@@ -188,7 +228,6 @@ export function formatDate(datetime, formatter, givenFormatter) {
   }
 
   const date = createDate(datetime, givenFormatter)
-  console.log(datetime, date.getFullYear(), date.getMonth(), date.getDay(), date.getMilliseconds())
   const output = parseFormatter(formatter, (found) => {
     const format = DATE_FORMATTERS[found]
     if (format) {
@@ -198,7 +237,6 @@ export function formatDate(datetime, formatter, givenFormatter) {
       return found
     }
   })
-  console.log(output)
 
   // the following code ensure the `\\M` to be `M` in formatter
   const parserKeys = getFormatterKeys()
