@@ -2,7 +2,7 @@
  * @module key-path
  */
 
-import { isObject } from './is.js'
+import { isObject, isSymbol } from './is.js'
 
 /** */
 export function makeKeyChain(path) {
@@ -12,9 +12,20 @@ export function makeKeyChain(path) {
 
 /** */
 export function makeKeyPath(chain) {
+  // if there is only one item, return the first one
+  // this support return a symbol
+  if (chain.length === 1) {
+    return chain[0]
+  }
+
   let path = ''
   for (let i = 0, len = chain.length; i < len; i ++) {
     let key = chain[i]
+    // do not support symbols
+    if (isSymbol(key)) {
+      const str = chain.map(item => isSymbol(item) ? item.toString() : item + '').join(', ')
+      throw new TypeError(`Cannot convert a Symbol value to a string when makeKeyPath by [${str}]`)
+    }
     if (/^[0-9]+$/.test(key)) {
       path += '[' + key + ']'
     }
