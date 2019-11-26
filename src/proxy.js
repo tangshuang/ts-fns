@@ -5,8 +5,12 @@ export function createProxy(obj, options = {}) {
   const { get, set, del } = options
   const createProxy = (obj, parents = []) => {
     const handler = {
-      get(target, key) {
-        const value = target[key]
+      get(target, key, receiver) {
+        if (key === Symbol.for('[[Target]]')) {
+          return target
+        }
+
+        const value = Reflect.get(target, key, receiver)
         let use
 
         if (isObject(value) || isArray(value)) {
@@ -20,25 +24,24 @@ export function createProxy(obj, options = {}) {
         if (isFunction(get)) {
           const chain = [ ...parents, key ]
           const keyPath = makeKeyPath(chain)
-          return get([obj, keyPath, use], [target, key, value])
+          return get([obj, keyPath, use], [target, key, value], receiver)
         }
         else {
           return use
         }
       },
-      set(target, key, value) {
+      set(target, key, value, receiver) {
         if (isFunction(set)) {
           const chain = [ ...parents, key ]
           const keyPath = makeKeyPath(chain)
-          const needto = set([obj, keyPath, value], [target, key, value])
+          const needto = set([obj, keyPath, value], [target, key, value], receiver)
           if (needto) {
             target[key] = value
           }
           return true
         }
         else {
-          target[key] = value
-          return true
+          return Reflect.set(target, key, value, receiver)
         }
       },
       deleteProperty(target, key) {
@@ -52,12 +55,12 @@ export function createProxy(obj, options = {}) {
           return true
         }
         else {
-          delete target[key]
-          return true
+          return Reflect.deleteProperty(target, key)
         }
       },
     }
     return new Proxy(obj, handler)
   }
-  return createProxy(obj)
+  const proxy = createProxy(obj)
+  return proxy
 }

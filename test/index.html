@@ -52,6 +52,22 @@ describe('proxy', () => {
     state.body.hand = 22
     expect(state.body.foot).to.equal(55)
   })
+  it('proxy object.function', () => {
+    const o = {
+      name: 'tomy',
+      say() {
+        return this.name
+      },
+    }
+    const p = createProxy(o, {})
+    p.name = 'ximi'
+    expect(p.say()).to.equal('ximi')
+  })
+  it(`Symbol.for('[[Target]]')`, () => {
+    const o = {}
+    const p = createProxy(o, {})
+    expect(p[Symbol.for('[[Target]]')]).to.equal(o)
+  })
 })
 
 describe('date', () => {
