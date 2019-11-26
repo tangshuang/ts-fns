@@ -7,6 +7,7 @@ import { formatStringBy, padRight, padLeft, CHARS } from './string.js'
 import { isString, isNumeric, isNumber, isNaN } from './is.js'
 import { createSafeExp } from './regexp.js'
 
+/** */
 export function numerify(num) {
 	if (isString(num)) {
 		if (!isNumeric(num)) {
@@ -29,6 +30,7 @@ export function numerify(num) {
 	}
 }
 
+/** */
 export function enumerify(input) {
   let num = parseFloat(input);
   if (isNaN(num)) {
@@ -79,6 +81,7 @@ export function enumerify(input) {
   }
 }
 
+/** */
 export function clearNumberZero(input) {
   input = input.toString()
   let [ integerPart, decimalPart = '' ] = input.split('.')
@@ -93,6 +96,7 @@ export function clearNumberZero(input) {
   return value
 }
 
+/** */
 export function plusby(a, b) {
   a = numerify(a)
   b = numerify(b)
@@ -182,6 +186,7 @@ export function plusby(a, b) {
   return sum
 }
 
+/** */
 export function minusby(a, b) {
   a = numerify(a)
   b = numerify(b)
@@ -296,6 +301,7 @@ export function minusby(a, b) {
   return diff
 }
 
+/** */
 export function multiplyby(a, b) {
   a = numerify(a)
   b = numerify(b)
@@ -409,6 +415,7 @@ export function multiplyby(a, b) {
   return value
 }
 
+/** */
 export function divideby(a, b, decimal) {
   if (isUndefined(decimal)) {
     decimal = divideby.InfiniteDecimalLength
@@ -562,6 +569,7 @@ export function divideby(a, b, decimal) {
 }
 divideby.InfiniteDecimalLength = 15
 
+/** */
 export function compare(a, b) {
   a = numerify(a)
   b = numerify(b)
@@ -634,6 +642,7 @@ export function compare(a, b) {
   return 0
 }
 
+/** */
 export function calculate(exp, decimal) {
   const contains = (str, items) => {
     for (let i = 0, len = items.length; i < len; i ++) {
@@ -875,10 +884,12 @@ export function calculate(exp, decimal) {
   return result
 }
 
+/** */
 export function formatNumberByThousands(input, formatdecimal = false) {
   return formatNumberBy(input, ',', 3, formatdecimal);
 }
 
+/** */
 export function fixNumber(input, decimal = 2, pad = false, floor = false) {
   let num = parseFloat(input)
   if (isNaN(num)) {
@@ -971,6 +982,7 @@ export function fixNumber(input, decimal = 2, pad = false, floor = false) {
   return value
 }
 
+/** */
 export function fixNumberToMillion(input, decimal, pad, floor) {
   let num = parseFloat(input);
   if (isNaN(num)) {
@@ -983,6 +995,7 @@ export function fixNumberToMillion(input, decimal, pad, floor) {
   return fixNumber(value, decimal, pad, floor)
 }
 
+/** */
 export function fixNumberToBillion(input, decimal, pad, floor) {
   let num = parseFloat(input);
   if (isNaN(num)) {
@@ -995,6 +1008,7 @@ export function fixNumberToBillion(input, decimal, pad, floor) {
   return fixNumber(value, decimal, pad, floor)
 }
 
+/** */
 export function formatNumberBy(input, separator, count, formatdecimal = false) {
   if (!input) {
     return '';
@@ -1039,18 +1053,21 @@ export function formatNumberBy(input, separator, count, formatdecimal = false) {
   return result;
 }
 
+/** */
 export function clearNumberWith(input, separator = ',') {
   const exp = createSafeExp(separator)
   const reg = new RegExp(exp, 'g')
   return input.replace(reg, '');
 }
 
+/** */
 export function formatNumber(input, decimal, pad, floor) {
   let value = fixNumber(input, decimal, pad, floor)
   let res = formatNumberByThousands(value)
   return res || ''
 }
 
+/** */
 export function formatNumberByMillion(input, decimal, pad, floor) {
   let num = parseFloat(input);
   if (isNaN(num)) {
@@ -1073,6 +1090,7 @@ export function formatNumberByMillion(input, decimal, pad, floor) {
   return res;
 }
 
+/** */
 export function formatNumberByBillion(input, decimal, pad, floor) {
   let num = parseFloat(input);
   if (isNaN(num)) {
@@ -1095,6 +1113,7 @@ export function formatNumberByBillion(input, decimal, pad, floor) {
   return res;
 }
 
+/** */
 export function formatNumberByMoney(input, decimal, pad, floor) {
   let num = parseFloat(input);
   if (isNaN(num)) {
@@ -1113,6 +1132,7 @@ export function formatNumberByMoney(input, decimal, pad, floor) {
 }
 
 // http://www.softwhy.com/article-4813-1.html
+/** */
 export function num10to62(num) {
   const chars = CHARS.split('')
   const radix = chars.length
@@ -1127,6 +1147,7 @@ export function num10to62(num) {
   const code = arr.join('')
   return code
 }
+/** */
 export function num62to10(code) {
   const radix = CHARS.length
   const len = code.length

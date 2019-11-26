@@ -1,10 +1,16 @@
+/**
+ * @module key-path
+ */
+
 import { isObject } from './is.js'
 
+/** */
 export function makeKeyChain(path) {
   let chain = path.toString().split(/\.|\[|\]/).filter(item => !!item)
   return chain
 }
 
+/** */
 export function makeKeyPath(chain) {
   let path = ''
   for (let i = 0, len = chain.length; i < len; i ++) {
@@ -19,12 +25,14 @@ export function makeKeyPath(chain) {
   return path
 }
 
+/** */
 export function makeKey(path) {
   let chain = makeKeyChain(path)
   let keyPath = makeKeyPath(chain)
   return keyPath
 }
 
+/** */
 export function parse(obj, path) {
   let chain = makeKeyChain(path)
 
@@ -43,6 +51,7 @@ export function parse(obj, path) {
   return target
 }
 
+/** */
 export function assign(obj, path, value) {
   const chain = makeKeyChain(path)
 
@@ -81,6 +90,7 @@ export function assign(obj, path, value) {
   return obj
 }
 
+/** */
 export function remove(obj, path) {
   let chain = makeKeyChain(path)
 

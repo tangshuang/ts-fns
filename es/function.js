@@ -4,6 +4,7 @@
 
 import { getObjectHash } from './object.js'
 
+/** */
 export function compute_(fn, expire = 60000) {
   const cache = {}
 
@@ -37,6 +38,7 @@ export function compute_(fn, expire = 60000) {
   }
 }
 
+/** */
 export function get_(fn, expire = 0) {
   let iscalling = false
   let cache = null
@@ -61,6 +63,7 @@ export function get_(fn, expire = 0) {
   }
 }
 
+/** */
 export function async_(fn, expire = 0) {
   const cache = {}
 
@@ -101,6 +104,7 @@ export function async_(fn, expire = 0) {
   }
 }
 
+/** */
 export function invoke_(fn, count = 1) {
   const cache = {}
 

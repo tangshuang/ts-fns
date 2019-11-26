@@ -4,76 +4,94 @@
 
 import { unionArray } from './array.js'
 
+/** */
 export function isUndefined(value) {
   return value === undefined
 }
 
+/** */
 export function isNull(value) {
   return value === null
 }
 
+/** */
 export function isNil (value) {
   return isUndefined(value) || isNull(value)
 }
 
+/** */
 export function isArray(value) {
   return Array.isArray(value)
 }
 
+/** */
 export function isObject(value) {
   return value && typeof value === 'object' && value.constructor === Object
 }
 
+/** */
 export function isDate(value) {
   return value instanceof Date
 }
 
+/** */
 export function isString(value) {
   return typeof value === 'string'
 }
 
+/** */
 export function isNumber(value) {
   return typeof value === 'number' && !isNaN(value)
 }
 
+/** */
 export function isNaN(value) {
   return typeof value === 'number' && Number.isNaN(value)
 }
 
+/** */
 export function isSymbol(value) {
   return typeof value === 'symbol'
 }
 
+/** */
 export function isFinite(value) {
   return typeof value === 'number' && Number.isFinite(value)
 }
 
+/** */
 export function isInfinite(value) {
   return typeof value === 'number' && !Number.isNaN(value) && !Number.isFinite(value)
 }
 
+/** */
 export function isBoolean(value) {
   return value === true || value === false
 }
 
+/** */
 export function isNumeric(value) {
   return isString(value) && /^\-{0,1}[0-9]+(\.{0,1}[0-9]+){0,1}$/.test(value)
 }
 
+/** */
 export function isBlob(value) {
   return value && typeof value.size === 'number' && typeof value.type === 'string'
 }
 
+/** */
 export function isFile(value) {
   return isBlob(value)
     && (typeof value.lastModifiedDate === 'object' || typeof value.lastModified === 'number')
     && typeof value.name === 'string'
 }
 
+/** */
 export function isFormData(value) {
   return value instanceof FormData
 }
 
+/** */
 export function isEmpty(value) {
   if (value === null || value === undefined || value === '' || (typeof value === 'number' && isNaN(value))) {
     return true
@@ -87,6 +105,7 @@ export function isEmpty(value) {
   return false
 }
 
+/** */
 export function isFunction(value) {
   return typeof value === 'function'
 		&& (value + '') !== `function ${value.name}() { [native code] }` // String, Number
@@ -94,14 +113,17 @@ export function isFunction(value) {
 		&& (value + '').indexOf('_classCallCheck(this,') === -1 // babel transformed class
 }
 
+/** */
 export function isTruthy(value) {
   return !!value
 }
 
+/** */
 export function isFalsy(value) {
   return !value
 }
 
+/** */
 export function isEqual(val1, val2) {
   const equal = (obj1, obj2) => {
     let keys1 = Object.keys(obj1)
@@ -139,22 +161,27 @@ export function isEqual(val1, val2) {
   }
 }
 
+/** */
 export function isLt(a, b) {
   return a < b
 }
 
+/** */
 export function isLte(a, b) {
   return a <= b
 }
 
+/** */
 export function isGt(a, b) {
   return a > b
 }
 
+/** */
 export function isGte(a, b) {
   return a >= b
 }
 
+/** */
 export function isPromise (value) {
   if (isInstanceOf(value, Promise)) {
     return true
@@ -164,6 +191,7 @@ export function isPromise (value) {
     && typeof value.then === 'function'
 }
 
+/** */
 export function isConstructor(f) {
   if (typeof f !== 'function') {
     return false
@@ -182,6 +210,7 @@ export function isConstructor(f) {
   return true
 }
 
+/** */
 export function isInstanceOf(value, Constructor, real = false) {
   if (!value || typeof value !== 'object') {
     return false
@@ -194,11 +223,13 @@ export function isInstanceOf(value, Constructor, real = false) {
   }
 }
 
+/** */
 export function isInheritedOf(SubConstructor, Constructor, strict) {
   const ins = SubConstructor.prototype
   return isInstanceOf(ins, Constructor, strict)
 }
 
+/** */
 export function inObject(key, obj) {
   if (typeof obj !== 'object') {
     return false
@@ -206,6 +237,7 @@ export function inObject(key, obj) {
   return key in obj
 }
 
+/** */
 export function inArray(item, arr) {
   return isArray(arr) && arr.includes(item);
 }

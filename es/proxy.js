@@ -1,3 +1,7 @@
+/**
+ * @module proxy
+ */
+
 import { makeKeyPath } from './key-path.js'
 import { isFunction, isObject, isArray } from './is.js'
 
@@ -66,11 +70,13 @@ const createProxyObject = (obj, options = {}, parents = []) => {
   return new Proxy(obj, handler)
 }
 
+/** */
 export function createProxy(obj, options = {}) {
   const proxy = createProxyObject(obj, options)
   return proxy
 }
 
+/** */
 export function getProxied(value) {
   const target = value[PROXY_TARGET] ? value[PROXY_TARGET] : value
   return target

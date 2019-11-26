@@ -1,8 +1,10 @@
 /**
  * @module mapping
  */
+
 import { toArray } from './array.js'
 
+/** */
 export function pickArrayByMapping(arr, key, mapping) {
   let res = arr.filter(item => mapping[item[key]])
 
@@ -21,6 +23,7 @@ export function pickArrayByMapping(arr, key, mapping) {
   return res
 }
 
+/** */
 export function pickObjectByKeys(obj, keys) {
   let res = {}
   keys.forEach((key) => {
@@ -29,6 +32,7 @@ export function pickObjectByKeys(obj, keys) {
   return res
 }
 
+/** */
 export function pickObjectByMapping(obj, mapping) {
   let res = {}
 
@@ -43,6 +47,7 @@ export function pickObjectByMapping(obj, mapping) {
   return res
 }
 
+/** */
 export function createObjectFromList(list, key) {
   const res = {}
   const items = toArray(list)
@@ -55,6 +60,7 @@ export function createObjectFromList(list, key) {
   return res
 }
 
+/** */
 export function findParentInTree(key, mapping) {
   const keys = Object.keys(mapping)
   for (let i = 0, len = keys.length; i < len; i ++) {

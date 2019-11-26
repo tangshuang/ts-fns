@@ -5,6 +5,7 @@
 import { getStringHash } from './string.js'
 import { isArray, isObject, isFile, isDate, isFunction } from './is.js'
 
+/** */
 export function clone(obj) {
   const parents = []
   const clone = function(origin) {
@@ -37,6 +38,7 @@ export function clone(obj) {
   return result
 }
 
+/** */
 export function merge(obj1, obj2, concatArray = true) {
   obj1 = clone(obj1)
 
@@ -93,6 +95,7 @@ export function merge(obj1, obj2, concatArray = true) {
   return merge(obj1, obj2)
 }
 
+/** */
 export function stringify(obj) {
   const exists = [obj]
   const used = []
@@ -156,6 +159,7 @@ export function stringify(obj) {
   return str
 }
 
+/** */
 export function getObjectHash(obj) {
   if (typeof obj !== 'object') {
     return
@@ -166,10 +170,12 @@ export function getObjectHash(obj) {
   return hash
 }
 
+/** */
 export function defineProperty(obj, key, value, options = {}) {
   Object.defineProperty(obj, key, { ...options, value })
 }
 
+/** */
 export function defineProperties(obj, values, options = {}) {
   const props = {}
   each(values, (value, key) => {
@@ -178,10 +184,12 @@ export function defineProperties(obj, values, options = {}) {
   Object.defineProperties(obj, props)
 }
 
+/** */
 export function defineGetter(obj, key, get, options = {}) {
   Object.defineProperty(obj, key, { ...options, get })
 }
 
+/** */
 export function defineGetters(obj, getters, options = {}) {
   const props = {}
   each(getters, (get, key) => {
@@ -190,6 +198,7 @@ export function defineGetters(obj, getters, options = {}) {
   Object.defineProperties(obj, props)
 }
 
+/** */
 export function flatObject(obj, determine) {
   const flat = (input, path = '', result = {}) => {
     if (isArray(input)) {
@@ -215,6 +224,7 @@ export function flatObject(obj, determine) {
   return flat(obj)
 }
 
+/** */
 export function each(obj, fn) {
   if (isArray(obj)) {
     obj.forEach(fn)
@@ -228,6 +238,7 @@ export function each(obj, fn) {
   }
 }
 
+/** */
 export function map(obj, fn) {
   if (isArray(obj)) {
     return obj.map(fn)
@@ -241,6 +252,7 @@ export function map(obj, fn) {
   }
 }
 
+/** */
 export function filter(obj, fn) {
   if (isArray(obj)) {
     return obj.filter(fn)
@@ -258,6 +270,7 @@ export function filter(obj, fn) {
   }
 }
 
+/** */
 export function iterate(obj, fn) {
   if (isArray(obj)) {
     for (let i = 0, len = obj.length; i < len; i ++) {
@@ -281,6 +294,7 @@ export function iterate(obj, fn) {
   }
 }
 
+/** */
 export function find(obj, fn) {
   return iterate(obj, (value, key) => {
     const res = fn(value, key, obj)
@@ -290,6 +304,7 @@ export function find(obj, fn) {
   })
 }
 
+/** */
 export function extract(obj, keys) {
   const results = {}
   keys.forEach((key) => {

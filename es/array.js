@@ -4,28 +4,34 @@
 
 import { inArray, isNaN, isString, isArray, isFunction } from './is.js'
 
+/** */
 export function createArray(value, count = 1) {
-  return [].fill.call(new Array(count), value);
+  return [].fill.call(new Array(count), value)
 }
 
+/** */
 export function unionArray(a, b) {
   return a.concat(b.filter(v => !inArray(v, a)))
 }
 
+/** */
 export function interArray(a, b) {
   return a.filter(v => b.includes(v))
 }
 
+/** */
 export function diffArray(a, b) {
   return a.filter(v => !b.includes(v))
 }
 
+/** */
 export function compArray(a, b) {
   const diffa = diffArray(a, b)
   const diffb = diffArray(b, a)
   return diffa.concat(diffb)
 }
 
+/** */
 export function uniqueArray(arr, prop) {
   const exists = []
   return arr.filter((item) => {
@@ -51,6 +57,7 @@ export function uniqueArray(arr, prop) {
   })
 }
 
+/** */
 export function sortArray(items, by, decs = false) {
   const res = [].concat(items)
   res.sort((a, b) => {
@@ -73,10 +80,12 @@ export function sortArray(items, by, decs = false) {
   return res
 }
 
+/** */
 export function toArray(arr) {
   return Array.from(arr)
 }
 
+/** */
 export function flatArray(arr) {
   const res = []
   arr.forEach((item) => {
@@ -86,6 +95,7 @@ export function flatArray(arr) {
   return res
 }
 
+/** */
 export function groupArray(arr, count) {
   const results = []
   arr.forEach((item, i) => {
@@ -119,6 +129,7 @@ export function splitArray(arr, split) {
   return results
 }
 
+/** */
 export function joinArray(arr, join) {
   const results = []
   arr.forEach((items) => {

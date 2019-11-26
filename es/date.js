@@ -1,5 +1,5 @@
 /**
- * @module datetime
+ * @module date
  */
 
 import { isFunction } from './is.js'
@@ -7,6 +7,7 @@ import { padRight, padLeft } from './string.js'
 import { createArray } from './array.js'
 
 const pad = num => num < 10 ? '0' + num : num + ''
+
 export const DATE_MONTHS = [
   'Jan',
   'Feb',
@@ -21,6 +22,7 @@ export const DATE_MONTHS = [
   'Nov',
   'Dec',
 ]
+
 export const DATE_WEEKS = [
   'Sun',
   'Mon',
@@ -30,6 +32,7 @@ export const DATE_WEEKS = [
   'Fri',
   'Sat',
 ]
+
 export const DATE_EXPS = {
   YYYY: '[12][0-9]{3}',
   YY: '[0-9]{2}',
@@ -53,6 +56,7 @@ export const DATE_EXPS = {
   S: '[0-9]|[1-9][0-9]|[1-9][0-9]{2}',
   SSS: '[0-9]{3}',
 }
+
 export const DATE_FORMATTERS = {
   YYYY: date => date.getFullYear() + '',
   YY: date => (date.getFullYear() % 100) + '',
@@ -76,6 +80,7 @@ export const DATE_FORMATTERS = {
   S: date => date.getMilliseconds() + '',
   SSS: date => padLeft(date.getMilliseconds() + '', 3, '0'),
 }
+
 const getFormatterKeys = () => {
   const parserKeys = Object.keys(DATE_EXPS)
   parserKeys.sort()
@@ -172,6 +177,7 @@ const parseDate = (dateString, formatter) => {
   return dateRes
 }
 
+/** */
 export function createDate(dateString, givenFormatter) {
   if (!givenFormatter) {
     return new Date(dateString)
@@ -219,6 +225,7 @@ export function createDate(dateString, givenFormatter) {
   return new Date(Y, M, D, H, m, s, ms)
 }
 
+/** */
 export function formatDate(datetime, formatter, givenFormatter) {
   if (!datetime) {
     return

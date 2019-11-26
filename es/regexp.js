@@ -1,3 +1,8 @@
+/**
+ * @module regexp
+ */
+
+/** */
 export function createSafeExp(exp) {
   const sign = '*.?+$^[](){}|\\/'
   const signArr = sign.split('')

@@ -7,6 +7,7 @@ import { createArray } from './array.js'
 // the order could never be changed, becuase we use it for number convertion
 export const CHARS = '0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ'
 
+/** */
 export function formatStringBy(input, separator, segments, alignright) {
   if (typeof input !== 'string' || !input) {
     return ''
@@ -54,6 +55,7 @@ export function formatStringBy(input, separator, segments, alignright) {
   return output
 }
 
+/** */
 export function padLeft(str, len, pad) {
   if (str.length >= len) {
     return str
@@ -65,6 +67,7 @@ export function padLeft(str, len, pad) {
   return letters.join('') + str
 }
 
+/** */
 export function padRight(str, len, pad) {
   if (str.length >= len) {
     return str
@@ -76,6 +79,7 @@ export function padRight(str, len, pad) {
   return str + letters.join('')
 }
 
+/** */
 export function getStringHash(str) {
   let hash = 5381
   let i = str.length
@@ -87,6 +91,7 @@ export function getStringHash(str) {
   return hash >>> 0
 }
 
+/** */
 export function createRandomString(length = 16) {
   let text = ''
   for (let i = 0; i < length; i++) {
@@ -96,6 +101,7 @@ export function createRandomString(length = 16) {
 }
 
 // https://github.com/gillesruppert/node-interpolate/blob/master/lib/interpolate.js
+/** */
 export function interpolate(template, data, opts) {
   let regex,
     lDel,
