@@ -1,7 +1,7 @@
 import { makeKeyPath } from './key-path.js'
 import { isFunction, isObject, isArray } from './is.js'
 
-const PROXY_TARGET = Symbol.for('[[Target]]')
+export const PROXY_TARGET = Symbol.for('[[Target]]')
 
 const createProxyObject = (obj, options = {}, parents = []) => {
   const { get, set, del } = options
