@@ -152,9 +152,12 @@ export function isGte(a, b) {
 }
 
 export function isPromise (value) {
-  return value &&
-		(typeof value === 'object' || typeof value === 'function') &&
-		typeof value.then === 'function'
+  if (isInstanceOf(value, Promise)) {
+    return true
+  }
+  return value
+    && (typeof value === 'object' || typeof value === 'function')
+    && typeof value.then === 'function'
 }
 
 export function isConstructor(f) {
@@ -192,15 +195,11 @@ export function isInheritedOf(SubConstructor, Constructor, strict) {
   return isInstanceOf(ins, Constructor, strict)
 }
 
-export function getConstructor(ins) {
-  return Object.getPrototypeOf(ins).constructor
-}
-
 export function inObject(key, obj) {
   if (typeof obj !== 'object') {
     return false
   }
-  return inArray(key, Object.keys(obj))
+  return key in obj
 }
 
 export function inArray(item, arr) {
