@@ -12,9 +12,12 @@
   },
   "author": "tangshuang",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "@babel/runtime": "^7.7.4"
+  },
   "devDependencies": {
     "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.7.4",
     "@babel/preset-env": "^7.5.5",
     "babel-loader": "^8.0.6",
     "docdash": "^1.1.1",

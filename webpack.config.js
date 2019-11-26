@@ -5,6 +5,9 @@ const babelConfig = {
   presets: [
     ['@babel/preset-env', { modules: false }],
   ],
+  plugins: [
+    ['@babel/plugin-transform-runtime', { useESModules: true }],
+  ],
 }
 
 const config = {
@@ -36,6 +39,7 @@ const config = {
 
 const mini = {
   ...config,
+  mode: 'production',
   output: {
     ...config.output,
     filename: 'ts-fns.min.js',

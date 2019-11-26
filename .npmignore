@@ -1,2 +1,6 @@
 test/
-build/
+docs/
+babel.config.js
+gulpfile.js
+jest.config.js
+webpack.config.js
