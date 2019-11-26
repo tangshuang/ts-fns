@@ -40,6 +40,10 @@ export function isNaN(value) {
   return typeof value === 'number' && Number.isNaN(value)
 }
 
+export function isSymbol(value) {
+  return typeof value === 'symbol'
+}
+
 export function isFinite(value) {
   return typeof value === 'number' && Number.isFinite(value)
 }

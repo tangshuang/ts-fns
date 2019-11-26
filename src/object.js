@@ -289,3 +289,13 @@ export function find(obj, fn) {
     }
   })
 }
+
+export function extract(obj, keys) {
+  const results = {}
+  keys.forEach((key) => {
+    if (inObject(key, obj)) {
+      results[key] = obj[key]
+    }
+  })
+  return results
+}
