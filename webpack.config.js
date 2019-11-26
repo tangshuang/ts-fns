@@ -1,11 +1,11 @@
 const path = require('path')
-const babelConfig = require('./babel.config')
 
 const root = path.resolve(__dirname)
-
-// make effect
-babelConfig.presets[0][1].modules = false
-babelConfig.plugins[0][1] = { useESModules: true }
+const babelConfig = {
+  presets: [
+    ['@babel/preset-env', { modules: false }],
+  ],
+}
 
 const config = {
   mode: 'none',
