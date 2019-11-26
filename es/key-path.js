@@ -2,7 +2,7 @@
  * @module key-path
  */
 
-import { isObject, isSymbol } from './is.js'
+import { isObject, isSymbol, isArray } from './is.js'
 
 /** */
 export function makeKeyChain(path) {
@@ -87,7 +87,7 @@ export function assign(obj, path, value) {
       next = key
     }
 
-    if (/^[0-9]+$/.test(next) && !Array.isArray(target[current])) {
+    if (/^[0-9]+$/.test(next) && !isArray(target[current])) {
       target[current] = []
     }
     else if (typeof target[current] !== 'object') {
