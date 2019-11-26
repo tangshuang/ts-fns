@@ -16,6 +16,7 @@ import {
   parse,
   num10to62,
   num62to10,
+  getProxied,
 } from '../src/index.js'
 
 const expect = chai.expect
@@ -67,6 +68,17 @@ describe('proxy', () => {
     const o = {}
     const p = createProxy(o, {})
     expect(p[Symbol.for('[[Target]]')]).to.equal(o)
+  })
+  it('getProxied', () => {
+    const o = {
+      body: {
+        head: 'ok',
+      },
+    }
+    const p = createProxy(o, {})
+    const t = getProxied(p)
+    expect(t).to.equal(o) // NOTICE not
+    expect(t.body.head).to.equal('ok')
   })
 })
 
