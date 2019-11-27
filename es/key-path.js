@@ -4,14 +4,28 @@
 
 import { isObject, isSymbol, isArray } from './is.js'
 
-/** */
-export function makeKeyChain(path) {
-  let chain = path.toString().split(/\.|\[|\]/).filter(item => !!item)
+/**
+ * convert a keyPath string to be an array
+ * @param {string} path
+ * @param {boolean} strict whether to keep square brackets of array index key
+ * @return {array}
+ */
+export function makeKeyChain(path, strict = false) {
+  const reg = strict ? /\.|(?=\[)/ : /\.|\[|\]\.|\]\[|\]/
+  let chain = path.split(reg)
+  if (!strict) {
+    chain = chain.filter(item => !!item)
+  }
   return chain
 }
 
-/** */
-export function makeKeyPath(chain) {
+/**
+ * convert an array to be a keyPath string
+ * @param {array} chain the array for path, without any symbol in it
+ * @param {boolean} strict
+ * @return {string}
+ */
+export function makeKeyPath(chain, strict = false) {
   // if there is only one item, return the first one
   // this support return a symbol
   if (chain.length === 1) {
@@ -26,8 +40,11 @@ export function makeKeyPath(chain) {
       const str = chain.map(item => isSymbol(item) ? item.toString() : item + '').join(', ')
       throw new TypeError(`Cannot convert a Symbol value to a string when makeKeyPath by [${str}]`)
     }
-    if (/^[0-9]+$/.test(key)) {
+    if (!strict && /^[0-9]+$/.test(key)) {
       path += '[' + key + ']'
+    }
+    else if (strict && /^\[[0-9]+\]$/.test(key)) {
+      path += key
     }
     else {
       path += path ? '.' + key : key
@@ -36,16 +53,24 @@ export function makeKeyPath(chain) {
   return path
 }
 
-/** */
-export function makeKey(path) {
-  let chain = makeKeyChain(path)
-  let keyPath = makeKeyPath(chain)
-  return keyPath
+/**
+ * convert a keyPath array or string to be a keyPath string
+ * @param {string|array} keyPath
+ * @return {string}
+ */
+export function makeKey(keyPath) {
+  const chain = isArray(keyPath) ? keyPath : makeKeyChain(keyPath)
+  const key = makeKeyPath(chain)
+  return key
 }
 
-/** */
-export function parse(obj, path) {
-  let chain = makeKeyChain(path)
+/**
+ * parse a property's value by its keyPath
+ * @param {object|array} obj
+ * @param {string|array} keyPath
+ */
+export function parse(obj, keyPath) {
+  let chain = isArray(keyPath) ? keyPath : makeKeyChain(keyPath)
 
   if (!chain.length) {
     return obj
@@ -62,9 +87,13 @@ export function parse(obj, path) {
   return target
 }
 
-/** */
-export function assign(obj, path, value) {
-  const chain = makeKeyChain(path)
+/**
+ * assign a property's value by its keyPath
+ * @param {object|array} obj
+ * @param {string|array} keyPath
+ */
+export function assign(obj, keyPath, value) {
+  const chain = isArray(keyPath) ? keyPath : makeKeyChain(keyPath)
 
   if (!chain.length) {
     return obj
@@ -101,22 +130,25 @@ export function assign(obj, path, value) {
   return obj
 }
 
-/** */
-export function remove(obj, path) {
-  let chain = makeKeyChain(path)
+/**
+ * remove a property by its keyPath
+ * @param {object|array} obj
+ * @param {string|array} keyPath
+ */
+export function remove(obj, keyPath) {
+  const chain = isArray(keyPath) ? keyPath : makeKeyChain(keyPath)
 
   if (!chain.length) {
     return obj
   }
 
   if (chain.length === 1) {
-    delete obj[path]
+    delete obj[chain[0]]
     return obj
   }
 
-  let tail = chain.pop()
-  let keyPath = makeKeyPath(chain)
-  let target = parse(obj, keyPath)
+  const tail = chain.pop()
+  const target = parse(obj, chain)
 
   if (!isObject(target) && !isArray(target)) {
     return obj
