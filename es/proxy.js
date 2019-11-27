@@ -20,7 +20,7 @@ const createProxyObject = (obj, options = {}, parents = []) => {
       if (isFunction(get)) {
         const chain = [ ...parents, key ]
         const keyPath = makeKeyPath(chain)
-        value = get([obj, keyPath, receiver], [target, key, receiver])
+        value = get([obj, keyPath], [target, key, receiver])
       }
       else {
         value = Reflect.get(target, key, receiver)
@@ -42,7 +42,7 @@ const createProxyObject = (obj, options = {}, parents = []) => {
       if (isFunction(set)) {
         const chain = [ ...parents, key ]
         const keyPath = makeKeyPath(chain)
-        const needto = set([obj, keyPath, v, receiver], [target, key, v, receiver])
+        const needto = set([obj, keyPath, v], [target, key, value, receiver])
         if (needto) {
           Reflect.set(target, key, v, receiver)
         }
