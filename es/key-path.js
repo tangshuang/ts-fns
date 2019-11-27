@@ -12,7 +12,7 @@ import { isObject, isSymbol, isArray } from './is.js'
  */
 export function makeKeyChain(path, strict = false) {
   const reg = strict ? /\.|(?=\[)/ : /\.|\[|\]\.|\]\[|\]/
-  let chain = path.split(reg)
+  let chain = path.toString().split(reg)
   if (!strict) {
     chain = chain.filter(item => !!item)
   }
