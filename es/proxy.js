@@ -42,7 +42,8 @@ export function createProxy(rootTarget, options = {}) {
         // a Symbol key will not to into `get` option function
         if (isFunction(get) && !isSymbol(key)) {
           const keyPath = makeKeyPath(keyChain)
-          value = get.call({ rootTarget, rootProxy, keyChain, keyPath }, target, key, receiver)
+          const context = { rootTarget, rootProxy, keyChain, keyPath }
+          value = get([target, key, receiver], context)
         }
         else {
           value = Reflect.get(target, key, receiver)
@@ -64,7 +65,8 @@ export function createProxy(rootTarget, options = {}) {
         if (isFunction(set) && !isSymbol(key)) {
           const keyChain = [...parents, key]
           const keyPath = makeKeyPath(keyChain)
-          const needto = set.call({ rootTarget, rootProxy, keyChain, keyPath }, target, key, value, receiver)
+          const context = { rootTarget, rootProxy, keyChain, keyPath }
+          const needto = set([target, key, value, receiver], context)
           if (needto) {
             return Reflect.set(target, key, v, receiver)
           }
@@ -78,7 +80,8 @@ export function createProxy(rootTarget, options = {}) {
         if (isFunction(del) && !isSymbol(key)) {
           const keyChain = [...parents, key]
           const keyPath = makeKeyPath(keyChain)
-          const needto = del.call({ rootTarget, rootProxy, keyChain, keyPath }, target, key)
+          const context = { rootTarget, rootProxy, keyChain, keyPath }
+          const needto = del([target, key], context)
           if (needto) {
             return Reflect.deleteProperty(target, key)
           }
