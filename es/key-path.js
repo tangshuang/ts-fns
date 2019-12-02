@@ -37,10 +37,10 @@ export function makeKeyPath(chain, strict = false) {
     let key = chain[i]
     // do not support symbols
     if (isSymbol(key)) {
-      const str = chain.map(item => isSymbol(item) ? item.toString() : item + '').join(', ')
-      throw new TypeError(`Cannot convert a Symbol value to a string when makeKeyPath by [${str}]`)
+      const symbol = key.toString()
+      path += '[' + symbol + ']'
     }
-    if (!strict && /^[0-9]+$/.test(key)) {
+    else if (!strict && /^[0-9]+$/.test(key)) {
       path += '[' + key + ']'
     }
     else if (strict && /^\[[0-9]+\]$/.test(key)) {
@@ -67,10 +67,10 @@ export function makeKey(keyPath) {
 /**
  * parse a property's value by its keyPath
  * @param {object|array} obj
- * @param {string|array} keyPath
+ * @param {string|array} key
  */
-export function parse(obj, keyPath) {
-  let chain = isArray(keyPath) ? keyPath : makeKeyChain(keyPath)
+export function parse(obj, key) {
+  let chain = isArray(key) ? key : makeKeyChain(key)
 
   if (!chain.length) {
     return obj
@@ -78,11 +78,11 @@ export function parse(obj, keyPath) {
 
   let target = obj
   for (let i = 0, len = chain.length; i < len; i ++) {
-    let key = chain[i]
-    if (target[key] === undefined) {
+    const one = chain[i]
+    if (target[one] === undefined) {
       return undefined
     }
-    target = target[key]
+    target = target[one]
   }
   return target
 }
@@ -90,19 +90,19 @@ export function parse(obj, keyPath) {
 /**
  * assign a property's value by its keyPath
  * @param {object|array} obj
- * @param {string|array} keyPath
+ * @param {string|array} key
  */
-export function assign(obj, keyPath, value) {
-  const chain = isArray(keyPath) ? keyPath : makeKeyChain(keyPath)
+export function assign(obj, key, value) {
+  const chain = isArray(key) ? key : makeKeyChain(key)
 
   if (!chain.length) {
     return obj
   }
 
-  const key = chain.pop()
+  const tail = chain.pop()
 
   if (!chain.length) {
-    obj[key] = value
+    obj[tail] = value
     return obj
   }
 
@@ -113,7 +113,7 @@ export function assign(obj, keyPath, value) {
     let next = chain[i + 1]
     // at the end
     if (next === undefined && i === len - 1) {
-      next = key
+      next = tail
     }
 
     if (/^[0-9]+$/.test(next) && !isArray(target[current])) {
@@ -125,7 +125,7 @@ export function assign(obj, keyPath, value) {
     target = target[current]
   }
 
-  target[key] = value
+  target[tail] = value
 
   return obj
 }
@@ -133,10 +133,10 @@ export function assign(obj, keyPath, value) {
 /**
  * remove a property by its keyPath
  * @param {object|array} obj
- * @param {string|array} keyPath
+ * @param {string|array} key
  */
-export function remove(obj, keyPath) {
-  const chain = isArray(keyPath) ? keyPath : makeKeyChain(keyPath)
+export function remove(obj, key) {
+  const chain = isArray(key) ? key : makeKeyChain(key)
 
   if (!chain.length) {
     return obj
