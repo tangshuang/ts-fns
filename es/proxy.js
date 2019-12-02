@@ -14,9 +14,9 @@ const PROXY_TARGET = Symbol.for('[[Target]]')
  * @param {object} options {
  *   // not working on Symbol properties
  *   // can use this.rootTarget, this.rootProxy, this.keyChain, this.keyPath
- *   get(target, key, receiver) {},
- *   set(target, key, value, receiver) {},
- *   del(target, key) {},
+ *   get(context, params) {},
+ *   set(context, params) {},
+ *   del(context, params) {},
  * }
  */
 export function createProxy(rootTarget, options = {}) {
@@ -42,8 +42,16 @@ export function createProxy(rootTarget, options = {}) {
         // a Symbol key will not to into `get` option function
         if (isFunction(get) && !isSymbol(key)) {
           const keyPath = makeKeyPath(keyChain)
-          const context = { rootTarget, rootProxy, keyChain, keyPath }
-          value = get([target, key, receiver], context)
+          const context = {
+            rootTarget,
+            rootProxy,
+            keyChain,
+            keyPath,
+            target,
+            key,
+            receiver,
+          }
+          value = get(context, [target, key, receiver])
         }
         else {
           value = Reflect.get(target, key, receiver)
@@ -65,8 +73,17 @@ export function createProxy(rootTarget, options = {}) {
         if (isFunction(set) && !isSymbol(key)) {
           const keyChain = [...parents, key]
           const keyPath = makeKeyPath(keyChain)
-          const context = { rootTarget, rootProxy, keyChain, keyPath }
-          const needto = set([target, key, value, receiver], context)
+          const context = {
+            rootTarget,
+            rootProxy,
+            keyChain,
+            keyPath,
+            target,
+            key,
+            value,
+            receiver,
+          }
+          const needto = set(context, [target, key, value, receiver])
           if (needto) {
             return Reflect.set(target, key, v, receiver)
           }
@@ -80,8 +97,15 @@ export function createProxy(rootTarget, options = {}) {
         if (isFunction(del) && !isSymbol(key)) {
           const keyChain = [...parents, key]
           const keyPath = makeKeyPath(keyChain)
-          const context = { rootTarget, rootProxy, keyChain, keyPath }
-          const needto = del([target, key], context)
+          const context = {
+            rootTarget,
+            rootProxy,
+            keyChain,
+            keyPath,
+            target,
+            key,
+          }
+          const needto = del(context, [target, key])
           if (needto) {
             return Reflect.deleteProperty(target, key)
           }
