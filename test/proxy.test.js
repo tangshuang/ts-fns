@@ -13,11 +13,11 @@ describe('proxy', () => {
     }
     const state = createProxy(data, {
       // get([data, keyPath], [target, key, value]) {},
-      set(target, key, value) {
-        if (this.keyPath === 'age') {
+      set([target, key, value], { keyPath }) {
+        if (keyPath === 'age') {
           target.weight = value * 2
         }
-        else if (this.keyPath === 'body.hand') {
+        else if (keyPath === 'body.hand') {
           target.foot = value * 2.5
         }
         return true
