@@ -13,7 +13,7 @@ describe('proxy', () => {
     }
     const state = createProxy(data, {
       // get([data, keyPath], [target, key, value]) {},
-      set([target, key, value], { keyPath }) {
+      set({ target, value, keyPath }) {
         if (keyPath === 'age') {
           target.weight = value * 2
         }
