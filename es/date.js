@@ -176,16 +176,40 @@ const parseDate = (dateString, formatter) => {
 
   return dateRes
 }
+const parseFormalDate = (dateString) => {
+  const [date, time = ''] = dateString.split(' ')
+  const [Y, M = '01', D = '01'] = date.split('-')
+  const [H = '00', m = '00', s = '00'] = time.split(':')
+  return [+Y, +M - 1, +D, +H, +m, +s]
+}
 
 /** */
-export function createDate(dateString, givenFormatter) {
-  if (!givenFormatter) {
-    return new Date(dateString)
+export function createDate(datetime, givenFormatter) {
+  if (isInstanceOf(datetime, Date)) {
+    return datetime
   }
 
-  const parsedDate = parseDate(dateString, givenFormatter)
+  if (isNumber(datetime)) {
+    return new Date(datetime)
+  }
+
+  if (isNumeric(datetime)) {
+    return new Date(+datetime)
+  }
+
+  if (!isString(datetime)) {
+    return new Date()
+  }
+
+  if (!givenFormatter) {
+    const items = parseFormalDate(datetime)
+    return new Date(...items)
+  }
+
+  const parsedDate = parseDate(datetime, givenFormatter)
   if (!parsedDate) {
-    return new Date(dateString)
+    const items = parseFormalDate(datetime)
+    return new Date(...items)
   }
 
   const Y = +(parsedDate.YYYY || ('20' + parsedDate.YY)) || (new Date().getFullYear())
