@@ -2,7 +2,7 @@
  * @module date
  */
 
-import { isFunction } from './is.js'
+import { isFunction, isInstanceOf, isNumber, isNumeric, isString } from './is.js'
 import { padRight, padLeft } from './string.js'
 import { createArray } from './array.js'
 
@@ -179,8 +179,10 @@ const parseDate = (dateString, formatter) => {
 const parseFormalDate = (dateString) => {
   const [date, time = ''] = dateString.split(' ')
   const [Y, M = '01', D = '01'] = date.split('-')
-  const [H = '00', m = '00', s = '00'] = time.split(':')
-  return [+Y, +M - 1, +D, +H, +m, +s]
+  const [hms = '', ms = '000'] = time.split('.')
+  const [H = '00', m = '00', s = '00'] = hms.split(':')
+  const sss = padRight(ms, 3, '0')
+  return [+Y, +M - 1, +D, +H, +m, +s, +sss]
 }
 
 /** */

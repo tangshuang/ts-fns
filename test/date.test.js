@@ -1,4 +1,4 @@
-import { formatDate } from '../es/date.js'
+import { formatDate, createDate } from '../es/date.js'
 
 describe('date', () => {
   test('formatDate', () => {
@@ -28,5 +28,11 @@ describe('date', () => {
     expect(date61).toBe('370')
     const date71 = formatDate('2019-02-12 08:09:23.37', 'SSS')
     expect(date71).toBe('370')
+  })
+  test("createDate", () => {
+    const date = createDate(new Date("2019-12-02"))
+    expect(date.getFullYear()).toBe(2019)
+    expect(date.getMonth()).toBe(11)
+    expect(date.getDate()).toBe(2)
   })
 })
