@@ -1,7 +1,7 @@
 # ts-fns
 
 Low level javascript functions.
-All written by ES.
+All written by ES6+.
 
 ## usage
 
@@ -19,7 +19,7 @@ es: in `es` dir, export by `module` field
 
 commonjs: in `cjs` dir, export by `main` field
 
-umd: in `umd` dir, without exporting, you should use it by manually, can be used in browsers by requiring `const { each } = window['ts-fns']`
+bundle: in `dist` dir, with `umd`, without exporting, you should use it by manually, can be used in browsers by requiring `const { each } = window['ts-fns']`
 
 ## docs
 

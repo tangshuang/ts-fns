@@ -15,7 +15,7 @@ const config = {
   mode: 'none',
   entry: path.resolve(root, 'es/index.js'),
   output: {
-    path: path.resolve(root, 'umd'),
+    path: path.resolve(root, 'dist'),
     filename: 'ts-fns.js',
     library: 'ts-fns',
     libraryTarget: 'umd',
