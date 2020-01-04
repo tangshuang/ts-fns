@@ -5,7 +5,7 @@
 import { makeKeyPath } from './key-path.js'
 import { isFunction, isObject, isArray, isSymbol } from './is.js'
 
-const PROXY_TARGET = Symbol.for('[[Target]]')
+const PROXY_TARGET = /*#__PURE__*/Symbol.for('[[Target]]')
 
 /**
  * create a proxy object/array

@@ -26,6 +26,7 @@
     "jest": "^24.9.0",
     "jsdoc": "^3.6.3",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-deep-scope-plugin": "^1.6.2"
   }
 }

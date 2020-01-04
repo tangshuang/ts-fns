@@ -1,4 +1,5 @@
 const path = require('path')
+const DeepScopePlugin = require('webpack-deep-scope-plugin').default
 
 const root = path.resolve(__dirname)
 const babelConfig = {
@@ -48,6 +49,9 @@ const mini = {
     ...config.optimization,
     minimize: true,
   },
+  plugins: [
+    new DeepScopePlugin(),
+  ],
 }
 
 module.exports = [

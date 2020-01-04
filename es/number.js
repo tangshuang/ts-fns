@@ -418,7 +418,7 @@ export function multiplyby(a, b) {
 /** */
 export function divideby(a, b, decimal) {
   if (isUndefined(decimal)) {
-    decimal = divideby.InfiniteDecimalLength
+    decimal = divideby.InfiniteDecimalLength || 15
   }
 
   a = numerify(a)
@@ -567,7 +567,6 @@ export function divideby(a, b, decimal) {
 
   return value
 }
-divideby.InfiniteDecimalLength = 15
 
 /** */
 export function compare(a, b) {

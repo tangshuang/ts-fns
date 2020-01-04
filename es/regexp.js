@@ -11,3 +11,14 @@ export function createSafeExp(exp) {
   const safeExp = expList.join('')
   return safeExp
 }
+
+export function matchAll(regexp, str) {
+  const results = []
+  let match
+
+  while ((match = regexp.exec(str)) !== null) {
+    results.push(match)
+  }
+
+  return results
+}
