@@ -5,7 +5,7 @@
   "main": "cjs/index.js",
   "module": "es/index.js",
   "scripts": {
-    "prepublishOnly": "npm run test && npm run build",
+    "prepublishOnly": "npm run build && npm run test",
     "build": "node gulpfile.js && webpack",
     "test": "jest",
     "docs": "jsdoc ./es -r -d ./docs -t ./node_modules/docdash"

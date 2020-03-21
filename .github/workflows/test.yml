@@ -2,9 +2,8 @@ name: Testing
 on:
   push:
     ## when push on master, we will use publish workflow to build and publish
-    branches-ignore:
-      - master
     branches:
+      - '!master'
       - '**'
     paths:
       - 'es/**'
