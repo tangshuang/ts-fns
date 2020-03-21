@@ -1,0 +1,39 @@
+name: Testing
+on:
+  push:
+    ## when push on master, we will use publish workflow to build and publish
+    branches-ignore:
+      - master
+    branches:
+      - '**'
+    paths:
+      - 'es/**'
+      - 'test/**'
+      - 'jest.config.js'
+  pull_request:
+    branches:
+      - '**'
+    paths:
+      - 'es/**'
+      - 'test/**'
+      - 'jest.config.js'
+env:
+  NODE_ENV: test
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install
+      run: npm ci
+    - name: Build
+      run: npm run build
+    - name: Test
+      run: npm test

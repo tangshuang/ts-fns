@@ -2,11 +2,6 @@ const path = require('path')
 const DeepScopePlugin = require('webpack-deep-scope-plugin').default
 
 const root = path.resolve(__dirname)
-const babelConfig = {
-  presets: [
-    ['@babel/preset-env', { modules: false }],
-  ],
-}
 
 const config = {
   mode: 'none',
@@ -23,7 +18,6 @@ const config = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        options: babelConfig,
       },
     ],
   },
