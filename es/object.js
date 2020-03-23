@@ -3,7 +3,7 @@
  */
 
 import { getStringHash } from './string.js'
-import { isArray, isObject, isFile, isDate, isFunction } from './is.js'
+import { isArray, isObject, isFile, isDate, isFunction, inArray } from './is.js'
 
 /** */
 export function clone(obj) {
@@ -313,4 +313,163 @@ export function extract(obj, keys) {
     }
   })
   return results
+}
+
+/**
+ * create a reactive object.
+ * @notice it will change your original data
+ * @param {*} input
+ * @param {*} options
+ * @param {function} options.get to modify output value of each node
+ * @param {function} options.set to modify input value of each node
+ * @param {function} options.dispatch to notify change with keyPath
+ */
+export function createReactive(input, options = {}) {
+  const { get, set, dispatch } = options
+
+  const create = (input, parents = []) => {
+    if (!isObject(input) && !isArray(input)) {
+      return input
+    }
+
+    let output = null
+    if (isObject(input)) {
+      output = createObject({ ...input }, parents)
+    }
+    else {
+      output = createArray([...input], parents)
+    }
+
+    // Object.defineProperty(output, '__reactive__', { value: true })
+    return output
+  }
+
+  const createObject = (obj, parents = []) => {
+    const res = {}
+    each(obj, (value, key) => {
+      const keyPath = [...parents, key]
+      const setValue = (v) => {
+        const next = isFunction(set) ? set(v, keyPath) : v
+        const coming = create(next, keyPath)
+        obj[key] = coming
+        return coming
+      }
+      // initialize the current value at the first time
+      setValue(value)
+      Object.defineProperty(res, key, {
+        get: () => {
+          const value = obj[key] // we should not use original value, because it may be changed at any time
+          const node = isFunction(get) ? get(value, keyPath) : value
+          return node
+        },
+        set: (v) => {
+          const next = setValue(v)
+          if (isFunction(dispatch)) {
+            dispatch(keyPath, next)
+          }
+          return next
+        },
+        enumerable: true,
+        configurable: true,
+      })
+    })
+    return res
+  }
+
+  const createArray = (arr, parents) => {
+    const res = []
+
+    // fill items into output array
+    const fill = (start, end, init = true) => {
+      for (let i = start; i <= end; i ++) {
+        const item = arr[i]
+        const keyPath = [...parents, i]
+        const setValue = (v) => {
+          const next = isFunction(set) ? set(v, keyPath) : v
+          const coming = create(next, keyPath)
+          arr[i] = coming
+          return coming
+        }
+
+        if (init) {
+          // initialize items
+          setValue(item)
+        }
+
+        Object.defineProperty(res, i, {
+          get: () => {
+            const item = arr[i]
+            const node = isFunction(get) ? get(item, keyPath) : item
+            return node
+          },
+          set: (v) => {
+            const next = setValue(v)
+            if (isFunction(dispatch)) {
+              dispatch(keyPath, next)
+            }
+            return next
+          },
+          enumerable: true,
+          configurable: true,
+        })
+      }
+    }
+
+    // change array prototype methods
+    const modify = (fn) => ({
+      value: function(...args) {
+        // deal with original data
+        const items = args.map(item => create(item, parents))
+        const before = arr.length
+        const o = Array.prototype[fn].call(arr, ...items)
+        const after = arr.length
+
+        // the methods will change the length of arr
+        if (inArray(fn, ['push', 'unshift', 'splice'])) {
+          // delete items
+          if (before > after) {
+            res.length = after
+          }
+          // insert items
+          else if (after > before) {
+            fill(before - 1, after - 1, false)
+          }
+        }
+
+        if (isFunction(dispatch)) {
+          dispatch(parents, res)
+        }
+
+        return o
+      },
+    })
+
+    Object.defineProperties(res, {
+      push: modify('push'),
+      pop: modify('pop'),
+      unshift: modify('unshift'),
+      shift: modify('shift'),
+      splice: modify('splice'),
+      sort: modify('sort'),
+      reverse: modify('reverse'),
+      fill: modify('fill'),
+      clear: function() {
+        arr.length = 0
+        res.length = 0
+
+        if (isFunction(dispatch)) {
+          dispatch(parents, res)
+        }
+
+        return this
+      },
+    })
+
+    fill(0, arr.length - 1)
+
+    return res
+  }
+
+  const output = create(input)
+  return output
 }
