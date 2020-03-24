@@ -54,5 +54,6 @@ jobs:
       - name: Publish Docs
         uses: peaceiris/actions-gh-pages@v3
         with:
+          publish_branch: gh-pages
           publish_dir: ./docs
           github_token: ${{ secrets.GITHUB_TOKEN }}
