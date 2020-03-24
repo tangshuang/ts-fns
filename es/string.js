@@ -4,11 +4,13 @@
 
 import { createArray } from './array.js'
 
-// the order could never be changed, becuase we use it for number convertion
+/**
+ * @notice the order could never be changed, becuase we use it for number convertion
+ */
 export const CHARS = '0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ'
 
 /** */
-export function formatStringBy(input, separator, segments, alignright) {
+export function formatString(input, separator, segments, alignright) {
   if (typeof input !== 'string' || !input) {
     return ''
   }

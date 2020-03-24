@@ -3,7 +3,7 @@
  */
 
 
-import { formatStringBy, padRight, padLeft, CHARS } from './string.js'
+import { formatString, padRight, padLeft, CHARS } from './string.js'
 import { isString, isNumeric, isNumber, isNaN } from './is.js'
 import { createSafeExp } from './regexp.js'
 
@@ -884,7 +884,7 @@ export function calculate(exp, decimal) {
 }
 
 /** */
-export function fixNumber(input, decimal = 2, pad = false, floor = false) {
+export function fixNum(input, decimal = 2, pad = false, floor = false) {
   let num = parseFloat(input)
   if (isNaN(num)) {
     return ''
@@ -977,7 +977,7 @@ export function fixNumber(input, decimal = 2, pad = false, floor = false) {
 }
 
 /** */
-export function formatNumber(input, separator, count, formatdecimal = false) {
+export function formatNum(input, separator, count, formatdecimal = false) {
   if (!input) {
     return '';
   }
@@ -1002,9 +1002,9 @@ export function formatNumber(input, separator, count, formatdecimal = false) {
     decimal = blocks[1] || '';
   }
 
-  integer = formatStringBy(integer, separator, count, true);
+  integer = formatString(integer, separator, count, true);
   if (formatdecimal && decimal) {
-    decimal = formatStringBy(decimal, separator, count);
+    decimal = formatString(decimal, separator, count);
   }
 
   let result = '';

@@ -3,13 +3,13 @@
  */
 
 /** */
-export function constructof(ins) {
+export function getConstructorOf(ins) {
   return Object.getPrototypeOf(ins).constructor
 }
 
 /** */
-export function inherit(Class, Parent) {
-  return Object.setPrototypeOf(Class, Parent)
+export function inherit(child, parent) {
+  return Object.setPrototypeOf(child, parent)
 }
 
 /** */

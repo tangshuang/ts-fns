@@ -4,6 +4,7 @@ on:
     ## when push on master, we will use publish workflow to build and publish
     branches-ignore:
       - master
+      - gh-pages
     paths:
       - 'es/**'
       - 'test/**'
