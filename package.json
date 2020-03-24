@@ -8,7 +8,7 @@
     "prepublishOnly": "npm run build && npm run test",
     "build": "node gulpfile.js && webpack",
     "test": "jest",
-    "docs": "jsdoc ./es -r -d ./docs -t ./node_modules/clean-jsdoc-theme"
+    "docs": "jsdoc -c ./jsdoc.json"
   },
   "author": "tangshuang",
   "license": "ISC",

@@ -23,7 +23,7 @@ bundle: in `dist` dir, with `umd`, without exporting, you should use it by manua
 
 ## docs
 
-git clone this repo, and run
+[View github pages here](https://tangshuang.github.io/ts-fns) , or git clone this repo, and run
 
 ```
 npm i
