@@ -12,6 +12,7 @@ export function createSafeExp(exp) {
   return safeExp
 }
 
+/** */
 export function matchAll(regexp, str) {
   const results = []
   let match

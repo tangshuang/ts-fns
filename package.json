@@ -1,6 +1,6 @@
 {
   "name": "ts-fns",
-  "version": "4.1.2",
+  "version": "5.0.0-0",
   "description": "Public Functions.",
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -8,7 +8,7 @@
     "prepublishOnly": "npm run build && npm run test",
     "build": "node gulpfile.js && webpack",
     "test": "jest",
-    "docs": "jsdoc ./es -r -d ./docs -t ./node_modules/docdash"
+    "docs": "jsdoc ./es -r -d ./docs -t ./node_modules/clean-jsdoc-theme"
   },
   "author": "tangshuang",
   "license": "ISC",
@@ -17,7 +17,7 @@
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "babel-loader": "^8.1.0",
-    "docdash": "^1.2.0",
+    "clean-jsdoc-theme": "^2.2.11",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "jest": "^24.9.0",
