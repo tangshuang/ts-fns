@@ -15,7 +15,7 @@ export function isNull(value) {
 }
 
 /** */
-export function isNil (value) {
+export function isNone(value) {
   return isUndefined(value) || isNull(value)
 }
 
@@ -31,7 +31,7 @@ export function isObject(value) {
 
 /** */
 export function isDate(value) {
-  return value instanceof Date
+  return isInstanceOf(value, Date)
 }
 
 /** */
@@ -61,7 +61,7 @@ export function isFinite(value) {
 
 /** */
 export function isInfinite(value) {
-  return typeof value === 'number' && !Number.isNaN(value) && !Number.isFinite(value)
+  return !isNaN(value) && !Number.isFinite(value)
 }
 
 /** */
@@ -76,33 +76,43 @@ export function isNumeric(value) {
 
 /** */
 export function isBlob(value) {
-  return value && typeof value.size === 'number' && typeof value.type === 'string'
+  return isInstanceOf(value, Blob)
+    || (
+      value
+      && typeof value.size === 'number'
+      && typeof value.type === 'string'
+    )
 }
 
 /** */
 export function isFile(value) {
-  return isBlob(value)
-    && (typeof value.lastModifiedDate === 'object' || typeof value.lastModified === 'number')
-    && typeof value.name === 'string'
+  return isInstanceOf(value, File)
+    || (
+      isBlob(value)
+      && (typeof value.lastModifiedDate === 'object' || typeof value.lastModified === 'number')
+      && typeof value.name === 'string'
+    )
 }
 
 /** */
 export function isFormData(value) {
-  return value instanceof FormData
+  return isInstanceOf(value, FormData)
 }
 
 /** */
 export function isEmpty(value) {
-  if (value === null || value === undefined || value === '' || (typeof value === 'number' && isNaN(value))) {
+  if (isNone(value) || value === '' || isNaN(value)) {
     return true
   }
   else if (isArray(value)) {
     return value.length === 0
   }
   else if (isObject(value)) {
-    return Object.keys(value).length === 0
+    return Object.getOwnPropertyNames(value).length === 0
   }
-  return false
+  else {
+    return false
+  }
 }
 
 /** */
@@ -126,12 +136,12 @@ export function isFalsy(value) {
 /** */
 export function isEqual(val1, val2) {
   const equal = (obj1, obj2) => {
-    let keys1 = Object.keys(obj1)
-    let keys2 = Object.keys(obj2)
-    let keys = unionArray(keys1, keys2)
+    const keys1 = Object.getOwnPropertyNames(obj1)
+    const keys2 = Object.getOwnPropertyNames(obj2)
+    const keys = unionArray(keys1, keys2)
 
     for (let i = 0, len = keys.length; i < len; i ++) {
-      let key = keys[i]
+      const key = keys[i]
 
       if (!inArray(key, keys1)) {
         return false
@@ -140,8 +150,8 @@ export function isEqual(val1, val2) {
         return false
       }
 
-      let value1 = obj1[key]
-      let value2 = obj2[key]
+      const value1 = obj1[key]
+      const value2 = obj2[key]
       if (!isEqual(value1, value2)) {
         return false
       }
@@ -182,13 +192,13 @@ export function isGte(a, b) {
 }
 
 /** */
-export function isPromise (value) {
-  if (isInstanceOf(value, Promise)) {
-    return true
-  }
-  return value
-    && (typeof value === 'object' || typeof value === 'function')
-    && typeof value.then === 'function'
+export function isPromise(value) {
+  return isInstanceOf(value, Promise)
+    || (
+      value
+      && (typeof value === 'object' || typeof value === 'function')
+      && typeof value.then === 'function'
+    )
 }
 
 /** */
@@ -239,5 +249,5 @@ export function inObject(key, obj) {
 
 /** */
 export function inArray(item, arr) {
-  return isArray(arr) && arr.includes(item);
+  return isArray(arr) && arr.includes(item)
 }

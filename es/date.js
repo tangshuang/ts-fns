@@ -8,6 +8,7 @@ import { createArray } from './array.js'
 
 const pad = num => num < 10 ? '0' + num : num + ''
 
+/** */
 export const DATE_MONTHS = [
   'Jan',
   'Feb',
@@ -23,6 +24,7 @@ export const DATE_MONTHS = [
   'Dec',
 ]
 
+/** */
 export const DATE_WEEKS = [
   'Sun',
   'Mon',
@@ -33,6 +35,7 @@ export const DATE_WEEKS = [
   'Sat',
 ]
 
+/** */
 export const DATE_EXPS = {
   YYYY: '[12][0-9]{3}',
   YY: '[0-9]{2}',
@@ -57,6 +60,7 @@ export const DATE_EXPS = {
   SSS: '[0-9]{3}',
 }
 
+/** */
 export const DATE_FORMATTERS = {
   YYYY: date => date.getFullYear() + '',
   YY: date => (date.getFullYear() % 100) + '',
@@ -96,10 +100,7 @@ const getFormatterKeys = () => {
 //   return formatterStr
 // }
 
-/**
- * convert 'a' to unicode '\uaaa0', 'A' to '\uaaa1'
- * @param {*} a
- */
+// convert 'a' to unicode '\uaaa0', 'A' to '\uaaa1'
 const convertCharToUnicode = (char) => {
   const lower = char.toLowerCase()
   const isLower = char === lower

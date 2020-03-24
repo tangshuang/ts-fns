@@ -3,7 +3,7 @@
  */
 
 
-import { formatStringBy, padRight, padLeft, CHARS } from './string.js'
+import { formatString, padRight, padLeft, CHARS } from './string.js'
 import { isString, isNumeric, isNumber, isNaN } from './is.js'
 import { createSafeExp } from './regexp.js'
 
@@ -13,7 +13,7 @@ export function numerify(num) {
 		if (!isNumeric(num)) {
 			return ''
 		}
-		let value = clearNumberZero(num)
+		let value = clearNum00(num)
 		return value
 	}
 	else if (isNumber(num)) {
@@ -82,7 +82,7 @@ export function enumerify(input) {
 }
 
 /** */
-export function clearNumberZero(input) {
+export function clearNum00(input) {
   input = input.toString()
   let [ integerPart, decimalPart = '' ] = input.split('.')
   let isNegative = false
@@ -176,7 +176,7 @@ export function plusby(a, b) {
   sumr.splice(index, 0, '.')
   sum = sumr.join('')
 
-  sum = clearNumberZero(sum)
+  sum = clearNum00(sum)
   sum = sum === '' ? '0' : sum
 
   if (sum !== '0' && na && nb) {
@@ -227,7 +227,7 @@ export function minusby(a, b) {
     return plusby(a, b.substring(1))
   }
 
-  if (compare(b, a) > 0) {
+  if (compareby(b, a) > 0) {
     let diff = minusby(b, a)
     return '-' + diff
   }
@@ -295,7 +295,7 @@ export function minusby(a, b) {
   diffr.splice(index, 0, '.')
   diff = diffr.join('')
 
-  diff = clearNumberZero(diff)
+  diff = clearNum00(diff)
   diff = diff === '' ? '0' : diff
 
   return diff
@@ -342,7 +342,7 @@ export function multiplyby(a, b) {
     else {
       value = integerPart + decimalPart.substring(0, wei) + '.' + decimalPart.substring(wei)
     }
-    value = clearNumberZero(value)
+    value = clearNum00(value)
     return value
   }
 
@@ -408,7 +408,7 @@ export function multiplyby(a, b) {
   dProd = padLeft(dProd, da.length + db.length, '0')
 
   let value = iProd + '.' + dProd
-  value = clearNumberZero(value)
+  value = clearNum00(value)
   value = (isNegative ? '-' : '') + value
   value = value === '' ? '0' : value
 
@@ -451,7 +451,7 @@ export function divideby(a, b, decimal) {
       let right = integerPart.substring(pos)
       value = left + '.' + right + decimalPart
     }
-    value = clearNumberZero(value)
+    value = clearNum00(value)
     return value
   }
 
@@ -489,7 +489,7 @@ export function divideby(a, b, decimal) {
 
     do {
       let c
-      while (c = compare(stillhave, y) >= 0) {
+      while (c = compareby(stillhave, y) >= 0) {
         if (c > 0) {
           inrange ++
           stillhave = minusby(stillhave, y)
@@ -516,13 +516,13 @@ export function divideby(a, b, decimal) {
         stillhave = ''
         break
       }
-    } while (compare(stillhave, y) >= 0)
+    } while (compareby(stillhave, y) >= 0)
 
     let remainder = stillhave || '0'
     let quotient = result.join('')
 
-    remainder = clearNumberZero(remainder)
-    quotient = clearNumberZero(quotient)
+    remainder = clearNum00(remainder)
+    quotient = clearNum00(quotient)
 
     return { remainder, quotient }
   }
@@ -559,7 +559,7 @@ export function divideby(a, b, decimal) {
     value = quotient + '.' + result
   }
 
-  value = clearNumberZero(value)
+  value = clearNum00(value)
 
   if ((na && !nb) || (!na && nb)) {
     value = '-' + value
@@ -569,7 +569,7 @@ export function divideby(a, b, decimal) {
 }
 
 /** */
-export function compare(a, b) {
+export function compareby(a, b) {
   a = numerify(a)
   b = numerify(b)
 
@@ -619,7 +619,7 @@ export function compare(a, b) {
     }
   }
 
-  const ci = compare(ia, ib)
+  const ci = compareby(ia, ib)
   if (ci) {
     return ci
   }
@@ -633,7 +633,7 @@ export function compare(a, b) {
   if (dblen < dlen) {
     db = padRight(db, dlen, '0')
   }
-  const cd = compare(da, db)
+  const cd = compareby(da, db)
   if (cd) {
     return cd
   }
@@ -884,12 +884,7 @@ export function calculate(exp, decimal) {
 }
 
 /** */
-export function formatNumberByThousands(input, formatdecimal = false) {
-  return formatNumberBy(input, ',', 3, formatdecimal);
-}
-
-/** */
-export function fixNumber(input, decimal = 2, pad = false, floor = false) {
+export function fixNum(input, decimal = 2, pad = false, floor = false) {
   let num = parseFloat(input)
   if (isNaN(num)) {
     return ''
@@ -968,7 +963,7 @@ export function fixNumber(input, decimal = 2, pad = false, floor = false) {
     }
   }
 
-  value = clearNumberZero(value)
+  value = clearNum00(value)
 
   if (pad) {
     let [ integerPart, decimalPart = '' ] = value.split('.')
@@ -982,33 +977,7 @@ export function fixNumber(input, decimal = 2, pad = false, floor = false) {
 }
 
 /** */
-export function fixNumberToMillion(input, decimal, pad, floor) {
-  let num = parseFloat(input);
-  if (isNaN(num)) {
-    return '';
-  }
-
-  let value = numerify(input)
-  value = divideby(value, 1000000)
-
-  return fixNumber(value, decimal, pad, floor)
-}
-
-/** */
-export function fixNumberToBillion(input, decimal, pad, floor) {
-  let num = parseFloat(input);
-  if (isNaN(num)) {
-    return '';
-  }
-
-  let value = numerify(input)
-  value = divideby(value, 1000000000)
-
-  return fixNumber(value, decimal, pad, floor)
-}
-
-/** */
-export function formatNumberBy(input, separator, count, formatdecimal = false) {
+export function formatNum(input, separator, count, formatdecimal = false) {
   if (!input) {
     return '';
   }
@@ -1033,9 +1002,9 @@ export function formatNumberBy(input, separator, count, formatdecimal = false) {
     decimal = blocks[1] || '';
   }
 
-  integer = formatStringBy(integer, separator, count, true);
+  integer = formatString(integer, separator, count, true);
   if (formatdecimal && decimal) {
-    decimal = formatStringBy(decimal, separator, count);
+    decimal = formatString(decimal, separator, count);
   }
 
   let result = '';
@@ -1053,81 +1022,8 @@ export function formatNumberBy(input, separator, count, formatdecimal = false) {
 }
 
 /** */
-export function clearNumberWith(input, separator = ',') {
-  const exp = createSafeExp(separator)
-  const reg = new RegExp(exp, 'g')
-  return input.replace(reg, '');
-}
-
-/** */
-export function formatNumber(input, decimal, pad, floor) {
-  let value = fixNumber(input, decimal, pad, floor)
-  let res = formatNumberByThousands(value)
-  return res || ''
-}
-
-/** */
-export function formatNumberByMillion(input, decimal, pad, floor) {
-  let num = parseFloat(input);
-  if (isNaN(num)) {
-    return '';
-  }
-
-  let should = num > 1000000 || num < -1000000;
-
-  let value = should ? fixNumberToMillion(input, decimal, pad, floor) : fixNumber(input, decimal, pad, floor);
-  let res = formatNumberByThousands(value);
-
-  if (!res) {
-    return '';
-  }
-
-  if (should) {
-    return res + ' mn';
-  }
-
-  return res;
-}
-
-/** */
-export function formatNumberByBillion(input, decimal, pad, floor) {
-  let num = parseFloat(input);
-  if (isNaN(num)) {
-    return '';
-  }
-
-  let should = num > 1000000000 || num < -1000000000;
-
-  let value = should ? fixNumberToBillion(input, decimal, pad, floor) : fixNumber(input, decimal, pad, floor);
-  let res = formatNumberByThousands(value);
-
-  if (!res) {
-    return '';
-  }
-
-  if (should) {
-    return res + ' bn';
-  }
-
-  return res;
-}
-
-/** */
-export function formatNumberByMoney(input, decimal, pad, floor) {
-  let num = parseFloat(input);
-  if (isNaN(num)) {
-    return '';
-  }
-
-  if (num < -1000000000 || num > 1000000000) {
-    return formatNumberByBillion(input, decimal, pad, floor)
-  }
-  else if (num < -1000000 || num > 1000000) {
-    return formatNumberByMillion(input, decimal, pad, floor)
-  }
-  else {
-    return formatNumber(input, decimal, pad, floor)
-  }
+export function formatNum1000(input, formatdecimal = false) {
+  return formatNumber(input, ',', 3, formatdecimal);
 }
 
 // http://www.softwhy.com/article-4813-1.html

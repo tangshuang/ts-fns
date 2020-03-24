@@ -4,6 +4,7 @@ on:
     ## when push on master, we will use publish workflow to build and publish
     branches-ignore:
       - master
+      - gh-pages
     paths:
       - 'es/**'
       - 'test/**'
@@ -31,6 +32,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - run: npx can-npm-publish
       - name: Install
         run: npm ci
       - name: Build

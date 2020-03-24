@@ -171,35 +171,28 @@ export function getObjectHash(obj) {
 }
 
 /** */
-export function defineProperty(obj, key, value, options = {}) {
-  Object.defineProperty(obj, key, { ...options, value })
+export function define(obj, key, value) {
+  if (isFunction(value)) {
+    return Object.defineProperty(obj, key, { get: value })
+  }
+  else if (isObject(value)) {
+    if ('enumerable' in value || 'configurable' in value) {
+      return Object.defineProperty(obj, key, value)
+    }
+    else if ((isFunction(value.set) && isFunction(value.get))) {
+      return Object.defineProperty(obj, key, value)
+    }
+    else {
+      return Object.defineProperty(obj, key, { value })
+    }
+  }
+  else {
+    return Object.defineProperty(obj, key, { value })
+  }
 }
 
 /** */
-export function defineProperties(obj, values, options = {}) {
-  const props = {}
-  each(values, (value, key) => {
-    props[key] = { ...options, value }
-  })
-  Object.defineProperties(obj, props)
-}
-
-/** */
-export function defineGetter(obj, key, get, options = {}) {
-  Object.defineProperty(obj, key, { ...options, get })
-}
-
-/** */
-export function defineGetters(obj, getters, options = {}) {
-  const props = {}
-  each(getters, (get, key) => {
-    props[key] = { ...options, get }
-  })
-  Object.defineProperties(obj, props)
-}
-
-/** */
-export function flatObject(obj, determine) {
+export function flat(obj, determine) {
   const flat = (input, path = '', result = {}) => {
     if (isArray(input)) {
       input.forEach((item, i) => flat(item, `${path}[${i}]`, result))

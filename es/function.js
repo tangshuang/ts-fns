@@ -39,21 +39,19 @@ export function compute_(fn, expire = 60000) {
 }
 
 /** */
-export function get_(fn, expire = 0) {
+export function get_(fn) {
   let iscalling = false
   let cache = null
-  let timer = null
 
   return function() {
-    clearTimeout(timer)
-    timer = setTimeout(() => {
-      iscalling = false
-      cache = null
-    }, expire)
-
     if (iscalling) {
       return cache
     }
+
+    Promise.resolve().then(() => {
+      iscalling = false
+      cache = null
+    })
 
     iscalling = true
 
@@ -125,6 +123,18 @@ export function invoke_(fn, count = 1) {
     const result = fn.apply(this, args)
     cache[hash] = { result, invoked: 1 }
 
+    return result
+  }
+}
+
+/** */
+export function pipe_(...fns) {
+  return (...args) => {
+    let result = fns.shift()(...args)
+    for (let i = 0, len = fns.length; i < len; i ++) {
+      const fn = fns[i]
+      result = fn(result)
+    }
     return result
   }
 }
