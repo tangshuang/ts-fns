@@ -1,4 +1,4 @@
-name: Publish
+name: Docs
 on:
   push:
     ## only works on master branch
