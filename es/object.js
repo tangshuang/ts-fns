@@ -3,7 +3,7 @@
  */
 
 import { getStringHash } from './string.js'
-import { isArray, isObject, isFile, isDate, isFunction, inArray } from './is.js'
+import { isArray, isObject, isFile, isDate, isFunction, inArray, isSymbol } from './is.js'
 
 /** */
 export function clone(obj) {
@@ -316,9 +316,10 @@ export function extract(obj, keys) {
  * @param {function} options.get to modify output value of each node
  * @param {function} options.set to modify input value of each node
  * @param {function} options.dispatch to notify change with keyPath
+ * @param {function} options.writable whether be able to change value
  */
 export function createReactive(input, options = {}) {
-  const { get, set, dispatch } = options
+  const { get, set, dispatch, writable } = options
 
   const create = (input, parents = []) => {
     if (!isObject(input) && !isArray(input)) {
@@ -333,13 +334,12 @@ export function createReactive(input, options = {}) {
       output = createArray([...input], parents)
     }
 
-    // Object.defineProperty(output, '__reactive__', { value: true })
     return output
   }
 
   const createObject = (obj, parents = []) => {
     const res = {}
-    each(obj, (value, key) => {
+    const put = (key, value) => {
       const keyPath = [...parents, key]
       const setValue = (v) => {
         const next = isFunction(set) ? set(v, keyPath) : v
@@ -348,7 +348,7 @@ export function createReactive(input, options = {}) {
         return coming
       }
       // initialize the current value at the first time
-      setValue(value)
+      const next = setValue(value)
       Object.defineProperty(res, key, {
         get: () => {
           const value = obj[key] // we should not use original value, because it may be changed at any time
@@ -356,16 +356,66 @@ export function createReactive(input, options = {}) {
           return node
         },
         set: (v) => {
+          const current = res[key]
+
+          if (isFunction(writable) && !writable(keyPath)) {
+            return current
+          }
+
           const next = setValue(v)
           if (isFunction(dispatch)) {
-            dispatch(keyPath, next)
+            dispatch(keyPath, next, current)
           }
           return next
         },
         enumerable: true,
         configurable: true,
       })
+      return next
+    }
+
+    each(obj, (value, key) => {
+      put(key, value)
     })
+
+    Object.defineProperties(res, {
+      $get: {
+        value: key => res[key],
+      },
+      $set: {
+        value: (key, value) => {
+          const keyPath = [...parents, key]
+          const current = res[key]
+
+          const next = put(key, value)
+
+          if (isFunction(dispatch)) {
+            dispatch(keyPath, next, current)
+          }
+
+          return next
+        },
+      },
+      $del: {
+        value: (key) => {
+          const keyPath = [...parents, key]
+          const current = res[key]
+
+          if (isFunction(writable) && !writable(keyPath)) {
+            return current
+          }
+
+          delete res[key]
+
+          if (isFunction(dispatch)) {
+            dispatch(keyPath, undefined, current)
+          }
+
+          return res
+        },
+      },
+    })
+
     return res
   }
 
@@ -396,9 +446,15 @@ export function createReactive(input, options = {}) {
             return node
           },
           set: (v) => {
+            const current = res[i]
+
+            if (isFunction(writable) && !writable(keyPath)) {
+              return current
+            }
+
             const next = setValue(v)
             if (isFunction(dispatch)) {
-              dispatch(keyPath, next)
+              dispatch(keyPath, next, current)
             }
             return next
           },
@@ -411,6 +467,10 @@ export function createReactive(input, options = {}) {
     // change array prototype methods
     const modify = (fn) => ({
       value: function(...args) {
+        if (isFunction(writable) && !writable(parents)) {
+          throw new TypeError(fn + ' is not allowed. The array is not writable.')
+        }
+
         // deal with original data
         const items = args.map(item => create(item, parents))
         const before = arr.length
@@ -430,7 +490,7 @@ export function createReactive(input, options = {}) {
         }
 
         if (isFunction(dispatch)) {
-          dispatch(parents, res)
+          dispatch(parents, res, res)
         }
 
         return o
@@ -446,21 +506,264 @@ export function createReactive(input, options = {}) {
       sort: modify('sort'),
       reverse: modify('reverse'),
       fill: modify('fill'),
-      clear: function() {
-        arr.length = 0
-        res.length = 0
-
-        if (isFunction(dispatch)) {
-          dispatch(parents, res)
-        }
-
-        return this
-      },
     })
 
     fill(0, arr.length - 1)
 
     return res
+  }
+
+  const output = create(input)
+  return output
+}
+
+/**
+ * create a proxy object.
+ * @notice it will change your original data
+ * @param {*} input
+ * @param {*} options
+ * @param {function} options.get to modify output value of each node
+ * @param {function} options.set to modify input value of each node
+ * @param {function} options.dispatch to notify change with keyPath
+ * @param {function} options.writable whether be able to change value
+ */
+export function createProxy(input, options = {}) {
+  const { get, set, dispatch, writable } = options
+
+  const PROXY_TARGET = Symbol.for('[[ProxyTarget]]')
+
+  // get original object which is porxied by createProxy
+  const getProxied = (proxy) => {
+    const target = proxy[PROXY_TARGET] || proxy
+    // make sure to return original object
+    if (target[PROXY_TARGET]) {
+      return getProxied(target)
+    }
+    return target
+  }
+
+  const create = (input, parents = []) => {
+    // input is a proxy create by this function
+    if (input && typeof input === 'object' && input[PROXY_TARGET]) {
+      return input
+    }
+
+    if (!isObject(input) && !isArray(input)) {
+      return input
+    }
+
+    let output = null
+    if (isObject(input)) {
+      output = createObject({ ...input }, parents)
+    }
+    else {
+      output = createArray([...input], parents)
+    }
+
+    return output
+  }
+
+  const createObject = (obj, parents = []) => {
+    const res = {}
+    each(obj, (value, key) => {
+      const keyPath = [...parents, key]
+
+      let input = value
+
+      if (isFunction(set) && !isSymbol(key)) {
+        input = set(value, keyPath)
+      }
+
+      res[key] = create(input, keyPath)
+    })
+
+    const proxy = new Proxy(res, {
+      get: (target, key, receiver) => {
+        if (key === PROXY_TARGET) {
+          return getProxied(target)
+        }
+
+        // primitive property
+        // such as 'a' + obj, and obj[Symbol.toPrimitive](hint) defined
+        if (isSymbol(key) && key.description && key.description.indexOf('Symbol.') === 0) {
+          return Reflect.get(target, key, receiver)
+        }
+
+        const value = Reflect.get(target, key, receiver)
+
+        // here should be noticed
+        // a Symbol key will not to into `get` option function
+        if (isFunction(get) && !isSymbol(key)) {
+          const keyPath = [...parents, key]
+          const output = get(value, keyPath)
+          return output
+        }
+        else {
+          return value
+        }
+      },
+      set: (target, key, value, receiver) => {
+        const keyPath = [...parents, key]
+
+        if (isFunction(writable) && !writable(keyPath)) {
+          return false
+        }
+
+        const current = proxy[key]
+
+        let input = value
+
+        if (isFunction(set) && !isSymbol(key)) {
+          input = set(value, keyPath)
+        }
+
+        const next = create(input, keyPath)
+
+        Reflect.set(target, key, next, receiver)
+
+        if (isFunction(dispatch)) {
+          dispatch(keyPath, next, current)
+        }
+
+        return true
+      },
+      deleteProperty: (target, key) => {
+        const keyPath = [...parents, key]
+
+        if (isFunction(writable) && !writable(keyPath)) {
+          return false
+        }
+
+        const current = proxy[key]
+
+        Reflect.deleteProperty(target, key)
+
+        if (isFunction(dispatch)) {
+          dispatch(keyPath, undefined, current)
+        }
+
+        return true
+      },
+    })
+    return proxy
+  }
+
+  const createArray = (arr, parents = []) => {
+    const items = []
+    arr.forEach((item, i) => {
+      const keyPath = [...parents, i]
+
+      let input = item
+
+      if (isFunction(set)) {
+        input = set(item, keyPath)
+      }
+
+      items[i] = create(input, keyPath)
+    })
+
+    const proxy = new Proxy(items, {
+      get: (target, key, receiver) => {
+        if (key === PROXY_TARGET) {
+          return getProxied(target)
+        }
+
+        // primitive property
+        // such as 'a' + obj, and obj[Symbol.toPrimitive](hint) defined
+        if (isSymbol(key) && key.description && key.description.indexOf('Symbol.') === 0) {
+          return Reflect.get(target, key, receiver)
+        }
+
+        const keyPath = [...parents, key]
+
+        // array primitive operation
+        if (inArray(key, ['push', 'pop', 'unshift', 'shift', 'splice', 'sort', 'reverse', 'fill'])) {
+          return (...args) => {
+            if (isFunction(writable) && !writable(parents)) {
+              throw new TypeError(key + ' is not allowed. The array is not writable.')
+            }
+
+            const res = Array.prototype[key].call(items, ...args)
+
+            if (isFunction(dispatch)) {
+              dispatch(parents, proxy, proxy)
+            }
+
+            return res
+          }
+        }
+
+        const value = Reflect.get(target, key, receiver)
+
+        // here should be noticed
+        // a Symbol key will not to into `get` option function
+        if (isFunction(get) && !isSymbol(key)) {
+          const output = get(value, keyPath)
+          return output
+        }
+        else {
+          return value
+        }
+      },
+      set: (target, key, value, receiver) => {
+        const keyPath = [...parents, key]
+
+        if (isFunction(writable) && !writable(keyPath)) {
+          return false
+        }
+
+        // operate like items.length = 0
+        if (key === 'length') {
+          if (isFunction(writable) && !writable(parents)) {
+            throw new TypeError('Length could not be changed. The array is not writable.')
+          }
+
+          items.length = value
+
+          if (isFunction(dispatch)) {
+            dispatch(parents, proxy, proxy)
+          }
+
+          return true
+        }
+
+        const current = proxy[key]
+
+        let input = value
+
+        if (isFunction(set) && !isSymbol(key)) {
+          input = set(value, keyPath)
+        }
+
+        const next = create(input, keyPath)
+
+        Reflect.set(target, key, next, receiver)
+
+        if (isFunction(dispatch)) {
+          dispatch(keyPath, next, current)
+        }
+
+        return true
+      },
+      deleteProperty: (target, key) => {
+        const keyPath = [...parents, key]
+
+        if (isFunction(writable) && !writable(keyPath)) {
+          return false
+        }
+
+        const current = proxy[key]
+
+        Reflect.defineProperty(target, key)
+
+        if (isFunction(dispatch)) {
+          dispatch(keyPath, undefined, current)
+        }
+
+        return true
+      },
+    })
+    return proxy
   }
 
   const output = create(input)

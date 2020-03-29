@@ -1,4 +1,4 @@
-import { merge, createReactive } from '../es/object.js'
+import { merge, createReactive, createProxy } from '../es/object.js'
 
 describe('merge', () => {
   test('merge', () => {
@@ -16,7 +16,9 @@ describe('merge', () => {
     expect(obj.body.left).toBe(true)
     expect(obj.body.right).toBe(true)
   })
+})
 
+describe('reactive', () => {
   test('create reactive object', () => {
     const obj = {
       name: 'tomy',
@@ -32,7 +34,6 @@ describe('merge', () => {
       dispatch: (keyPath, v) => {
         count ++
       },
-      deep: true,
     })
 
     expect(reactive.name).toBe('tomy')
@@ -44,6 +45,32 @@ describe('merge', () => {
     expect(count).toBe(1)
 
     reactive.body.right = true
+    expect(count).toBe(2)
+  })
+
+  test('$set', () => {
+    const obj = {
+      name: 'tomy',
+      age: 10,
+      body: {
+        left: true,
+        right: false,
+      },
+    }
+
+    let count = 0
+    const reactive = createReactive(obj, {
+      dispatch: (keyPath, v) => {
+        count ++
+      },
+    })
+
+    reactive.$set('newField', 1) // this will trigger dispatch
+    expect(reactive.newField).toBe(1)
+
+    reactive.newField = 2
+    expect(reactive.newField).toBe(2)
+
     expect(count).toBe(2)
   })
 
@@ -65,7 +92,6 @@ describe('merge', () => {
       dispatch: (keyPath, v) => {
         count ++
       },
-      deep: true,
     })
 
     expect(reactive[0].name).toBe('tomy')
@@ -94,5 +120,53 @@ describe('merge', () => {
 
     reactive[1].age ++
     expect(count).toBe(5)
+  })
+})
+
+describe('proxy', () => {
+  test('createProxy', () => {
+    const data = {
+      name: 'tomy',
+      age: 10,
+      weight: 20,
+      body: {
+        hand: 20,
+        foot: 50,
+      },
+    }
+    const state = createProxy(data, {
+      dispatch(keyPath, value) {
+        if (keyPath.join('.') === 'age') {
+          state.weight = value * 2
+        }
+        else if (keyPath.join('.') === 'body.hand') {
+          state.body.foot = value * 2.5
+        }
+      },
+    })
+
+    state.age = 4
+    expect(state.weight).toBe(8)
+
+    state.body.hand = 22
+    expect(state.body.foot).toBe(55)
+  })
+  test('proxy object.function', () => {
+    const o = {
+      name: 'tomy',
+      say() {
+        return this.name
+      },
+    }
+    const p = createProxy(o, {})
+    p.name = 'ximi'
+    expect(p.say()).toBe('ximi')
+  })
+  test(`Symbol.for('[[ProxyTarget]]')`, () => {
+    const o = {}
+    const p = createProxy(o, {})
+    const target = p[Symbol.for('[[ProxyTarget]]')]
+    expect(target).not.toBe(o)
+    expect(target).toEqual(o)
   })
 })
