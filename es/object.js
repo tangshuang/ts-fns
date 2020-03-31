@@ -309,6 +309,32 @@ export function extract(obj, keys) {
 }
 
 /**
+ * deep freeze
+ * @param {*} o
+ */
+export function freeze(o) {
+	if (!Object.freeze) {
+		return o
+	}
+
+	Object.freeze(o)
+
+	Object.getOwnPropertyNames(o).forEach((prop) => {
+		const v = o[prop]
+		if (
+			Object.prototype.hasOwnProperty.call(o, prop)
+			&& v !== null
+			&& (typeof v === 'object' || typeof v === 'function')
+			&& !Object.isFrozen(v)
+		) {
+			freeze(v)
+		}
+	})
+
+	return o
+}
+
+/**
  * create a reactive object.
  * @notice it will change your original data
  * @param {*} input
