@@ -395,13 +395,40 @@ export function freeze(o) {
 
 /**
  * create a reactive object.
- * @notice it will change your original data
- * @param {*} input
- * @param {*} options
- * @param {function} options.get to modify output value of each node
- * @param {function} options.set to modify input value of each node
- * @param {function} options.dispatch to notify change with keyPath
- * @param {function} options.writable whether be able to change value
+ * it will not change your original data, like clone a new data refererence.
+ * @param {object|array} input
+ * @param {object} options
+ * @param {function} options.get to modify output value of each node, receive (keyPath, reactiveValue), reactiveValue is a reactive object/array as if, keyPath is an array which catains keys in path
+ * @param {function} options.set to modify input value of each node, receive (keyPath, nextValue), nextValue is the given passed value, the return value will be transformed to be reactive object/array as if
+ * @param {function} options.dispatch to notify change with keyPath, receive (keypath, next, prev), it will be called after value is set into
+ * @param {function} options.writable whether be able to change value, return false to disable writable, default is true
+ * @example
+ * const some = {
+ *   body: {
+ *     hand: true,
+ *     foot: true,
+ *   },
+ * }
+ * const a = createReactive(some, {
+ *   get(keyPath, value) {
+ *     if (keyPath.join('.') === 'body.hand') {
+ *       return value.toString()
+ *     }
+ *     else {
+ *       return value
+ *     }
+ *   },
+ *   set(keyPath, value) {},
+ *   dispatch(keyPath, next, current) {},
+ * })
+ *
+ * a !== some // reactive object !== object
+ * a.body !== some.body // reactive object !== object
+ * a.body.hand !== some.body.hand // true !== 'true'
+ * a.body.foot == some.body.foot // true == true
+ *
+ * a.body.hand = false // now a.body.hand is 'false', a string
+ * some.body.hand === true // no change
  */
 export function createReactive(input, options = {}) {
   const { get, set, dispatch, writable } = options
@@ -508,7 +535,7 @@ export function createReactive(input, options = {}) {
     const res = []
 
     // fill items into output array
-    const fill = (start, end, init = true) => {
+    const shuffle = (start, end, init = true) => {
       for (let i = start; i &lt;= end; i ++) {
         const item = arr[i]
         const keyPath = [...parents, i]
@@ -557,9 +584,9 @@ export function createReactive(input, options = {}) {
         }
 
         // deal with original data
-        const items = args.map(item => create(item, parents))
+        const p = args.map(item => create(item, parents))
         const before = arr.length
-        const o = Array.prototype[fn].call(arr, ...items)
+        const o = Array.prototype[fn].apply(arr, p)
         const after = arr.length
 
         // the methods will change the length of arr
@@ -570,7 +597,7 @@ export function createReactive(input, options = {}) {
           }
           // insert items
           else if (after > before) {
-            fill(before - 1, after - 1, false)
+            shuffle(before - 1, after - 1, false)
           }
         }
 
@@ -593,7 +620,7 @@ export function createReactive(input, options = {}) {
       fill: modify('fill'),
     })
 
-    fill(0, arr.length - 1)
+    shuffle(0, arr.length - 1)
 
     return res
   }
@@ -604,70 +631,64 @@ export function createReactive(input, options = {}) {
 
 /**
  * create a proxy object.
- * @notice it will change your original data
- * @param {*} input
- * @param {*} options
- * @param {function} options.get to modify output value of each node
- * @param {function} options.set to modify input value of each node
- * @param {function} options.dispatch to notify change with keyPath
- * @param {function} options.writable whether be able to change value
+ * it will change your original data
+ * @param {object|array} input
+ * @param {object} options
+ * @param {function} options.get to modify output value of each node, receive (keyPath, proxiedValue), proxiedValue is a reactive object/array as if, keyPath is an array which catains keys in path
+ * @param {function} options.set to modify input value of each node, receive (keyPath, nextValue), nextValue is the given passed value, the return value will be transformed to be reactive object/array as if
+ * @param {function} options.dispatch to notify change with keyPath, receive (keypath, next, prev), it will be called after value is set into
+ * @param {function} options.writable whether be able to change value, return false to disable writable, default is true
+ * @example
+ * const some = {
+ *   body: {
+ *     hand: true,
+ *     foot: true,
+ *   },
+ * }
+ * const a = createProxy(some, {
+ *   get(keyPath, value) {
+ *     if (keyPath.join('.') === 'body.hand') {
+ *       return value.toString()
+ *     }
+ *     else {
+ *       return value
+ *     }
+ *   },
+ *   set(keyPath, value) {},
+ *   dispatch(keyPath, next, current) {},
+ * })
+ *
+ * a !== some // proxy object !== object
+ * a.body !== some.body // proxy object !== object
+ * a.body.hand !== some.body.hand // true !== 'true'
+ * a.body.foot == some.body.foot // true == true
+ *
+ * a.body.hand = false // now a.body.hand is 'false', a string
+ * some.body.hand === false // some.body.hand changes to false
  */
 export function createProxy(input, options = {}) {
   const { get, set, dispatch, writable } = options
 
-  const PROXY_TARGET = Symbol.for('[[ProxyTarget]]')
-
-  // get original object which is porxied by createProxy
-  const getProxied = (proxy) => {
-    const target = proxy[PROXY_TARGET] || proxy
-    // make sure to return original object
-    if (target[PROXY_TARGET]) {
-      return getProxied(target)
-    }
-    return target
-  }
-
   const create = (input, parents = []) => {
-    // input is a proxy create by this function
-    if (input &amp;&amp; typeof input === 'object' &amp;&amp; input[PROXY_TARGET]) {
-      return input
-    }
-
     if (!isObject(input) &amp;&amp; !isArray(input)) {
       return input
     }
 
     let output = null
     if (isObject(input)) {
-      output = createObject({ ...input }, parents)
+      output = createObject(input, parents)
     }
     else {
-      output = createArray([...input], parents)
+      output = createArray(input, parents)
     }
 
     return output
   }
 
-  const createObject = (obj, parents = []) => {
-    const res = {}
-    each(obj, (value, key) => {
-      const keyPath = [...parents, key]
-
-      let input = value
-
-      if (isFunction(set) &amp;&amp; !isSymbol(key)) {
-        input = set(keyPath, value)
-      }
-
-      res[key] = create(input, keyPath)
-    })
-
-    const proxy = new Proxy(res, {
+  const createObject = (origin, parents = []) => {
+    const media = {}
+    const proxy = new Proxy(media, {
       get: (target, key, receiver) => {
-        if (key === PROXY_TARGET) {
-          return getProxied(target)
-        }
-
         // primitive property
         // such as 'a' + obj, and obj[Symbol.toPrimitive](hint) defined
         if (isSymbol(key) &amp;&amp; key.description &amp;&amp; key.description.indexOf('Symbol.') === 0) {
@@ -694,20 +715,21 @@ export function createProxy(input, options = {}) {
           return false
         }
 
-        const current = proxy[key]
-
         let input = value
 
         if (isFunction(set) &amp;&amp; !isSymbol(key)) {
           input = set(keyPath, value)
         }
 
-        const next = create(input, keyPath)
+        // change the original object
+        const current = origin[key]
+        origin[key] = input
 
+        const next = create(input, keyPath)
         Reflect.set(target, key, next, receiver)
 
         if (isFunction(dispatch)) {
-          dispatch(keyPath, next, current)
+          dispatch(keyPath, input, current)
         }
 
         return true
@@ -719,7 +741,9 @@ export function createProxy(input, options = {}) {
           return false
         }
 
-        const current = proxy[key]
+        // change the original object
+        const current = origin[key]
+        delete origin[key]
 
         Reflect.deleteProperty(target, key)
 
@@ -730,36 +754,30 @@ export function createProxy(input, options = {}) {
         return true
       },
     })
+    each(origin, (value, key) => {
+      const keyPath = [...parents, key]
+
+      let input = value
+
+      if (isFunction(set) &amp;&amp; !isSymbol(key)) {
+        input = set(keyPath, value)
+      }
+
+      origin[key] = input
+      media[key] = create(input, keyPath)
+    })
     return proxy
   }
 
-  const createArray = (arr, parents = []) => {
-    const items = []
-    arr.forEach((item, i) => {
-      const keyPath = [...parents, i]
-
-      let input = item
-
-      if (isFunction(set)) {
-        input = set(keyPath, item)
-      }
-
-      items[i] = create(input, keyPath)
-    })
-
-    const proxy = new Proxy(items, {
+  const createArray = (origin, parents = []) => {
+    const media = []
+    const proxy = new Proxy(media, {
       get: (target, key, receiver) => {
-        if (key === PROXY_TARGET) {
-          return getProxied(target)
-        }
-
         // primitive property
         // such as 'a' + obj, and obj[Symbol.toPrimitive](hint) defined
         if (isSymbol(key) &amp;&amp; key.description &amp;&amp; key.description.indexOf('Symbol.') === 0) {
           return Reflect.get(target, key, receiver)
         }
-
-        const keyPath = [...parents, key]
 
         // array primitive operation
         if (inArray(key, ['push', 'pop', 'unshift', 'shift', 'splice', 'sort', 'reverse', 'fill'])) {
@@ -768,16 +786,20 @@ export function createProxy(input, options = {}) {
               throw new TypeError(key + ' is not allowed. The array is not writable.')
             }
 
-            const res = Array.prototype[key].call(items, ...args)
+            // change original data
+            Array.prototype[key].apply(origin, args)
+
+            const o = Array.prototype[key].apply(media, args.map(item => create(item, parents)))
 
             if (isFunction(dispatch)) {
-              dispatch(parents, proxy, proxy)
+              dispatch(parents, origin, origin)
             }
 
-            return res
+            return o
           }
         }
 
+        const keyPath = [...parents, key]
         const value = Reflect.get(target, key, receiver)
 
         // here should be noticed
@@ -797,22 +819,21 @@ export function createProxy(input, options = {}) {
           return false
         }
 
-        // operate like items.length = 0
+        // operate like media.length = 0
         if (key === 'length') {
           if (isFunction(writable) &amp;&amp; !writable(parents)) {
             throw new TypeError('Length could not be changed. The array is not writable.')
           }
 
-          items.length = value
+          origin.length = value
+          media.length = value
 
           if (isFunction(dispatch)) {
-            dispatch(parents, proxy, proxy)
+            dispatch(parents, origin, origin)
           }
 
           return true
         }
-
-        const current = proxy[key]
 
         let input = value
 
@@ -820,12 +841,14 @@ export function createProxy(input, options = {}) {
           input = set(keyPath, value)
         }
 
-        const next = create(input, keyPath)
+        const current = origin[key]
+        origin[key] = input
 
+        const next = create(input, keyPath)
         Reflect.set(target, key, next, receiver)
 
         if (isFunction(dispatch)) {
-          dispatch(keyPath, next, current)
+          dispatch(keyPath, input, current)
         }
 
         return true
@@ -837,7 +860,8 @@ export function createProxy(input, options = {}) {
           return false
         }
 
-        const current = proxy[key]
+        const current = origin[key]
+        delete origin[key]
 
         Reflect.defineProperty(target, key)
 
@@ -847,6 +871,18 @@ export function createProxy(input, options = {}) {
 
         return true
       },
+    })
+    origin.forEach((item, i) => {
+      const keyPath = [...parents, i]
+
+      let input = item
+
+      if (isFunction(set)) {
+        input = set(keyPath, item)
+      }
+
+      origin[i] = input
+      media[i] = create(input, keyPath)
     })
     return proxy
   }

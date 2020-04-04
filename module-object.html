@@ -181,7 +181,8 @@
 
 
     <div class="description">
-        <p>create a proxy object.</p>
+        <p>create a proxy object.
+it will change your original data</p>
     </div>
 
 
@@ -224,7 +225,10 @@
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
 
 
             
@@ -247,7 +251,7 @@
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">object</span>
 
 
             
@@ -299,7 +303,7 @@
 
             
 
-            <td class="description last"><p>to modify output value of each node</p></td>
+            <td class="description last"><p>to modify output value of each node, receive (keyPath, proxiedValue), proxiedValue is a reactive object/array as if, keyPath is an array which catains keys in path</p></td>
         </tr>
 
     
@@ -322,7 +326,7 @@
 
             
 
-            <td class="description last"><p>to modify input value of each node</p></td>
+            <td class="description last"><p>to modify input value of each node, receive (keyPath, nextValue), nextValue is the given passed value, the return value will be transformed to be reactive object/array as if</p></td>
         </tr>
 
     
@@ -345,7 +349,7 @@
 
             
 
-            <td class="description last"><p>to notify change with keyPath</p></td>
+            <td class="description last"><p>to notify change with keyPath, receive (keypath, next, prev), it will be called after value is set into</p></td>
         </tr>
 
     
@@ -368,7 +372,7 @@
 
             
 
-            <td class="description last"><p>whether be able to change value</p></td>
+            <td class="description last"><p>whether be able to change value, return false to disable writable, default is true</p></td>
         </tr>
 
     
@@ -418,7 +422,7 @@
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="object.js.html">object.js</a>, <a href="object.js.html#line556">line 556</a>
+                <a href="object.js.html">object.js</a>, <a href="object.js.html#line610">line 610</a>
             </li></ul></dd>
         </div>
     
@@ -443,6 +447,38 @@
 
 
 
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
+        
+    <pre class="prettyprint"><code>const some = {
+  body: {
+    hand: true,
+    foot: true,
+  },
+}
+const a = createProxy(some, {
+  get(keyPath, value) {
+    if (keyPath.join('.') === 'body.hand') {
+      return value.toString()
+    }
+    else {
+      return value
+    }
+  },
+  set(keyPath, value) {},
+  dispatch(keyPath, next, current) {},
+})
+
+a !== some // proxy object !== object
+a.body !== some.body // proxy object !== object
+a.body.hand !== some.body.hand // true !== 'true'
+a.body.foot == some.body.foot // true == true
+
+a.body.hand = false // now a.body.hand is 'false', a string
+some.body.hand === false // some.body.hand changes to false</code></pre>
+
+    </div>
 
 
         
@@ -457,7 +493,8 @@
 
 
     <div class="description">
-        <p>create a reactive object.</p>
+        <p>create a reactive object.
+it will not change your original data, like clone a new data refererence.</p>
     </div>
 
 
@@ -500,7 +537,10 @@
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
 
 
             
@@ -523,7 +563,7 @@
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type">object</span>
 
 
             
@@ -575,7 +615,7 @@
 
             
 
-            <td class="description last"><p>to modify output value of each node</p></td>
+            <td class="description last"><p>to modify output value of each node, receive (keyPath, reactiveValue), reactiveValue is a reactive object/array as if, keyPath is an array which catains keys in path</p></td>
         </tr>
 
     
@@ -598,7 +638,7 @@
 
             
 
-            <td class="description last"><p>to modify input value of each node</p></td>
+            <td class="description last"><p>to modify input value of each node, receive (keyPath, nextValue), nextValue is the given passed value, the return value will be transformed to be reactive object/array as if</p></td>
         </tr>
 
     
@@ -621,7 +661,7 @@
 
             
 
-            <td class="description last"><p>to notify change with keyPath</p></td>
+            <td class="description last"><p>to notify change with keyPath, receive (keypath, next, prev), it will be called after value is set into</p></td>
         </tr>
 
     
@@ -644,7 +684,7 @@
 
             
 
-            <td class="description last"><p>whether be able to change value</p></td>
+            <td class="description last"><p>whether be able to change value, return false to disable writable, default is true</p></td>
         </tr>
 
     
@@ -694,7 +734,7 @@
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="object.js.html">object.js</a>, <a href="object.js.html#line347">line 347</a>
+                <a href="object.js.html">object.js</a>, <a href="object.js.html#line374">line 374</a>
             </li></ul></dd>
         </div>
     
@@ -719,6 +759,38 @@
 
 
 
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
+        
+    <pre class="prettyprint"><code>const some = {
+  body: {
+    hand: true,
+    foot: true,
+  },
+}
+const a = createReactive(some, {
+  get(keyPath, value) {
+    if (keyPath.join('.') === 'body.hand') {
+      return value.toString()
+    }
+    else {
+      return value
+    }
+  },
+  set(keyPath, value) {},
+  dispatch(keyPath, next, current) {},
+})
+
+a !== some // reactive object !== object
+a.body !== some.body // reactive object !== object
+a.body.hand !== some.body.hand // true !== 'true'
+a.body.foot == some.body.foot // true == true
+
+a.body.hand = false // now a.body.hand is 'false', a string
+some.body.hand === true // no change</code></pre>
+
+    </div>
 
 
         
