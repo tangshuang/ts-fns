@@ -121,6 +121,42 @@ describe('reactive', () => {
     reactive[1].age ++
     expect(count).toBe(5)
   })
+
+  test('origin not equal', () => {
+    const o = {}
+    const r = createReactive(o, {})
+
+    r.$set('name', 'tony')
+    expect(r.name).toBe('tony')
+    expect(o.name).toBeUndefined()
+  })
+
+  test('reactive refererence', () => {
+    const some = {
+      body: {
+        hand: true,
+        foot: true,
+      },
+    }
+    const a = createReactive(some, {
+      get(keyPath, value) {
+        if (keyPath.join('.') === 'body.hand') {
+          return value.toString()
+        }
+        else {
+          return value
+        }
+      },
+    })
+
+    expect(a.body).not.toBe(some.body)
+    expect(a.body.hand).toBe('true')
+    expect(a.body.foot).toBe(true)
+
+    a.body.hand = false
+    expect(a.body.hand).toBe('false')
+    expect(some.body.hand).toBe(true)
+  })
 })
 
 describe('proxy', () => {
@@ -151,6 +187,7 @@ describe('proxy', () => {
     state.body.hand = 22
     expect(state.body.foot).toBe(55)
   })
+
   test('proxy object.function', () => {
     const o = {
       name: 'tomy',
@@ -162,11 +199,39 @@ describe('proxy', () => {
     p.name = 'ximi'
     expect(p.say()).toBe('ximi')
   })
-  test(`Symbol.for('[[ProxyTarget]]')`, () => {
+
+  test('origin equal', () => {
     const o = {}
     const p = createProxy(o, {})
-    const target = p[Symbol.for('[[ProxyTarget]]')]
-    expect(target).not.toBe(o)
-    expect(target).toEqual(o)
+
+    p.name = 'tony'
+    expect(o.name).toBe('tony')
+  })
+
+  test('proxy refererence', () => {
+    const some = {
+      body: {
+        hand: true,
+        foot: true,
+      },
+    }
+    const a = createProxy(some, {
+      get(keyPath, value) {
+        if (keyPath.join('.') === 'body.hand') {
+          return value.toString()
+        }
+        else {
+          return value
+        }
+      },
+    })
+
+    expect(a.body).not.toBe(some.body)
+    expect(a.body.hand).toBe('true')
+    expect(a.body.foot).toBe(true)
+
+    a.body.hand = false
+    expect(a.body.hand).toBe('false')
+    expect(some.body.hand).toBe(false)
   })
 })
