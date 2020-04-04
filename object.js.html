@@ -427,7 +427,7 @@ export function createReactive(input, options = {}) {
     const put = (key, value) => {
       const keyPath = [...parents, key]
       const setValue = (v) => {
-        const next = isFunction(set) ? set(v, keyPath) : v
+        const next = isFunction(set) ? set(keyPath, v) : v
         const coming = create(next, keyPath)
         obj[key] = coming
         return coming
@@ -437,7 +437,7 @@ export function createReactive(input, options = {}) {
       Object.defineProperty(res, key, {
         get: () => {
           const value = obj[key] // we should not use original value, because it may be changed at any time
-          const node = isFunction(get) ? get(value, keyPath) : value
+          const node = isFunction(get) ? get(keyPath, value) : value
           return node
         },
         set: (v) => {
@@ -513,7 +513,7 @@ export function createReactive(input, options = {}) {
         const item = arr[i]
         const keyPath = [...parents, i]
         const setValue = (v) => {
-          const next = isFunction(set) ? set(v, keyPath) : v
+          const next = isFunction(set) ? set(keyPath, v) : v
           const coming = create(next, keyPath)
           arr[i] = coming
           return coming
@@ -527,7 +527,7 @@ export function createReactive(input, options = {}) {
         Object.defineProperty(res, i, {
           get: () => {
             const item = arr[i]
-            const node = isFunction(get) ? get(item, keyPath) : item
+            const node = isFunction(get) ? get(keyPath, item) : item
             return node
           },
           set: (v) => {
@@ -656,7 +656,7 @@ export function createProxy(input, options = {}) {
       let input = value
 
       if (isFunction(set) &amp;&amp; !isSymbol(key)) {
-        input = set(value, keyPath)
+        input = set(keyPath, value)
       }
 
       res[key] = create(input, keyPath)
@@ -680,7 +680,7 @@ export function createProxy(input, options = {}) {
         // a Symbol key will not to into `get` option function
         if (isFunction(get) &amp;&amp; !isSymbol(key)) {
           const keyPath = [...parents, key]
-          const output = get(value, keyPath)
+          const output = get(keyPath, value)
           return output
         }
         else {
@@ -699,7 +699,7 @@ export function createProxy(input, options = {}) {
         let input = value
 
         if (isFunction(set) &amp;&amp; !isSymbol(key)) {
-          input = set(value, keyPath)
+          input = set(keyPath, value)
         }
 
         const next = create(input, keyPath)
@@ -741,7 +741,7 @@ export function createProxy(input, options = {}) {
       let input = item
 
       if (isFunction(set)) {
-        input = set(item, keyPath)
+        input = set(keyPath, item)
       }
 
       items[i] = create(input, keyPath)
@@ -783,7 +783,7 @@ export function createProxy(input, options = {}) {
         // here should be noticed
         // a Symbol key will not to into `get` option function
         if (isFunction(get) &amp;&amp; !isSymbol(key)) {
-          const output = get(value, keyPath)
+          const output = get(keyPath, value)
           return output
         }
         else {
@@ -817,7 +817,7 @@ export function createProxy(input, options = {}) {
         let input = value
 
         if (isFunction(set) &amp;&amp; !isSymbol(key)) {
-          input = set(value, keyPath)
+          input = set(keyPath, value)
         }
 
         const next = create(input, keyPath)
