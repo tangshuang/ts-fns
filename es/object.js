@@ -652,7 +652,7 @@ export function createReactive(origin, options = {}) {
  * some.body.hand === false // some.body.hand changes to false
  */
 export function createProxy(origin, options = {}) {
-  const { get, set, dispatch, writable } = options
+  const { get, set, del, dispatch, writable } = options
 
   const create = (origin, parents = []) => {
     if (!isObject(origin) && !isArray(origin)) {
@@ -854,6 +854,10 @@ export function createProxy(origin, options = {}) {
 
         if (isFunction(writable) && !writable(keyPath)) {
           return false
+        }
+
+        if (isFunction(del) && !isSymbol(key)) {
+          del(keyPath)
         }
 
         delete origin[key]
