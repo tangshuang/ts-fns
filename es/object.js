@@ -587,7 +587,7 @@ export function createReactive(origin, options = {}) {
         }
 
         if (isFunction(dispatch)) {
-          dispatch(parents, media, media)
+          dispatch(parents, media, media, true)
         }
 
         return output
@@ -788,7 +788,7 @@ export function createProxy(origin, options = {}) {
             const output = Array.prototype[key].apply(media, args.map(item => create(item, parents)))
 
             if (isFunction(dispatch)) {
-              dispatch(parents, media, media)
+              dispatch(parents, media, media, true)
             }
 
             return output
@@ -825,7 +825,7 @@ export function createProxy(origin, options = {}) {
           media.length = value
 
           if (isFunction(dispatch)) {
-            dispatch(parents, media, media)
+            dispatch(parents, media, media, true)
           }
 
           return true
