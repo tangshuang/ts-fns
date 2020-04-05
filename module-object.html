@@ -174,7 +174,7 @@
 
     
 
-    <h4 class="name" id=".createProxy"><span class="type-signature">(static) </span>createProxy<span class="signature">(input, options)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".createProxy"><span class="type-signature">(static) </span>createProxy<span class="signature">(origin, options)</span><span class="type-signature"></span></h4>
 
     
 
@@ -219,7 +219,7 @@ it will change your original data</p>
 
         <tr>
             
-                <td class="name"><code>input</code></td>
+                <td class="name"><code>origin</code></td>
             
 
             <td class="type">
@@ -422,7 +422,7 @@ it will change your original data</p>
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="object.js.html">object.js</a>, <a href="object.js.html#line610">line 610</a>
+                <a href="object.js.html">object.js</a>, <a href="object.js.html#line654">line 654</a>
             </li></ul></dd>
         </div>
     
@@ -486,7 +486,7 @@ some.body.hand === false // some.body.hand changes to false</code></pre>
 
     
 
-    <h4 class="name" id=".createReactive"><span class="type-signature">(static) </span>createReactive<span class="signature">(input, options)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".createReactive"><span class="type-signature">(static) </span>createReactive<span class="signature">(origin, options)</span><span class="type-signature"></span></h4>
 
     
 
@@ -494,7 +494,7 @@ some.body.hand === false // some.body.hand changes to false</code></pre>
 
     <div class="description">
         <p>create a reactive object.
-it will not change your original data, like clone a new data refererence.</p>
+it will change your original data</p>
     </div>
 
 
@@ -531,7 +531,7 @@ it will not change your original data, like clone a new data refererence.</p>
 
         <tr>
             
-                <td class="name"><code>input</code></td>
+                <td class="name"><code>origin</code></td>
             
 
             <td class="type">
@@ -788,7 +788,7 @@ a.body.hand !== some.body.hand // true !== 'true'
 a.body.foot == some.body.foot // true == true
 
 a.body.hand = false // now a.body.hand is 'false', a string
-some.body.hand === true // no change</code></pre>
+some.body.hand === false // original data changed</code></pre>
 
     </div>
 
