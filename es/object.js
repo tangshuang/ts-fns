@@ -336,8 +336,8 @@ export function freeze(o) {
 
 /**
  * create a reactive object.
- * it will not change your original data, like clone a new data refererence.
- * @param {object|array} input
+ * it will change your original data
+ * @param {object|array} origin
  * @param {object} options
  * @param {function} options.get to modify output value of each node, receive (keyPath, reactiveValue), reactiveValue is a reactive object/array as if, keyPath is an array which catains keys in path
  * @param {function} options.set to modify input value of each node, receive (keyPath, nextValue), nextValue is the given passed value, the return value will be transformed to be reactive object/array as if
@@ -369,151 +369,159 @@ export function freeze(o) {
  * a.body.foot == some.body.foot // true == true
  *
  * a.body.hand = false // now a.body.hand is 'false', a string
- * some.body.hand === true // no change
+ * some.body.hand === false // original data changed
  */
-export function createReactive(input, options = {}) {
+export function createReactive(origin, options = {}) {
   const { get, set, dispatch, writable } = options
 
-  const create = (input, parents = []) => {
-    if (!isObject(input) && !isArray(input)) {
-      return input
+  const create = (origin, parents = []) => {
+    if (!isObject(origin) && !isArray(origin)) {
+      return origin
     }
 
     let output = null
-    if (isObject(input)) {
-      output = createObject({ ...input }, parents)
+    if (isObject(origin)) {
+      output = createObject(origin, parents)
     }
     else {
-      output = createArray([...input], parents)
+      output = createArray(origin, parents)
     }
 
     return output
   }
 
-  const createObject = (obj, parents = []) => {
-    const res = {}
-    const put = (key, value) => {
+  const createObject = (origin, parents = []) => {
+    const media = {}
+    const reactive = {}
+
+    const put = (key, value, trigger) => {
       const keyPath = [...parents, key]
-      const setValue = (v) => {
-        const next = isFunction(set) ? set(keyPath, v) : v
-        const coming = create(next, keyPath)
-        obj[key] = coming
+      const setValue = (value, current, trigger) => {
+        const next = isFunction(set) ? set(keyPath, value) : value
+        // if next === current, it means not change
+        const coming = next === current ? next : create(next, keyPath)
+
+        origin[key] = next
+        media[key] = coming
+
+        if (trigger && isFunction(dispatch)) {
+          dispatch(keyPath, coming, current)
+        }
+
         return coming
       }
-      // initialize the current value at the first time
-      const next = setValue(value)
-      Object.defineProperty(res, key, {
+
+      Object.defineProperty(reactive, key, {
         get: () => {
-          const value = obj[key] // we should not use original value, because it may be changed at any time
+          const value = media[key]
           const node = isFunction(get) ? get(keyPath, value) : value
           return node
         },
-        set: (v) => {
-          const current = res[key]
+        set: (value) => {
+          const current = media[key]
 
           if (isFunction(writable) && !writable(keyPath)) {
             return current
           }
 
-          const next = setValue(v)
-          if (isFunction(dispatch)) {
-            dispatch(keyPath, next, current)
-          }
+          const next = setValue(value, current, true)
           return next
         },
         enumerable: true,
         configurable: true,
       })
+
+      // initialize the current value at the first time
+      const next = setValue(value, media[key], trigger)
       return next
     }
 
-    each(obj, (value, key) => {
+    each(origin, (value, key) => {
       put(key, value)
     })
 
-    Object.defineProperties(res, {
+    Object.defineProperties(reactive, {
       $get: {
-        value: key => res[key],
+        value: key => reactive[key],
       },
       $set: {
         value: (key, value) => {
-          const keyPath = [...parents, key]
-          const current = res[key]
-
-          const next = put(key, value)
-
-          if (isFunction(dispatch)) {
-            dispatch(keyPath, next, current)
-          }
-
+          const next = put(key, value, true)
           return next
         },
       },
       $del: {
         value: (key) => {
           const keyPath = [...parents, key]
-          const current = res[key]
+          const current = media[key]
 
           if (isFunction(writable) && !writable(keyPath)) {
             return current
           }
 
-          delete res[key]
+          delete reactive[key]
+          delete media[key]
+          delete origin[key]
 
           if (isFunction(dispatch)) {
             dispatch(keyPath, undefined, current)
           }
 
-          return res
+          return true
         },
       },
     })
 
-    return res
+    return reactive
   }
 
-  const createArray = (arr, parents) => {
-    const res = []
+  const createArray = (origin, parents) => {
+    const media = []
+    const reactive = []
 
     // fill items into output array
-    const shuffle = (start, end, init = true) => {
+    // start and end, where to start and end
+    // items, original data to use
+    const shuffle = (start, end) => {
       for (let i = start; i <= end; i ++) {
-        const item = arr[i]
         const keyPath = [...parents, i]
-        const setValue = (v) => {
-          const next = isFunction(set) ? set(keyPath, v) : v
-          const coming = create(next, keyPath)
-          arr[i] = coming
+        const setValue = (value, current, trigger) => {
+          const next = isFunction(set) ? set(keyPath, value) : value
+          // === means not change
+          const coming = next === current ? next : create(next, keyPath)
+
+          origin[i] = next
+          media[i] = coming
+
+          if (trigger && isFunction(dispatch)) {
+            dispatch(keyPath, coming, current)
+          }
+
           return coming
         }
 
-        if (init) {
-          // initialize items
-          setValue(item)
-        }
-
-        Object.defineProperty(res, i, {
+        Object.defineProperty(reactive, i, {
           get: () => {
-            const item = arr[i]
+            const item = media[i]
             const node = isFunction(get) ? get(keyPath, item) : item
             return node
           },
-          set: (v) => {
-            const current = res[i]
+          set: (value) => {
+            const current = media[i]
 
             if (isFunction(writable) && !writable(keyPath)) {
               return current
             }
 
-            const next = setValue(v)
-            if (isFunction(dispatch)) {
-              dispatch(keyPath, next, current)
-            }
+            const next = setValue(value, current, true)
             return next
           },
           enumerable: true,
           configurable: true,
         })
+
+        // initialize
+        setValue(origin[i], media[i])
       }
     }
 
@@ -525,55 +533,91 @@ export function createReactive(input, options = {}) {
         }
 
         // deal with original data
-        const p = args.map(item => create(item, parents))
-        const before = arr.length
-        const o = Array.prototype[fn].apply(arr, p)
-        const after = arr.length
+        const before = origin.length
+        Array.prototype[fn].apply(origin, args)
+        const after = origin.length
 
-        // the methods will change the length of arr
-        if (inArray(fn, ['push', 'unshift', 'splice'])) {
-          // delete items
-          if (before > after) {
-            res.length = after
+        let output = null
+
+        if (fn === 'push') {
+          output = origin.length
+          shuffle(before - 1, after - 1)
+        }
+        else if (fn === 'unshift') {
+          output = origin.length
+          shuffle(0, after - before - 1)
+        }
+        else if (fn === 'splice') {
+          const [_start, _count, ...items] = args
+          output = media[fn](...args)
+          reactive.length = after
+
+          // new items inserted
+          if (items.length) {
+            // find the index inserted at
+            let index = -1
+            for (let i = 0, len = media.length; i < len; i ++) {
+              let matched = true
+              for (let n = 0, l = items.length; n < l; n ++) {
+                const o = media[i + n] // use media so that it should must equal origin items
+                const t = items[n]
+                if (o !== t) {
+                  matched = false
+                  break
+                }
+              }
+              if (matched) {
+                index = i
+                break
+              }
+            }
+
+            const start = index
+            const end = start + items.length - 1
+
+            shuffle(start, end)
           }
-          // insert items
-          else if (after > before) {
-            shuffle(before - 1, after - 1, false)
-          }
+        }
+        else if (inArray(fn, ['shift', 'pop'])) {
+          output = media[fn](...args)
+          reactive.length = after
+        }
+        else if (inArray(fn, ['sort', 'reverse', 'fill'])) {
+          output = media[fn](...args)
         }
 
         if (isFunction(dispatch)) {
-          dispatch(parents, res, res)
+          dispatch(parents, media, media, true)
         }
 
-        return o
+        return output
       },
     })
 
-    Object.defineProperties(res, {
+    Object.defineProperties(reactive, {
       push: modify('push'),
-      pop: modify('pop'),
       unshift: modify('unshift'),
-      shift: modify('shift'),
       splice: modify('splice'),
+      pop: modify('pop'),
+      shift: modify('shift'),
       sort: modify('sort'),
       reverse: modify('reverse'),
       fill: modify('fill'),
     })
 
-    shuffle(0, arr.length - 1)
+    shuffle(0, origin.length - 1)
 
-    return res
+    return reactive
   }
 
-  const output = create(input)
+  const output = create(origin)
   return output
 }
 
 /**
  * create a proxy object.
  * it will change your original data
- * @param {object|array} input
+ * @param {object|array} origin
  * @param {object} options
  * @param {function} options.get to modify output value of each node, receive (keyPath, proxiedValue), proxiedValue is a reactive object/array as if, keyPath is an array which catains keys in path
  * @param {function} options.set to modify input value of each node, receive (keyPath, nextValue), nextValue is the given passed value, the return value will be transformed to be reactive object/array as if
@@ -607,20 +651,20 @@ export function createReactive(input, options = {}) {
  * a.body.hand = false // now a.body.hand is 'false', a string
  * some.body.hand === false // some.body.hand changes to false
  */
-export function createProxy(input, options = {}) {
-  const { get, set, dispatch, writable } = options
+export function createProxy(origin, options = {}) {
+  const { get, set, del, dispatch, writable } = options
 
-  const create = (input, parents = []) => {
-    if (!isObject(input) && !isArray(input)) {
-      return input
+  const create = (origin, parents = []) => {
+    if (!isObject(origin) && !isArray(origin)) {
+      return origin
     }
 
     let output = null
-    if (isObject(input)) {
-      output = createObject(input, parents)
+    if (isObject(origin)) {
+      output = createObject(origin, parents)
     }
     else {
-      output = createArray(input, parents)
+      output = createArray(origin, parents)
     }
 
     return output
@@ -656,21 +700,21 @@ export function createProxy(input, options = {}) {
           return false
         }
 
-        let input = value
+        let next = value
 
         if (isFunction(set) && !isSymbol(key)) {
-          input = set(keyPath, value)
+          next = set(keyPath, value)
         }
 
         // change the original object
-        const current = origin[key]
-        origin[key] = input
+        origin[key] = next
 
-        const next = create(input, keyPath)
-        Reflect.set(target, key, next, receiver)
+        const current = media[key]
+        const coming = next === current ? next : create(next, keyPath)
+        Reflect.set(target, key, coming, receiver)
 
         if (isFunction(dispatch)) {
-          dispatch(keyPath, input, current)
+          dispatch(keyPath, coming, current)
         }
 
         return true
@@ -683,9 +727,9 @@ export function createProxy(input, options = {}) {
         }
 
         // change the original object
-        const current = origin[key]
         delete origin[key]
 
+        const current = media[key]
         Reflect.deleteProperty(target, key)
 
         if (isFunction(dispatch)) {
@@ -721,7 +765,18 @@ export function createProxy(input, options = {}) {
         }
 
         // array primitive operation
-        if (inArray(key, ['push', 'pop', 'unshift', 'shift', 'splice', 'sort', 'reverse', 'fill'])) {
+        const methods = [
+          // the following 3 lines will change the array's length
+          // the following 1 line will return the new length
+          'push', 'unshift',
+          // the following 1 line will return the spliced items array
+          'splice',
+          // the following 1 line will return the removed item value
+          'shift', 'pop',
+          // the following 1 line will return the changed original array
+          'sort', 'reverse', 'fill',
+        ]
+        if (inArray(key, methods)) {
           return (...args) => {
             if (isFunction(writable) && !writable(parents)) {
               throw new TypeError(key + ' is not allowed. The array is not writable.')
@@ -730,13 +785,13 @@ export function createProxy(input, options = {}) {
             // change original data
             Array.prototype[key].apply(origin, args)
 
-            const o = Array.prototype[key].apply(media, args.map(item => create(item, parents)))
+            const output = Array.prototype[key].apply(media, args.map(item => create(item, parents)))
 
             if (isFunction(dispatch)) {
-              dispatch(parents, origin, origin)
+              dispatch(parents, media, media, true)
             }
 
-            return o
+            return output
           }
         }
 
@@ -770,26 +825,26 @@ export function createProxy(input, options = {}) {
           media.length = value
 
           if (isFunction(dispatch)) {
-            dispatch(parents, origin, origin)
+            dispatch(parents, media, media, true)
           }
 
           return true
         }
 
-        let input = value
+        let next = value
 
         if (isFunction(set) && !isSymbol(key)) {
-          input = set(keyPath, value)
+          next = set(keyPath, value)
         }
 
-        const current = origin[key]
-        origin[key] = input
+        origin[key] = next
 
-        const next = create(input, keyPath)
-        Reflect.set(target, key, next, receiver)
+        const current = media[key]
+        const coming = next === current ? next : create(next, keyPath)
+        Reflect.set(target, key, coming, receiver)
 
         if (isFunction(dispatch)) {
-          dispatch(keyPath, input, current)
+          dispatch(keyPath, next, current)
         }
 
         return true
@@ -801,9 +856,13 @@ export function createProxy(input, options = {}) {
           return false
         }
 
-        const current = origin[key]
+        if (isFunction(del) && !isSymbol(key)) {
+          del(keyPath)
+        }
+
         delete origin[key]
 
+        const current = media[key]
         Reflect.defineProperty(target, key)
 
         if (isFunction(dispatch)) {
@@ -828,6 +887,6 @@ export function createProxy(input, options = {}) {
     return proxy
   }
 
-  const output = create(input)
+  const output = create(origin)
   return output
 }

@@ -122,13 +122,13 @@ describe('reactive', () => {
     expect(count).toBe(5)
   })
 
-  test('origin not equal', () => {
+  test('origin equal', () => {
     const o = {}
     const r = createReactive(o, {})
 
     r.$set('name', 'tony')
     expect(r.name).toBe('tony')
-    expect(o.name).toBeUndefined()
+    expect(o.name).toBe('tony')
   })
 
   test('reactive refererence', () => {
@@ -155,7 +155,7 @@ describe('reactive', () => {
 
     a.body.hand = false
     expect(a.body.hand).toBe('false')
-    expect(some.body.hand).toBe(true)
+    expect(some.body.hand).toBe(false)
   })
 })
 
