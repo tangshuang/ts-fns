@@ -94,12 +94,16 @@
 
     
 
-    <h4 class="name" id=".async_"><span class="type-signature">(static) </span>async_<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".async_"><span class="type-signature">(static) </span>async_<span class="signature">(fn, expire)</span><span class="type-signature"> &rarr; {function}</span></h4>
 
     
 
 
 
+    <div class="description">
+        <p>Create a function which return a Promise and cached by parameters.
+Memory recycle is the same as compute_</p>
+    </div>
 
 
 
@@ -107,6 +111,81 @@
 
 
 
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a function, can be async function or normal function</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>expire</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the expire time for releasing cache</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
 
 
 
@@ -142,7 +221,7 @@
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="function.js.html">function.js</a>, <a href="function.js.html#line65">line 65</a>
+                <a href="function.js.html">function.js</a>, <a href="function.js.html#line183">line 183</a>
             </li></ul></dd>
         </div>
     
@@ -166,7 +245,43 @@
 
 
 
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
+            
+<div class="param-desc">
+    <p>.clear() and .recycle() is available</p>
+</div>
 
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+ 
+    </div>
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
+        
+    <pre class="prettyprint"><code>const fn = async_(async () => {})
+
+const a = fn()
+const b = fn()
+
+a === b // the same Promise</code></pre>
+
+    </div>
 
 
         
@@ -174,12 +289,16 @@
 
     
 
-    <h4 class="name" id=".compute_"><span class="type-signature">(static) </span>compute_<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".compute_"><span class="type-signature">(static) </span>compute_<span class="signature">(fn, expire)</span><span class="type-signature"> &rarr; {function}</span></h4>
 
     
 
 
 
+    <div class="description">
+        <p>Create a function which cache result by parameters.
+Notice that, there is an async loop to clear expired cache every 1s. You can use .recycle(0) to stop the loop.</p>
+    </div>
 
 
 
@@ -187,6 +306,81 @@
 
 
 
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the original function to calculate result</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>expire</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the time to expire cache, if set 0 (or not set), the cache will never be expired, default 0.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
 
 
 
@@ -222,7 +416,7 @@
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="function.js.html">function.js</a>, <a href="function.js.html#line8">line 8</a>
+                <a href="function.js.html">function.js</a>, <a href="function.js.html#line27">line 27</a>
             </li></ul></dd>
         </div>
     
@@ -246,7 +440,50 @@
 
 
 
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
+            
+<div class="param-desc">
+    <p>you can call a .clear() method on this function to clear the cache</p>
+</div>
 
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+ 
+    </div>
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
+        
+    <pre class="prettyprint"><code>const compute = compute_((x, y) => {
+  return x + y
+})
+
+// the following two computing will call original fn only once
+const a = compute(1, 3)
+const b = compute(1, 3)
+
+compute.clear() // clear expired cache
+compute.clear(true) // force clear all cache
+
+compute.recycle(0) // stop the recycle task
+compute.recycle(500) // start a task to recycle cache to avoid memory overflow</code></pre>
+
+    </div>
 
 
         
@@ -254,12 +491,15 @@
 
     
 
-    <h4 class="name" id=".get_"><span class="type-signature">(static) </span>get_<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".get_"><span class="type-signature">(static) </span>get_<span class="signature">(fn, type)</span><span class="type-signature"> &rarr; {function}</span></h4>
 
     
 
 
 
+    <div class="description">
+        <p>create a getter function which will cache the result, cache will be released automaticly</p>
+    </div>
 
 
 
@@ -267,6 +507,88 @@
 
 
 
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the getter function, notice, without parameters</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the type of automatic releasing, default 1.</p>
+<ul>
+<li>0: never released</li>
+<li>1: in Promise microtask</li>
+<li>2: in timeout task</li>
+<li>3: in requestAnimationFrame</li>
+<li>4: in requestIdleCallback</li>
+</ul></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
 
 
 
@@ -302,7 +624,7 @@
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="function.js.html">function.js</a>, <a href="function.js.html#line42">line 42</a>
+                <a href="function.js.html">function.js</a>, <a href="function.js.html#line126">line 126</a>
             </li></ul></dd>
         </div>
     
@@ -326,7 +648,69 @@
 
 
 
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
+            
+<div class="param-desc">
+    <p>you can call .clear() to clear cache immediately</p>
+</div>
 
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+ 
+    </div>
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
+        
+    <pre class="prettyprint"><code>const get = get_(() => {
+  return Math.random()
+})
+
+// the following two getting will call original fn only once
+const a = get()
+const b = get()
+a === b
+
+// type: 1
+const getter = get_(() => Date.now(), 1)
+const e = getter()
+Promise.then(() => {
+  const h = getter()
+  e !== h // cache is released in a previous Promise microtask
+})
+setTimeout(() => {
+  const f = getter()
+  e !== f // when type is 1, the cache will be release in a Promise microtask, so when we call setTimeout, cache is gone
+})
+
+// type: 2
+const use = get_(() => Date.now(), 2)
+const m = use()
+Promise.then(() => {
+  const n = use()
+  m === n // when type is 2, the cache will be release in a setTimeout task, so when we call in a Promise.then, cache is existing
+})
+setTimeout(() => {
+  const l = use()
+  m !== l // cache was released in a previous setTimeout task
+})</code></pre>
+
+    </div>
 
 
         
@@ -334,12 +718,15 @@
 
     
 
-    <h4 class="name" id=".invoke_"><span class="type-signature">(static) </span>invoke_<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".invoke_"><span class="type-signature">(static) </span>invoke_<span class="signature">(fn, count, expire)</span><span class="type-signature"> &rarr; {function}</span></h4>
 
     
 
 
 
+    <div class="description">
+        <p>create a function whose result will be cached, and the cache will be released by invoke count</p>
+    </div>
 
 
 
@@ -347,6 +734,104 @@
 
 
 
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Parameters:</strong>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>count</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>expire</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the expire time after latest invoke</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
 
 
 
@@ -382,7 +867,7 @@
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="function.js.html">function.js</a>, <a href="function.js.html#line106">line 106</a>
+                <a href="function.js.html">function.js</a>, <a href="function.js.html#line259">line 259</a>
             </li></ul></dd>
         </div>
     
@@ -406,7 +891,47 @@
 
 
 
+    <div class="method-member-container mt-20">
+    <strong>Returns:</strong>
+        
+            
+<div class="param-desc">
+    <p>.clear() and .recycle() is avaliable, recycle runs in a loop task which run every minutes.</p>
+</div>
 
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+ 
+    </div>
+
+
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
+        
+    <pre class="prettyprint"><code>const invoke = invoke_(() => {
+  return Math.random()
+}, 2)
+
+const a = invoke()
+const b = invoke()
+const c = invoke()
+
+a === b
+a !== c</code></pre>
+
+    </div>
 
 
         
@@ -462,7 +987,7 @@
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="function.js.html">function.js</a>, <a href="function.js.html#line131">line 131</a>
+                <a href="function.js.html">function.js</a>, <a href="function.js.html#line329">line 329</a>
             </li></ul></dd>
         </div>
     
@@ -487,6 +1012,20 @@
 
 
 
+
+    <div class="method-member-container flex flex-col w-100 overflow-auto mt-20">
+        <strong>Example</strong>
+        
+    <pre class="prettyprint"><code>const pipe = pipe_(
+  x => x + 1,
+  x => x - 1,
+  x => x * x,
+  x => x / x,
+)
+
+const y = pipe(10) // 10</code></pre>
+
+    </div>
 
 
         
