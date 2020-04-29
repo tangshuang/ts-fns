@@ -422,7 +422,7 @@ it will change your original data</p>
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="object.js.html">object.js</a>, <a href="object.js.html#line654">line 654</a>
+                <a href="object.js.html">object.js</a>, <a href="object.js.html#line660">line 660</a>
             </li></ul></dd>
         </div>
     
@@ -734,7 +734,7 @@ it will change your original data</p>
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="object.js.html">object.js</a>, <a href="object.js.html#line374">line 374</a>
+                <a href="object.js.html">object.js</a>, <a href="object.js.html#line380">line 380</a>
             </li></ul></dd>
         </div>
     
@@ -779,7 +779,13 @@ const a = createReactive(some, {
     }
   },
   set(keyPath, value) {},
-  dispatch(keyPath, next, current) {},
+  dispatch({
+    keyPath,
+    value, // receive value
+    input, // getter output
+    next, // created reactive
+    prev, // current reactive
+  }, force) {},
 })
 
 a !== some // reactive object !== object

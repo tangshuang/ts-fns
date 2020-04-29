@@ -419,7 +419,13 @@ export function freeze(o) {
  *     }
  *   },
  *   set(keyPath, value) {},
- *   dispatch(keyPath, next, current) {},
+ *   dispatch({
+ *     keyPath,
+ *     value, // receive value
+ *     input, // getter output
+ *     next, // created reactive
+ *     prev, // current reactive
+ *   }, force) {},
  * })
  *
  * a !== some // reactive object !== object
@@ -455,19 +461,19 @@ export function createReactive(origin, options = {}) {
 
     const put = (key, value, trigger) => {
       const keyPath = [...parents, key]
-      const setValue = (value, current, trigger) => {
-        const next = isFunction(set) ? set(keyPath, value) : value
-        // if next === current, it means not change
-        const coming = next === current ? next : create(next, keyPath)
+      const setValue = (value, prev, trigger) => {
+        const input = isFunction(set) ? set(keyPath, value) : value
+        // if input === prev, it means not change
+        const next = input === prev ? input : create(input, keyPath)
 
-        origin[key] = next
-        media[key] = coming
+        origin[key] = input
+        media[key] = next
 
         if (trigger &amp;&amp; isFunction(dispatch)) {
-          dispatch(keyPath, coming, current)
+          dispatch({ keyPath, value, input, next, prev })
         }
 
-        return coming
+        return input
       }
 
       Object.defineProperty(reactive, key, {
@@ -477,13 +483,13 @@ export function createReactive(origin, options = {}) {
           return node
         },
         set: (value) => {
-          const current = media[key]
+          const prev = media[key]
 
           if (isFunction(writable) &amp;&amp; !writable(keyPath)) {
-            return current
+            return prev
           }
 
-          const next = setValue(value, current, true)
+          const next = setValue(value, prev, true)
           return next
         },
         enumerable: true,
@@ -512,10 +518,10 @@ export function createReactive(origin, options = {}) {
       $del: {
         value: (key) => {
           const keyPath = [...parents, key]
-          const current = media[key]
+          const prev = media[key]
 
           if (isFunction(writable) &amp;&amp; !writable(keyPath)) {
-            return current
+            return prev
           }
 
           delete reactive[key]
@@ -523,7 +529,7 @@ export function createReactive(origin, options = {}) {
           delete origin[key]
 
           if (isFunction(dispatch)) {
-            dispatch(keyPath, undefined, current)
+            dispatch({ keyPath, value: undefined, input: undefined, next: undefined, prev })
           }
 
           return true
@@ -534,7 +540,7 @@ export function createReactive(origin, options = {}) {
     return reactive
   }
 
-  const createArray = (origin, parents) => {
+  const createArray = (origin, parents = []) => {
     const media = []
     const reactive = []
 
@@ -544,19 +550,19 @@ export function createReactive(origin, options = {}) {
     const shuffle = (start, end) => {
       for (let i = start; i &lt;= end; i ++) {
         const keyPath = [...parents, i]
-        const setValue = (value, current, trigger) => {
-          const next = isFunction(set) ? set(keyPath, value) : value
+        const setValue = (value, prev, trigger) => {
+          const input = isFunction(set) ? set(keyPath, value) : value
           // === means not change
-          const coming = next === current ? next : create(next, keyPath)
+          const next = input === prev ? input : create(input, keyPath)
 
-          origin[i] = next
-          media[i] = coming
+          origin[i] = input
+          media[i] = next
 
           if (trigger &amp;&amp; isFunction(dispatch)) {
-            dispatch(keyPath, coming, current)
+            dispatch({ keyPath, value, input, next, prev })
           }
 
-          return coming
+          return next
         }
 
         Object.defineProperty(reactive, i, {
@@ -566,13 +572,13 @@ export function createReactive(origin, options = {}) {
             return node
           },
           set: (value) => {
-            const current = media[i]
+            const prev = media[i]
 
             if (isFunction(writable) &amp;&amp; !writable(keyPath)) {
-              return current
+              return prev
             }
 
-            const next = setValue(value, current, true)
+            const next = setValue(value, prev, true)
             return next
           },
           enumerable: true,
@@ -646,7 +652,7 @@ export function createReactive(origin, options = {}) {
         }
 
         if (isFunction(dispatch)) {
-          dispatch(parents, media, media, true)
+          dispatch({ keyPath: parents, value: origin, input: reactive, next: reactive, prev: reactive }, true)
         }
 
         return output
@@ -759,21 +765,21 @@ export function createProxy(origin, options = {}) {
           return false
         }
 
-        let next = value
+        let input = value
 
         if (isFunction(set) &amp;&amp; !isSymbol(key)) {
-          next = set(keyPath, value)
+          input = set(keyPath, value)
         }
 
         // change the original object
-        origin[key] = next
+        origin[key] = input
 
-        const current = media[key]
-        const coming = next === current ? next : create(next, keyPath)
-        Reflect.set(target, key, coming, receiver)
+        const prev = media[key]
+        const next = input === prev ? input : create(input, keyPath)
+        Reflect.set(target, key, next, receiver)
 
         if (isFunction(dispatch)) {
-          dispatch(keyPath, coming, current)
+          dispatch({ keyPath, value, input, next, prev })
         }
 
         return true
@@ -788,11 +794,11 @@ export function createProxy(origin, options = {}) {
         // change the original object
         delete origin[key]
 
-        const current = media[key]
+        const prev = media[key]
         Reflect.deleteProperty(target, key)
 
         if (isFunction(dispatch)) {
-          dispatch(keyPath, undefined, current)
+          dispatch({ keyPath, value: undefined, input: undefined, next: undefined, prev })
         }
 
         return true
@@ -847,7 +853,7 @@ export function createProxy(origin, options = {}) {
             const output = Array.prototype[key].apply(media, args.map(item => create(item, parents)))
 
             if (isFunction(dispatch)) {
-              dispatch(parents, media, media, true)
+              dispatch({ keyPath: parents, value: origin, input: proxy, next: proxy, prev: proxy }, true)
             }
 
             return output
@@ -884,26 +890,26 @@ export function createProxy(origin, options = {}) {
           media.length = value
 
           if (isFunction(dispatch)) {
-            dispatch(parents, media, media, true)
+            dispatch({ keyPath: parents, value: origin, input: proxy, next: proxy, prev: proxy }, true)
           }
 
           return true
         }
 
-        let next = value
+        let input = value
 
         if (isFunction(set) &amp;&amp; !isSymbol(key)) {
-          next = set(keyPath, value)
+          input = set(keyPath, value)
         }
 
-        origin[key] = next
+        origin[key] = input
 
-        const current = media[key]
-        const coming = next === current ? next : create(next, keyPath)
-        Reflect.set(target, key, coming, receiver)
+        const prev = media[key]
+        const next = input === prev ? input : create(input, keyPath)
+        Reflect.set(target, key, next, receiver)
 
         if (isFunction(dispatch)) {
-          dispatch(keyPath, next, current)
+          dispatch({ keyPath, value, input, next, prev })
         }
 
         return true
@@ -921,11 +927,11 @@ export function createProxy(origin, options = {}) {
 
         delete origin[key]
 
-        const current = media[key]
+        const prev = media[key]
         Reflect.defineProperty(target, key)
 
         if (isFunction(dispatch)) {
-          dispatch(keyPath, undefined, current)
+          dispatch({ keyPath, value: undefined, input: undefined, next: undefined, prev })
         }
 
         return true
