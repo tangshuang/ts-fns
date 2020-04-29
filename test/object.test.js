@@ -31,7 +31,7 @@ describe('reactive', () => {
 
     let count = 0
     const reactive = createReactive(obj, {
-      dispatch: (keyPath, v) => {
+      dispatch: () => {
         count ++
       },
     })
@@ -60,7 +60,7 @@ describe('reactive', () => {
 
     let count = 0
     const reactive = createReactive(obj, {
-      dispatch: (keyPath, v) => {
+      dispatch: () => {
         count ++
       },
     })
@@ -89,7 +89,7 @@ describe('reactive', () => {
 
     let count = 0
     const reactive = createReactive(arr, {
-      dispatch: (keyPath, v) => {
+      dispatch: () => {
         count ++
       },
     })
@@ -171,7 +171,7 @@ describe('proxy', () => {
       },
     }
     const state = createProxy(data, {
-      dispatch(keyPath, value) {
+      dispatch({ keyPath, value }) {
         if (keyPath.join('.') === 'age') {
           state.weight = value * 2
         }

@@ -33,7 +33,7 @@ describe('function', () => {
     const compute = compute_((x, y) => {
       count ++
       return x + y
-    }, 8)
+    }, 20)
 
     const a = compute(1, 2)
     const b = compute(1, 2)
@@ -41,18 +41,18 @@ describe('function', () => {
 
     expect(count).toBe(1)
 
+    // cache not expired
     setTimeout(() => {
       const d = compute(1, 2)
-      // cache not expired
       expect(count).toBe(1)
-    }, 4)
+    }, 10)
 
+    // cache expired
     setTimeout(() => {
       const e = compute(1, 2)
-      // cache expired
       expect(count).toBe(2)
       done()
-    }, 8)
+    }, 30)
   })
 
   test('get_: basic', () => {
