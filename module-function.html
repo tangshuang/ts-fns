@@ -101,8 +101,7 @@
 
 
     <div class="description">
-        <p>Create a function which return a Promise and cached by parameters.
-Memory recycle is the same as compute_</p>
+        <p>Create a function which return a Promise and cached by parameters.</p>
     </div>
 
 
@@ -221,7 +220,7 @@ Memory recycle is the same as compute_</p>
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="function.js.html">function.js</a>, <a href="function.js.html#line183">line 183</a>
+                <a href="function.js.html">function.js</a>, <a href="function.js.html#line167">line 167</a>
             </li></ul></dd>
         </div>
     
@@ -250,7 +249,7 @@ Memory recycle is the same as compute_</p>
         
             
 <div class="param-desc">
-    <p>.clear() and .recycle() is available</p>
+    <p>.clear() is available</p>
 </div>
 
 
@@ -296,8 +295,7 @@ a === b // the same Promise</code></pre>
 
 
     <div class="description">
-        <p>Create a function which cache result by parameters.
-Notice that, there is an async loop to clear expired cache every 1s. You can use .recycle(0) to stop the loop.</p>
+        <p>Create a function which cache result by parameters.</p>
     </div>
 
 
@@ -416,7 +414,7 @@ Notice that, there is an async loop to clear expired cache every 1s. You can use
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="function.js.html">function.js</a>, <a href="function.js.html#line27">line 27</a>
+                <a href="function.js.html">function.js</a>, <a href="function.js.html#line22">line 22</a>
             </li></ul></dd>
         </div>
     
@@ -477,11 +475,7 @@ Notice that, there is an async loop to clear expired cache every 1s. You can use
 const a = compute(1, 3)
 const b = compute(1, 3)
 
-compute.clear() // clear expired cache
-compute.clear(true) // force clear all cache
-
-compute.recycle(0) // stop the recycle task
-compute.recycle(500) // start a task to recycle cache to avoid memory overflow</code></pre>
+compute.clear() // clear all cache</code></pre>
 
     </div>
 
@@ -624,7 +618,7 @@ compute.recycle(500) // start a task to recycle cache to avoid memory overflow</
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="function.js.html">function.js</a>, <a href="function.js.html#line126">line 126</a>
+                <a href="function.js.html">function.js</a>, <a href="function.js.html#line111">line 111</a>
             </li></ul></dd>
         </div>
     
@@ -867,7 +861,7 @@ setTimeout(() => {
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="function.js.html">function.js</a>, <a href="function.js.html#line259">line 259</a>
+                <a href="function.js.html">function.js</a>, <a href="function.js.html#line237">line 237</a>
             </li></ul></dd>
         </div>
     
@@ -896,7 +890,7 @@ setTimeout(() => {
         
             
 <div class="param-desc">
-    <p>.clear() and .recycle() is avaliable, recycle runs in a loop task which run every minutes.</p>
+    <p>.clear() is avaliable</p>
 </div>
 
 
@@ -987,7 +981,7 @@ a !== c</code></pre>
         <div class="details-item-container">
             <dt class="tag-source">Source:</dt>
             <dd class="tag-source"><ul class="dummy"><li>
-                <a href="function.js.html">function.js</a>, <a href="function.js.html#line329">line 329</a>
+                <a href="function.js.html">function.js</a>, <a href="function.js.html#line298">line 298</a>
             </li></ul></dd>
         </div>
     
