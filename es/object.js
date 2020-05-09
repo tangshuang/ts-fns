@@ -432,7 +432,7 @@ export function createReactive(origin, options = {}) {
         media[key] = active
 
         if (trigger && isFunction(dispatch)) {
-          dispatch({ keyPath, value, next, prev })
+          dispatch({ keyPath, value, next, prev, active })
         }
 
         return active
@@ -496,6 +496,7 @@ export function createReactive(origin, options = {}) {
               value: undefined,
               next: undefined,
               prev,
+              active: undefined,
             }, true)
           }
 
@@ -547,7 +548,7 @@ export function createReactive(origin, options = {}) {
           media[i] = active
 
           if (trigger && isFunction(dispatch)) {
-            dispatch({ keyPath, value, next, prev })
+            dispatch({ keyPath, value, next, prev, active })
           }
 
           return active
@@ -641,6 +642,7 @@ export function createReactive(origin, options = {}) {
             value: origin,
             next: origin,
             prev: origin,
+            active: reactive,
           }, true)
         }
 
@@ -782,7 +784,7 @@ export function createProxy(origin, options = {}) {
         Reflect.set(target, key, active, receiver)
 
         if (isFunction(dispatch)) {
-          dispatch({ keyPath, value, next, prev })
+          dispatch({ keyPath, value, next, prev, active })
         }
 
         return true
@@ -809,6 +811,7 @@ export function createProxy(origin, options = {}) {
             value: undefined,
             next: undefined,
             prev,
+            active: undefined,
           }, true)
         }
 
@@ -866,6 +869,7 @@ export function createProxy(origin, options = {}) {
                 value: origin,
                 next: origin,
                 prev: origin,
+                active: proxy,
               }, true)
             }
 
@@ -908,6 +912,7 @@ export function createProxy(origin, options = {}) {
               value: origin,
               next: origin,
               prev: origin,
+              active: proxy,
             }, true)
           }
 
@@ -942,7 +947,7 @@ export function createProxy(origin, options = {}) {
         Reflect.set(target, key, active, receiver)
 
         if (isFunction(dispatch)) {
-          dispatch({ keyPath, value, next, prev })
+          dispatch({ keyPath, value, next, prev, active })
         }
 
         return true
@@ -969,6 +974,7 @@ export function createProxy(origin, options = {}) {
             value: undefined,
             next: undefined,
             prev,
+            active: undefined,
           }, true)
         }
 
