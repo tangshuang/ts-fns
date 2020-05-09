@@ -3,7 +3,7 @@
  */
 
 import { getStringHash } from './string.js'
-import { isArray, isObject, isFile, isDate, isFunction, inArray, isSymbol } from './is.js'
+import { isArray, isObject, isFile, isDate, isFunction, inArray, isSymbol, inObject } from './is.js'
 
 /** */
 export function clone(obj) {
@@ -409,7 +409,10 @@ export function createReactive(origin, options = {}) {
         const next = isFunction(set) ? set(keyPath, value) : value
 
         let active
-        if (value === prev) {
+        if (!inObject(key, media)) {
+          active = create(next, keyPath)
+        }
+        else if (value === prev) {
           active = prevMedia
         }
         else if (value === prevMedia) {
@@ -422,7 +425,7 @@ export function createReactive(origin, options = {}) {
           active = prevMedia
         }
         else {
-          active = create(input, keyPath)
+          active = create(next, keyPath)
         }
 
         origin[key] = next
@@ -521,7 +524,10 @@ export function createReactive(origin, options = {}) {
           const next = isFunction(set) ? set(keyPath, value, prev) : value
 
           let active
-          if (value === prev) {
+          if (!inObject(i, media)) {
+            active = create(next, keyPath)
+          }
+          else if (value === prev) {
             active = prevMedia
           }
           else if (value === prevMedia) {
@@ -534,7 +540,7 @@ export function createReactive(origin, options = {}) {
             active = prevMedia
           }
           else {
-            active = create(input, keyPath)
+            active = create(next, keyPath)
           }
 
           origin[i] = next
@@ -753,7 +759,10 @@ export function createProxy(origin, options = {}) {
         const next = isFunction(set) && !isSymbol(key) ? set(keyPath, value) : value
 
         let active
-        if (value === prev) {
+        if (!inObject(key, media)) {
+          active = create(next, keyPath)
+        }
+        else if (value === prev) {
           active = prevMedia
         }
         else if (value === prevMedia) {
@@ -766,7 +775,7 @@ export function createProxy(origin, options = {}) {
           active = prevMedia
         }
         else {
-          active = create(input, keyPath)
+          active = create(next, keyPath)
         }
 
         origin[key] = next
@@ -910,7 +919,10 @@ export function createProxy(origin, options = {}) {
         const next = isFunction(set) && !isSymbol(key) ? set(keyPath, value) : value
 
         let active
-        if (value === prev) {
+        if (!inObject(key, media)) {
+          active = create(next, keyPath)
+        }
+        else if (value === prev) {
           active = prevMedia
         }
         else if (value === prevMedia) {
@@ -923,7 +935,7 @@ export function createProxy(origin, options = {}) {
           active = prevMedia
         }
         else {
-          active = create(input, keyPath)
+          active = create(next, keyPath)
         }
 
         origin[key] = next
