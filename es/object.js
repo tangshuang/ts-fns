@@ -988,10 +988,10 @@ export function createProxy(origin, options = {}) {
 
     origin.forEach((value, i) => {
       const keyPath = [...parents, i]
-      const next = isFunction(set) && !isSymbol(key) ? set(keyPath, value) : value
+      const next = isFunction(set) && !isSymbol(i) ? set(keyPath, value) : value
 
-      origin[key] = next
-      media[key] = create(next, keyPath)
+      origin[i] = next
+      media[i] = create(next, keyPath)
     })
 
     return proxy
