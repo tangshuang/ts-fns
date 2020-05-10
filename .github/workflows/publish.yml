@@ -21,8 +21,8 @@ jobs:
       - name: Publish
         ## prepublishOnly has done build and test tasks
         uses: JS-DevTools/npm-publish@v1
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+        with:
+          token: ${{secrets.NPM_AUTH_TOKEN}}
       - name: Git-tag
         uses: butlerlogic/action-autotag@stable
         with:
