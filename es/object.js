@@ -405,26 +405,22 @@ export function createReactive(origin, options = {}) {
 
       const setValue = (value, trigger) => {
         const prev = origin[key]
-        const prevMedia = media[key]
-        const next = isFunction(set) ? set(keyPath, value) : value
+        const invalid = media[key]
+        const input = isFunction(set) ? set(keyPath, value) : value
 
         let active
-        if (!inObject(key, media)) {
-          active = create(next, keyPath)
-        }
-        else if (value === prev) {
-          active = prevMedia
-        }
-        else if (value === prevMedia) {
-          active = prevMedia
-        }
-        else if (next === prev) {
-          active = prevMedia
-        }
-        else if (next === prevMedia) {
-          active = prevMedia
+        let next
+        if (inObject(key, media) && (
+          value === prev
+          || value === invalid
+          || input === prev
+          || input === invalid
+        )) {
+          next = prev
+          active = invalid
         }
         else {
+          next = input
           active = create(next, keyPath)
         }
 
@@ -432,7 +428,12 @@ export function createReactive(origin, options = {}) {
         media[key] = active
 
         if (trigger && isFunction(dispatch)) {
-          dispatch({ keyPath, value, next, prev, active })
+          dispatch({
+            keyPath,
+            value,
+            next, active,
+            prev, invalid,
+          })
         }
 
         return active
@@ -521,26 +522,22 @@ export function createReactive(origin, options = {}) {
 
         const setValue = (value, trigger) => {
           const prev = origin[i]
-          const prevMedia = media[i]
-          const next = isFunction(set) ? set(keyPath, value, prev) : value
+          const invalid = media[i]
+          const input = isFunction(set) ? set(keyPath, value) : value
 
           let active
-          if (!inObject(i, media)) {
-            active = create(next, keyPath)
-          }
-          else if (value === prev) {
-            active = prevMedia
-          }
-          else if (value === prevMedia) {
-            active = prevMedia
-          }
-          else if (next === prev) {
-            active = prevMedia
-          }
-          else if (next === prevMedia) {
-            active = prevMedia
+          let next
+          if (inObject(i, media) && (
+            value === prev
+            || value === invalid
+            || input === prev
+            || input === invalid
+          )) {
+            next = prev
+            active = invalid
           }
           else {
+            next = input
             active = create(next, keyPath)
           }
 
@@ -548,7 +545,12 @@ export function createReactive(origin, options = {}) {
           media[i] = active
 
           if (trigger && isFunction(dispatch)) {
-            dispatch({ keyPath, value, next, prev, active })
+            dispatch({
+              keyPath,
+              value,
+              next, active,
+              prev, invalid,
+            })
           }
 
           return active
@@ -757,26 +759,22 @@ export function createProxy(origin, options = {}) {
         }
 
         const prev = origin[key]
-        const prevMedia = media[key]
-        const next = isFunction(set) && !isSymbol(key) ? set(keyPath, value) : value
+        const invalid = media[key]
+        const input = isFunction(set) ? set(keyPath, value) : value
 
         let active
-        if (!inObject(key, media)) {
-          active = create(next, keyPath)
-        }
-        else if (value === prev) {
-          active = prevMedia
-        }
-        else if (value === prevMedia) {
-          active = prevMedia
-        }
-        else if (next === prev) {
-          active = prevMedia
-        }
-        else if (next === prevMedia) {
-          active = prevMedia
+        let next
+        if (inObject(key, media) && (
+          value === prev
+          || value === invalid
+          || input === prev
+          || input === invalid
+        )) {
+          next = prev
+          active = invalid
         }
         else {
+          next = input
           active = create(next, keyPath)
         }
 
@@ -784,7 +782,12 @@ export function createProxy(origin, options = {}) {
         Reflect.set(target, key, active, receiver)
 
         if (isFunction(dispatch)) {
-          dispatch({ keyPath, value, next, prev, active })
+          dispatch({
+            keyPath,
+            value,
+            next, active,
+            prev, invalid,
+          })
         }
 
         return true
@@ -920,26 +923,22 @@ export function createProxy(origin, options = {}) {
         }
 
         const prev = origin[key]
-        const prevMedia = media[key]
-        const next = isFunction(set) && !isSymbol(key) ? set(keyPath, value) : value
+        const invalid = media[key]
+        const input = isFunction(set) ? set(keyPath, value) : value
 
         let active
-        if (!inObject(key, media)) {
-          active = create(next, keyPath)
-        }
-        else if (value === prev) {
-          active = prevMedia
-        }
-        else if (value === prevMedia) {
-          active = prevMedia
-        }
-        else if (next === prev) {
-          active = prevMedia
-        }
-        else if (next === prevMedia) {
-          active = prevMedia
+        let next
+        if (inObject(key, media) && (
+          value === prev
+          || value === invalid
+          || input === prev
+          || input === invalid
+        )) {
+          next = prev
+          active = invalid
         }
         else {
+          next = input
           active = create(next, keyPath)
         }
 
@@ -947,7 +946,12 @@ export function createProxy(origin, options = {}) {
         Reflect.set(target, key, active, receiver)
 
         if (isFunction(dispatch)) {
-          dispatch({ keyPath, value, next, prev, active })
+          dispatch({
+            keyPath,
+            value,
+            next, active,
+            prev, invalid,
+          })
         }
 
         return true
