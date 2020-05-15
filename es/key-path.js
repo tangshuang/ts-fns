@@ -93,7 +93,7 @@ export function parse(obj, key) {
  * @param {string|array} key
  */
 export function assign(obj, key, value) {
-  const chain = isArray(key) ? key : makeKeyChain(key)
+  const chain = isArray(key) ? [...key] : makeKeyChain(key)
 
   if (!chain.length) {
     return obj
@@ -136,7 +136,7 @@ export function assign(obj, key, value) {
  * @param {string|array} key
  */
 export function remove(obj, key) {
-  const chain = isArray(key) ? key : makeKeyChain(key)
+  const chain = isArray(key) ? [...key] : makeKeyChain(key)
 
   if (!chain.length) {
     return obj
