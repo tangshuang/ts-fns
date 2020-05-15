@@ -6,7 +6,7 @@ import { unionArray } from './array.js'
 
 /** */
 export function isUndefined(value) {
-  return value === undefined
+  return typeof value === 'undefined'
 }
 
 /** */
