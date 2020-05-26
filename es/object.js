@@ -182,6 +182,9 @@ export function define(obj, key, value) {
     else if ((isFunction(value.set) && isFunction(value.get))) {
       return Object.defineProperty(obj, key, value)
     }
+    else if ('value' in value) {
+      return Object.defineProperty(obj, key, value)
+    }
     else {
       return Object.defineProperty(obj, key, { value })
     }
