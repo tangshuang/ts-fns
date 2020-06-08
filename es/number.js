@@ -4,8 +4,7 @@
 
 
 import { formatString, padRight, padLeft, CHARS } from './string.js'
-import { isString, isNumeric, isNumber, isNaN } from './is.js'
-import { createSafeExp } from './regexp.js'
+import { isString, isNumeric, isNumber, isNaN, isUndefined } from './is.js'
 
 /** */
 export function numerify(num) {

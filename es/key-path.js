@@ -2,7 +2,7 @@
  * @module key-path
  */
 
-import { isObject, isSymbol, isArray } from './is.js'
+import { isObject, isSymbol, isArray, isUndefined } from './is.js'
 
 /**
  * convert a keyPath string to be an array
@@ -79,8 +79,8 @@ export function parse(obj, key) {
   let target = obj
   for (let i = 0, len = chain.length; i < len; i ++) {
     const one = chain[i]
-    if (target[one] === undefined) {
-      return undefined
+    if (isUndefined(target[one])) {
+      return
     }
     target = target[one]
   }
@@ -112,7 +112,7 @@ export function assign(obj, key, value) {
     const current = chain[i]
     let next = chain[i + 1]
     // at the end
-    if (next === undefined && i === len - 1) {
+    if (isUndefined(next) && i === len - 1) {
       next = tail
     }
 

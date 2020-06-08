@@ -4,7 +4,7 @@
 
 /** */
 export function createSafeExp(exp) {
-  const sign = '*.?+$^[](){}|\\/'
+  const sign = '*.?+-$^!<>[](){}|\\/'
   const signArr = sign.split('')
   const expArr = exp.split('')
   const expList = expArr.map(char => signArr.indexOf(char) > -1 ? '\\' + char : char)

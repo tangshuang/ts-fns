@@ -3,7 +3,7 @@
  */
 
 import { getStringHash } from './string.js'
-import { isArray, isObject, isFile, isDate, isFunction, inArray, isSymbol, inObject } from './is.js'
+import { isArray, isObject, isFile, isDate, isFunction, inArray, isSymbol, inObject, isUndefined } from './is.js'
 
 /** */
 export function clone(obj) {
@@ -272,7 +272,7 @@ export function iterate(obj, fn) {
     for (let i = 0, len = obj.length; i < len; i ++) {
       const item = obj[i]
       const res = fn(item, i, obj)
-      if (res !== undefined) {
+      if (!isUndefined(res)) {
         return res
       }
     }
@@ -283,7 +283,7 @@ export function iterate(obj, fn) {
       const key = keys[i]
       const value = obj[key]
       const res = fn(value, key, obj)
-      if (res !== undefined) {
+      if (!isUndefined(res)) {
         return res
       }
     }
@@ -295,7 +295,7 @@ export function find(obj, fn) {
   return iterate(obj, (value, key) => {
     const res = fn(value, key, obj)
     if (res) {
-      return value === undefined ? null : value
+      return isUndefined(value) ? null : value
     }
   })
 }
@@ -449,7 +449,7 @@ export function createReactive(origin, options = {}) {
           return output
         },
         set: (value) => {
-          if (isFunction(writable) && !writable(keyPath)) {
+          if (isFunction(writable) && !writable(keyPath, value)) {
             return media[key]
           }
 
@@ -485,6 +485,7 @@ export function createReactive(origin, options = {}) {
           }
 
           const prev = origin[key]
+          const invalid = media[key]
 
           if (isFunction(del)) {
             del(keyPath)
@@ -495,13 +496,14 @@ export function createReactive(origin, options = {}) {
           delete origin[key]
 
           if (isFunction(dispatch)) {
+            const none = undefined
             dispatch({
               keyPath,
-              value: undefined,
-              next: undefined,
-              prev,
-              active: undefined,
-            }, true)
+              value: none,
+              next: none,
+              active: none,
+              prev, invalid,
+            }, isUndefined(prev))
           }
 
           return true
@@ -566,7 +568,7 @@ export function createReactive(origin, options = {}) {
             return output
           },
           set: (value) => {
-            if (isFunction(writable) && !writable(keyPath)) {
+            if (isFunction(writable) && !writable(keyPath, value)) {
               return media[i]
             }
 
@@ -585,7 +587,7 @@ export function createReactive(origin, options = {}) {
     // change array prototype methods
     const modify = (fn) => ({
       value: function(...args) {
-        if (isFunction(writable) && !writable(parents)) {
+        if (isFunction(writable) && !writable(parents, origin)) {
           throw new TypeError(fn + ' is not allowed. The array is not writable.')
         }
 
@@ -646,8 +648,9 @@ export function createReactive(origin, options = {}) {
             keyPath: parents,
             value: origin,
             next: origin,
-            prev: origin,
             active: reactive,
+            prev: origin,
+            invalid: reactive,
           }, true)
         }
 
@@ -757,7 +760,7 @@ export function createProxy(origin, options = {}) {
       set: (target, key, value, receiver) => {
         const keyPath = [...parents, key]
 
-        if (isFunction(writable) && !writable(keyPath)) {
+        if (isFunction(writable) && !writable(keyPath, value)) {
           return false
         }
 
@@ -803,6 +806,7 @@ export function createProxy(origin, options = {}) {
         }
 
         const prev = origin[key]
+        const invalid = media[key]
 
         if (isFunction(del) && !isSymbol(key)) {
           del(keyPath)
@@ -812,13 +816,14 @@ export function createProxy(origin, options = {}) {
         Reflect.deleteProperty(target, key)
 
         if (isFunction(dispatch)) {
+          const none = undefined
           dispatch({
             keyPath,
-            value: undefined,
-            next: undefined,
-            prev,
-            active: undefined,
-          }, true)
+            value: none,
+            next: none,
+            active: none,
+            prev, invalid,
+          }, !isUndefined(prev))
         }
 
         return true
@@ -860,7 +865,7 @@ export function createProxy(origin, options = {}) {
         ]
         if (inArray(key, methods)) {
           return (...args) => {
-            if (isFunction(writable) && !writable(parents)) {
+            if (isFunction(writable) && !writable(parents, origin)) {
               throw new TypeError(key + ' is not allowed. The array is not writable.')
             }
 
@@ -874,8 +879,9 @@ export function createProxy(origin, options = {}) {
                 keyPath: parents,
                 value: origin,
                 next: origin,
-                prev: origin,
                 active: proxy,
+                prev: origin,
+                invalid: proxy,
               }, true)
             }
 
@@ -899,13 +905,13 @@ export function createProxy(origin, options = {}) {
       set: (target, key, value, receiver) => {
         const keyPath = [...parents, key]
 
-        if (isFunction(writable) && !writable(keyPath)) {
+        if (isFunction(writable) && !writable(keyPath, value)) {
           return false
         }
 
         // operate like media.length = 0
         if (key === 'length') {
-          if (isFunction(writable) && !writable(parents)) {
+          if (isFunction(writable) && !writable(parents, origin)) {
             throw new TypeError('Length could not be changed. The array is not writable.')
           }
 
@@ -967,6 +973,7 @@ export function createProxy(origin, options = {}) {
         }
 
         const prev = origin[key]
+        const invalid = media[key]
 
         if (isFunction(del) && !isSymbol(key)) {
           del(keyPath)
@@ -976,13 +983,14 @@ export function createProxy(origin, options = {}) {
         Reflect.defineProperty(target, key)
 
         if (isFunction(dispatch)) {
+          const none = undefined
           dispatch({
             keyPath,
-            value: undefined,
-            next: undefined,
-            prev,
-            active: undefined,
-          }, true)
+            value: none,
+            next: none,
+            active: none,
+            prev, invalid,
+          }, !isUndefined(prev))
         }
 
         return true
