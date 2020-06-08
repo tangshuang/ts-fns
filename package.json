@@ -1,6 +1,6 @@
 {
   "name": "ts-fns",
-  "version": "6.4.4",
+  "version": "6.4.5",
   "description": "Public Functions.",
   "main": "cjs/index.js",
   "module": "es/index.js",
