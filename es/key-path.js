@@ -2,27 +2,39 @@
  * @module key-path
  */
 
-import { isObject, isSymbol, isArray, isUndefined } from './is.js'
+import { isObject, isSymbol, isArray, isUndefined, isNumber, isString } from './is.js'
 
 /**
  * convert a keyPath string to be an array
  * @param {string} path
- * @param {boolean} strict whether to keep square brackets of array index key
+ * @param {boolean} strict whether to keep square bracket keys
  * @return {array}
  */
 export function makeKeyChain(path, strict = false) {
-  const reg = strict ? /\.|(?=\[)/ : /\.|\[|\]\.|\]\[|\]/
-  let chain = path.toString().split(reg)
-  if (!strict) {
-    chain = chain.filter(item => !!item)
-  }
+  const mapping = []
+  const text = path.replace(/\[.*?\]/g, (matched, position) => {
+    const index = mapping.length
+    mapping.push(matched)
+    return `${position ? '.' : ''}{${index}}`
+  })
+
+  const chain = text.split('.')
+  chain.forEach((item, i) => {
+    if (/^\{\d+\}$/.test(item)) {
+      const index = item.substring(1, item.length - 1)
+      const str = mapping[index]
+      const key = strict ? str : str.substring(1, str.length - 1)
+      chain[i] = key
+    }
+  })
+
   return chain
 }
 
 /**
  * convert an array to be a keyPath string
  * @param {array} chain the array for path, without any symbol in it
- * @param {boolean} strict
+ * @param {boolean} strict wether to use [] to wrap number key
  * @return {string}
  */
 export function makeKeyPath(chain, strict = false) {
@@ -40,11 +52,21 @@ export function makeKeyPath(chain, strict = false) {
       const symbol = key.toString()
       path += '[' + symbol + ']'
     }
-    else if (!strict && /^[0-9]+$/.test(key)) {
+    // 1
+    else if (strict && isNumber(key)) {
       path += '[' + key + ']'
     }
-    else if (strict && /^\[[0-9]+\]$/.test(key)) {
+    // '1'
+    else if (strict && isString(key) && /^[0-9]+$/.test(key)) {
+      path += '[' + key + ']'
+    }
+    // '[1]' or '[a]' or '[a.b]'
+    else if (strict && isString(key) && /^\[.*\]$/.test(key)) {
       path += key
+    }
+    // 'a.b'
+    else if (isString(key) && key.indexOf('.') > -1) {
+      path += '[' + key + ']'
     }
     else {
       path += path ? '.' + key : key
@@ -70,7 +92,7 @@ export function makeKey(keyPath) {
  * @param {string|array} key
  */
 export function parse(obj, key) {
-  let chain = isArray(key) ? key : makeKeyChain(key)
+  let chain = isArray(key) ? [...key] : makeKeyChain(key)
 
   if (!chain.length) {
     return obj
@@ -116,12 +138,13 @@ export function assign(obj, key, value) {
       next = tail
     }
 
-    if (/^[0-9]+$/.test(next) && !isArray(target[current])) {
+    if (isString(next) && /^[0-9]+$/.test(next) && !isArray(target[current])) {
       target[current] = []
     }
     else if (typeof target[current] !== 'object') {
       target[current] = {}
     }
+
     target = target[current]
   }
 
