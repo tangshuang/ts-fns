@@ -61,29 +61,54 @@
  * @module class
  */
 
+import { each, define } from './object.js'
+
 /** */
 export function getConstructorOf(ins) {
   return Object.getPrototypeOf(ins).constructor
 }
 
-/** */
-export function inherit(child, parent) {
-  return Object.setPrototypeOf(child, parent)
+/**
+ * Make Child Class inherited from Parent Class, contains statics properties
+ * @param {Class} Child it's best to be an empty Class
+ * @param {Class} Parent
+ */
+export function inherit(Child, Parent) {
+  Child.prototype = Object.create(Parent.prototype)
+  Child.prototype.constructor = Child
+
+  each(Parent, (value, key) => {
+    const descriptor = Object.getOwnPropertyDescriptor(statics, key)
+    define(Child, key, descriptor)
+  })
+
+  return Child
 }
 
-/** */
-export function extend(Class, proptotypes, statics) {
-  const { name } = Class
-  const o = {
-    [name]: class extends Class {},
-  }
-  const C = o[name]
+/**
+ * Create a new Child Class which is extended from Parent Class
+ * @param {Class} Parent
+ * @param {object} proptotypes
+ * @param {object} statics
+ */
+export function extend(Parent, proptotypes = {}, statics = {}) {
+  class NewClass extends Parent {}
+  const { name } = Parent
 
-  Object.assign(C.prototype, proptotypes || {})
-  Object.assign(C, { ...Class })
-  Object.assign(C, statics || {})
+  Object.assign(NewClass.prototype, proptotypes)
+  NewClass.prototype.constructor = NewClass
 
-  return C
+  define(NewClass, 'name', {
+    writable: true,
+    value: name,
+  })
+
+  each(statics, (value, key) => {
+    const descriptor = Object.getOwnPropertyDescriptor(statics, key)
+    define(NewClass, key, descriptor)
+  })
+
+  return NewClass
 }
 </code></pre>
         </article>
