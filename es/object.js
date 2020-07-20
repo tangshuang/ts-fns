@@ -295,7 +295,7 @@ export function find(obj, fn) {
   return iterate(obj, (value, key) => {
     const res = fn(value, key, obj)
     if (res) {
-      return isUndefined(value) ? null : value
+      return value
     }
   })
 }
