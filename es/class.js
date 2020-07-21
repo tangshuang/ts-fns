@@ -15,14 +15,32 @@ export function getConstructorOf(ins) {
  * @param {Class} Parent
  */
 export function inherit(Child, Parent) {
-  Child.prototype = Object.create(Parent.prototype)
-  Child.prototype.constructor = Child
+  const prototypes = Object.getOwnPropertyNames(Parent.prototype)
+  define(Child.proptotype, 'constructor', { value: Child })
+  prototypes.forEach((key) => {
+    if (key === 'constructor') {
+      return
+    }
+    const descriptor = Object.getOwnPropertyDescriptor(Parent.proptotype, key)
+    define(Child.prototype, key, descriptor)
+  })
 
   each(Parent, (value, key) => {
-    const descriptor = Object.getOwnPropertyDescriptor(statics, key)
+    const descriptor = Object.getOwnPropertyDescriptor(Parent, key)
     define(Child, key, descriptor)
   })
 
+  return Child
+}
+
+/**
+ * Make Parent Class to be prototype of Child Class
+ * @param {Class} Child
+ * @param {Class} Parent
+ */
+export function proto(Child, Parent) {
+  Object.setPrototypeOf(Child, Parent)
+  Object.setPrototypeOf(Child.prototype, Parent.prototype)
   return Child
 }
 
@@ -33,21 +51,21 @@ export function inherit(Child, Parent) {
  * @param {object} statics
  */
 export function extend(Parent, proptotypes = {}, statics = {}) {
-  class NewClass extends Parent {}
+  class Child extends Parent {}
   const { name } = Parent
 
-  Object.assign(NewClass.prototype, proptotypes)
-  NewClass.prototype.constructor = NewClass
+  Object.assign(Child.prototype, proptotypes)
+  Child.prototype.constructor = Child
 
-  define(NewClass, 'name', {
+  define(Child, 'name', {
     writable: true,
     value: name,
   })
 
   each(statics, (value, key) => {
     const descriptor = Object.getOwnPropertyDescriptor(statics, key)
-    define(NewClass, key, descriptor)
+    define(Child, key, descriptor)
   })
 
-  return NewClass
+  return Child
 }
