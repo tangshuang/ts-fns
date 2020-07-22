@@ -38,6 +38,86 @@ export function clone(obj) {
   return result
 }
 
+/**
+ * Deep extend an object
+ * @param {*} obj1
+ * @param {*} obj2
+ * @param {*} mixArr 0: extend array as object, 1: push into array, 2: replace all items
+ */
+export function extend(obj1, obj2, mixArr = 0) {
+  const exists = []
+  const extend = (obj1, obj2) => {
+    each(obj2, (value, key) => {
+      const originalValue = obj1[key]
+
+      // check whether extended
+      const exist = exists.find(item => item.e === value)
+      if (exist) {
+        if (originalValue === exist.o) {
+          return
+        }
+        if (!originalValue || typeof originalValue !== 'object') {
+          obj1[key] = exist.o
+          return
+        }
+      }
+
+      if (isObject(originalValue)) {
+        if (isObject(value) || isArray(value)) {
+          extend(originalValue, value, mixArr)
+        }
+        else {
+          obj1[key] = value
+        }
+      }
+      else if (isArray(originalValue)) {
+        if (isObject(value)) {
+          if (mixArr === 0 || mixArr === 1) {
+            extend(originalValue, value, mixArr)
+          }
+          else if (mixArr === 2) {
+            originalValue.length = 0
+            extend(originalValue, value, mixArr)
+          }
+          else {
+            obj1[key] = value
+          }
+        }
+        else if (isArray(value)) {
+          if (mixArr === 0) {
+            extend(originalValue, value, mixArr)
+          }
+          else if (mixArr === 1) {
+            originalValue.push(...value)
+          }
+          else if (mixArr === 2) {
+            originalValue.length = 0
+            originalValue.push(...value)
+          }
+          else {
+            obj1[key] = value
+          }
+        }
+        else {
+          obj1[key] = value
+        }
+      }
+      else {
+        obj1[key] = value
+      }
+    })
+
+    // record this pair
+    exists.push({
+      o: obj1, // original
+      e: obj2, // extend by this
+    })
+
+    return obj1
+  }
+  return extend(obj1, obj2)
+}
+
 /** */
 export function merge(obj1, obj2, concatArray = true) {
   obj1 = clone(obj1)

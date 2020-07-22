@@ -1,6 +1,6 @@
-import { merge, createReactive, createProxy } from '../es/object.js'
+import { merge, createReactive, createProxy, extend } from '../es/object.js'
 
-describe('merge', () => {
+describe('object', () => {
   test('merge', () => {
     const obj1 = {
       body: {
@@ -233,5 +233,20 @@ describe('proxy', () => {
     a.body.hand = false
     expect(a.body.hand).toBe('false')
     expect(some.body.hand).toBe(false)
+  })
+
+  test('extend', () => {
+    const o = {}
+    const e = {
+      body: {
+        hand: 2,
+        foot: 2,
+      },
+    }
+
+    extend(o, e)
+
+    expect(o.body.hand).toBe(2)
+    expect(o.body.foot).toBe(2)
   })
 })
