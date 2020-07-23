@@ -14,5 +14,10 @@ describe('class', () => {
 
     const b = new B('tomi')
     expect(b.getName()).toBe('tomi')
+
+    const C = inherit(A, {}, class {
+      static default = 'c'
+    })
+    expect(C.default).toBe('c')
   })
 })
