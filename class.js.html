@@ -82,6 +82,7 @@ export function inherit(Parent, proptotypes = {}, statics = {}) {
   Child.prototype.constructor = Child
 
   define(Child, 'name', {
+    configurable: true,
     writable: true,
     value: name,
   })
