@@ -561,7 +561,7 @@ export function createReactive(origin, options = {}) {
           const keyPath = [...parents, key]
 
           if (isFunction(writable) && !writable(keyPath)) {
-            return false
+            return
           }
 
           const prev = origin[key]
@@ -576,7 +576,7 @@ export function createReactive(origin, options = {}) {
           delete origin[key]
 
           if (isFunction(dispatch)) {
-            const none = undefined
+            const none = void 0
             dispatch({
               keyPath,
               value: none,
@@ -585,8 +585,6 @@ export function createReactive(origin, options = {}) {
               prev, invalid,
             }, isUndefined(prev))
           }
-
-          return true
         },
       },
     })
@@ -668,7 +666,21 @@ export function createReactive(origin, options = {}) {
     const modify = (fn) => ({
       value: function(...args) {
         if (isFunction(writable) && !writable(parents, origin)) {
-          throw new TypeError(fn + ' is not allowed. The array is not writable.')
+          if (fn === 'push' || fn === 'unshift') {
+            return origin.length
+          }
+          else if (fn === 'splice') {
+            return []
+          }
+          else if (fn === 'shift') {
+            return origin[0]
+          }
+          else if (fn === 'pop') {
+            return origin[origin.length - 1]
+          }
+          else {
+            return origin
+          }
         }
 
         // deal with original data
@@ -841,7 +853,7 @@ export function createProxy(origin, options = {}) {
         const keyPath = [...parents, key]
 
         if (isFunction(writable) && !writable(keyPath, value)) {
-          return false
+          return true
         }
 
         const prev = origin[key]
@@ -882,7 +894,7 @@ export function createProxy(origin, options = {}) {
         const keyPath = [...parents, key]
 
         if (isFunction(writable) && !writable(keyPath)) {
-          return false
+          return true
         }
 
         const prev = origin[key]
@@ -946,7 +958,21 @@ export function createProxy(origin, options = {}) {
         if (inArray(key, methods)) {
           return (...args) => {
             if (isFunction(writable) && !writable(parents, origin)) {
-              throw new TypeError(key + ' is not allowed. The array is not writable.')
+              if (key === 'push' || key === 'unshift') {
+                return origin.length
+              }
+              else if (key === 'splice') {
+                return []
+              }
+              else if (key === 'shift') {
+                return origin[0]
+              }
+              else if (key === 'pop') {
+                return origin[origin.length - 1]
+              }
+              else {
+                return origin
+              }
             }
 
             // change original data
@@ -986,13 +1012,13 @@ export function createProxy(origin, options = {}) {
         const keyPath = [...parents, key]
 
         if (isFunction(writable) && !writable(keyPath, value)) {
-          return false
+          return true
         }
 
         // operate like media.length = 0
         if (key === 'length') {
           if (isFunction(writable) && !writable(parents, origin)) {
-            throw new TypeError('Length could not be changed. The array is not writable.')
+            return true
           }
 
           origin.length = value
@@ -1049,7 +1075,7 @@ export function createProxy(origin, options = {}) {
         const keyPath = [...parents, key]
 
         if (isFunction(writable) && !writable(keyPath)) {
-          return false
+          return true
         }
 
         const prev = origin[key]
