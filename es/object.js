@@ -301,34 +301,37 @@ export function flat(obj, determine) {
 }
 
 /** */
-export function each(obj, fn) {
-  if (isArray(obj)) {
-    obj.forEach(fn)
-  }
-  else {
-    const keys = Object.keys(obj)
-    keys.forEach((key) => {
-      const value = obj[key]
-      fn(value, key, obj)
-    })
-  }
-}
-
-/** */
-export function foreach(obj, fn) {
-  if (isArray(obj)) {
-    for (let i = 0, len = obj.length; i < len; i ++) {
-      const descriptor = Object.getOwnPropertyDescriptor(obj, i)
-      fn(descriptor, i, obj)
+export function each(obj, fn, descriptor = false) {
+  const withDescriptor = () => {
+    if (isArray(obj)) {
+      for (let i = 0, len = obj.length; i < len; i ++) {
+        const descriptor = Object.getOwnPropertyDescriptor(obj, i)
+        fn(descriptor, i, obj)
+      }
+    }
+    else {
+      const keys = Object.keys(obj)
+      keys.forEach((key) => {
+        const descriptor = Object.getOwnPropertyDescriptor(obj, key)
+        fn(descriptor, key, obj)
+      })
     }
   }
-  else {
-    const keys = Object.keys(obj)
-    keys.forEach((key) => {
-      const descriptor = Object.getOwnPropertyDescriptor(obj, key)
-      fn(descriptor, key, obj)
-    })
+
+  const withIterator = () => {
+    if (isArray(obj)) {
+      obj.forEach(fn)
+    }
+    else {
+      const keys = Object.keys(obj)
+      keys.forEach((key) => {
+        const value = obj[key]
+        fn(value, key, obj)
+      })
+    }
   }
+
+  return descriptor ? withDescriptor() : withIterator()
 }
 
 /** */
