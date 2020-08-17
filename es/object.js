@@ -303,19 +303,15 @@ export function flat(obj, determine) {
 /** */
 export function each(obj, fn, descriptor = false) {
   const withDescriptor = () => {
-    if (isArray(obj)) {
-      for (let i = 0, len = obj.length; i < len; i ++) {
-        const descriptor = Object.getOwnPropertyDescriptor(obj, i)
-        fn(descriptor, i, obj)
-      }
-    }
-    else {
-      const keys = Object.keys(obj)
-      keys.forEach((key) => {
-        const descriptor = Object.getOwnPropertyDescriptor(obj, key)
+    const descriptors = Object.getOwnPropertyDescriptors(obj)
+    const keys = Object.keys(descriptors)
+    keys.forEach((key) => {
+      const descriptor = descriptors[key]
+      const { get, set, enumerable, configurable, writable } = descriptor
+      if (enumerable || (get || set) || (configurable && writable)) {
         fn(descriptor, key, obj)
-      })
-    }
+      }
+    })
   }
 
   const withIterator = () => {

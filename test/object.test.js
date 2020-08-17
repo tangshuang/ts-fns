@@ -1,4 +1,4 @@
-import { merge, createReactive, createProxy, extend } from '../es/object.js'
+import { merge, createReactive, createProxy, extend, each } from '../es/object.js'
 
 describe('object', () => {
   test('merge', () => {
@@ -248,5 +248,34 @@ describe('proxy', () => {
 
     expect(o.body.hand).toBe(2)
     expect(o.body.foot).toBe(2)
+  })
+
+  test('each', () => {
+    let count = 0
+
+    each({
+      name: 'name',
+      do() {},
+      get len() { return this.name.length },
+    }, () => count ++)
+
+    expect(count).toBe(3)
+
+    let b = 0
+    let c = 0
+
+    class Dog {
+      static name = 'dog'
+      static bark() {}
+      static get age() {
+        return 10
+      }
+    }
+
+    each(Dog, () => b ++, true)
+    expect(b).toBe(3)
+
+    each(Dog, () => c ++)
+    expect(c).toBe(1) // only `name` was found
   })
 })
