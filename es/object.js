@@ -315,6 +315,23 @@ export function each(obj, fn) {
 }
 
 /** */
+export function foreach(obj, fn) {
+  if (isArray(obj)) {
+    for (let i = 0, len = obj.length; i < len; i ++) {
+      const descriptor = Object.getOwnPropertyDescriptor(obj, i)
+      fn(descriptor, i, obj)
+    }
+  }
+  else {
+    const keys = Object.keys(obj)
+    keys.forEach((key) => {
+      const descriptor = Object.getOwnPropertyDescriptor(obj, i)
+      fn(descriptor, key, obj)
+    })
+  }
+}
+
+/** */
 export function map(obj, fn) {
   if (isArray(obj)) {
     return obj.map(fn)
