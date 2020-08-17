@@ -384,7 +384,7 @@ export function foreach(obj, fn) {
   else {
     const keys = Object.keys(obj)
     keys.forEach((key) => {
-      const descriptor = Object.getOwnPropertyDescriptor(obj, i)
+      const descriptor = Object.getOwnPropertyDescriptor(obj, key)
       fn(descriptor, key, obj)
     })
   }
