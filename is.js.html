@@ -299,9 +299,13 @@ export function isInheritedOf(SubConstructor, Constructor, strict) {
 }
 
 /** */
-export function inObject(key, obj) {
+export function inObject(key, obj, own) {
   if (typeof obj !== 'object') {
     return false
+  }
+  if (own) {
+    const keys = Object.getOwnPropertyNames(obj)
+    return inArray(key, keys)
   }
   return key in obj
 }
