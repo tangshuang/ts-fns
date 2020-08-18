@@ -3,6 +3,7 @@
  */
 
 import { each, define } from './object.js'
+import { inObject } from './is.js'
 
 /** */
 export function getConstructorOf(ins) {
@@ -15,12 +16,14 @@ export function getConstructorOf(ins) {
  * @param {object} proptotypes
  * @param {object} statics
  */
-export function inherit(Parent, proptotypes = {}, statics = {}) {
+export function inherit(Parent, proptotypes, statics) {
   class Child extends Parent {}
   const { name } = Parent
 
-  Object.assign(Child.prototype, proptotypes)
-  Child.prototype.constructor = Child
+  if (proptotypes) {
+    Object.assign(Child.prototype, proptotypes)
+    Child.prototype.constructor = Child
+  }
 
   define(Child, 'name', {
     configurable: true,
@@ -28,10 +31,18 @@ export function inherit(Parent, proptotypes = {}, statics = {}) {
     value: name,
   })
 
-  each(statics, (value, key) => {
-    const descriptor = Object.getOwnPropertyDescriptor(statics, key)
+  each(Parent, (descriptor, key) => {
+    if (statics && inObject(key, statics, true)) {
+      return
+    }
     define(Child, key, descriptor)
-  })
+  }, true)
+
+  if (statics) {
+    each(statics, (descriptor, key) => {
+      define(Child, key, descriptor)
+    }, true)
+  }
 
   return Child
 }
