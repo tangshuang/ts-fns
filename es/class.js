@@ -18,18 +18,17 @@ export function getConstructorOf(ins) {
  */
 export function inherit(Parent, proptotypes, statics) {
   class Child extends Parent {}
-  const { name } = Parent
+
+  const name = Object.getOwnPropertyDescriptor(Parent, 'name')
+  define(Child, 'name', {
+    ...name,
+    configurable: true,
+  })
 
   if (proptotypes) {
     Object.assign(Child.prototype, proptotypes)
     Child.prototype.constructor = Child
   }
-
-  define(Child, 'name', {
-    configurable: true,
-    writable: true,
-    value: name,
-  })
 
   each(Parent, (descriptor, key) => {
     if (statics && inObject(key, statics, true)) {
