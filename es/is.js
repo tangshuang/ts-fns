@@ -71,7 +71,7 @@ export function isBoolean(value) {
 
 /** */
 export function isNumeric(value) {
-  return isString(value) && /^\-{0,1}[0-9]+(\.{0,1}[0-9]+){0,1}$/.test(value)
+  return isString(value) && /^\-{0,1}[0-9]+\.{0,1}([0-9]+){0,1}$/.test(value)
 }
 
 /** */
