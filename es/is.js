@@ -117,10 +117,11 @@ export function isEmpty(value) {
 
 /** */
 export function isFunction(value) {
+  const entire = value + ''
   return typeof value === 'function'
-		&& (value + '') !== `function ${value.name}() { [native code] }` // String, Number
-		&& (value + '').indexOf('class ') !== 0 // class
-		&& (value + '').indexOf('_classCallCheck(this,') === -1 // babel transformed class
+    && entire !== `function ${value.name}() { [native code] }` // std lib: String, Number...
+    && entire.indexOf('class ') !== 0 // native class
+    && entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}")).trim().indexOf('_classCallCheck(this,') !== 0 // babel transformed class
 }
 
 /** */
