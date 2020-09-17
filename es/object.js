@@ -307,8 +307,8 @@ export function each(obj, fn, descriptor = false) {
     const keys = Object.keys(descriptors)
     keys.forEach((key) => {
       const descriptor = descriptors[key]
-      const { get, set, enumerable, configurable, writable } = descriptor
-      if (enumerable || (get || set) || (configurable && writable)) {
+      const { get, set, enumerable, writable } = descriptor
+      if (enumerable || (get || set) || ('value' in descriptor && writable)) {
         fn(descriptor, key, obj)
       }
     })

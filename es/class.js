@@ -45,3 +45,23 @@ export function inherit(Parent, proptotypes, statics) {
 
   return Child
 }
+
+/**
+ * mix Extend into Source, (notice: will override Source)
+ * @param {*} Source
+ * @param {*} Extend
+ */
+export function mixin(Source, Extend) {
+  each(Extend, (descriptor, key) => {
+    define(Source, key, descriptor)
+  }, true)
+
+  each(Extend.prototype, (descriptor, key) => {
+    if (key === 'constructor') {
+      return
+    }
+    define(Source.prototype, key, descriptor)
+  }, true)
+
+  return Source
+}
