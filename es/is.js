@@ -116,12 +116,20 @@ export function isEmpty(value) {
 }
 
 /** */
-export function isFunction(value, strict) {
-  return typeof value === 'function' && !isConstructor(value, !strict)
+export function isFunction(value) {
+  return typeof value === 'function' && !isConstructor(value, 2)
 }
 
-/** */
-export function isConstructor(f, loose) {
+/**
+ * judge whether a value is a Constructor
+ * @param {*} f
+ * @param {int} [strict] strict level
+ * - 3: should must be one of native code, native class definition or babel transformed class
+ * - 2: can be some function whose prototype has more than one properties
+ * - 1: can be some function which has this inside
+ * - 0: can be some function which has prototype
+ */
+export function isConstructor(f, strict) {
   if (typeof f !== 'function') {
     return false
   }
@@ -136,40 +144,43 @@ export function isConstructor(f, loose) {
   }
 
   const entire = f + ''
+  const fnBody = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}")).trim()
 
   // std lib: String, Number...
-  if (entire === `function ${f.name}() { [native code] }`) {
-    return true
-  }
+  const isNativeSTD = entire === `function ${f.name}() { [native code] }`
 
   // native class definition
-  if (entire.indexOf('class ') === 0) {
-    return true
+  const isNativeClass = entire.indexOf('class ') === 0
+
+  // babel transformed class, begin with '_classCallCheck(this,', may by minified by compile tool
+  const isBabelTransformedClass = /^[a-zA-Z0-9_]+\(this,/.test(fnBody)
+
+  const isMostStrict = isNativeSTD || isNativeClass || isBabelTransformedClass
+  if (strict == 3) {
+    return isMostStrict
   }
 
   // there are some properties on f.prototype
   const protos = Object.getOwnPropertyDescriptors(f.prototype)
   const keys = Object.keys(protos).filter(item => item !== 'constructor')
-  if (keys.length) {
-    return true
+  const hasProtos = !!keys.length
+
+  if (strict == 2) {
+    return isMostStrict || hasProtos
   }
 
-  const fnbody = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}")).trim()
+  // function() { this.name = 'xx' }
+  const topctx = fnBody.replace(/function.*?\{.*?\}/g, '')
+    .replace(/\n+/g, ';')
+    .replace(/\s+/g, '')
+    .replace(/;;/g, ';')
+  const hasThisInside = topctx.indexOf('this.') === 0 || topctx.indexOf(';this.') > -1 || topctx.indexOf('=this;') > -1
 
-  // babel transformed class, begin with '_classCallCheck(this,', may by minified by compile tool
-  if (/^[a-zA-Z0-9_]+\(this,/.test(fnbody)) {
-    return true
+  if (strict == 1) {
+    return isMostStrict || hasProtos || hasThisInside
   }
 
-  if (!loose) {
-    // function() { this.name = 'xx' }
-    const topctx = fnbody.replace(/function.*?\{.*?\}/g, '').replace(/\n+/g, ';').replace(/\s+/g, '').replace(/;;/g, ';')
-    if (topctx.indexOf('this.') === 0 || topctx.indexOf(';this.') > -1 || topctx.indexOf('=this;') > -1) {
-      return true
-    }
-  }
-
-  return false
+  return true
 }
 
 /** */
