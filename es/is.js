@@ -153,9 +153,11 @@ export function isConstructor(f, strict) {
   const isNativeClass = entire.indexOf('class ') === 0
 
   // babel transformed class, begin with '_classCallCheck(this,', may by minified by compile tool
-  const isBabelTransformedClass = /^[a-zA-Z0-9_]+\(this,/.test(fnBody)
+  const isBabelTransformedClass = /^[_a-zA-Z0-9]+\(this,/.test(fnBody)
+  // @babel/plugin-transform-runtime '(0, _classCallCheck2["default"])(this,'
+  const isBabelRuntimeTransformedClass = /^\(.*?\)\(this,/.test(fnBody)
 
-  const isMostStrict = isNativeSTD || isNativeClass || isBabelTransformedClass
+  const isMostStrict = isNativeSTD || isNativeClass || isBabelTransformedClass || isBabelRuntimeTransformedClass
   if (strict == 3) {
     return isMostStrict
   }
