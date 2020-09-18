@@ -17,17 +17,22 @@ describe('is', () => {
     expect(isFunction(String)).toBe(false)
     expect(isConstructor(String)).toBe(true)
 
-    function Some() {
-      this.name = 'some'
-    }
-    expect(isFunction(Some)).toBe(false)
-    expect(isConstructor(Some)).toBe(true)
-
     const xs = () => {
       this.xx = null
     }
     expect(isFunction(xs)).toBe(true)
     expect(isConstructor(xs)).toBe(false)
+
+    function Some() {
+      this.name = 'some'
+    }
+    expect(isFunction(Some)).toBe(true) // notice this line
+    expect(isConstructor(Some)).toBe(true)
+
+    function Next() {}
+    Next.prototype.get = function() {}
+    expect(isFunction(Next)).toBe(false)
+    expect(isConstructor(Next)).toBe(true)
 
     const Tx = class {}
     expect(isFunction(Tx)).toBe(false)
