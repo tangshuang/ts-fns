@@ -116,8 +116,8 @@ export function isEmpty(value) {
 }
 
 /** */
-export function isFunction(value) {
-  return typeof value === 'function' && !isConstructor(value, true)
+export function isFunction(value, strict) {
+  return typeof value === 'function' && !isConstructor(value, !strict)
 }
 
 /** */
