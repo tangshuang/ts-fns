@@ -176,11 +176,57 @@ export function isEmpty(value) {
 
 /** */
 export function isFunction(value) {
-  const entire = value + ''
-  return typeof value === 'function'
-    &amp;&amp; entire !== `function ${value.name}() { [native code] }` // std lib: String, Number...
-    &amp;&amp; entire.indexOf('class ') !== 0 // native class
-    &amp;&amp; entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}")).trim().indexOf('_classCallCheck(this,') !== 0 // babel transformed class
+  return typeof value === 'function' &amp;&amp; !isConstructor(value)
+}
+
+/** */
+export function isConstructor(f) {
+  if (typeof f !== 'function') {
+    return false
+  }
+
+  if (f === Symbol) {
+    return false
+  }
+
+  // bond function &amp;&amp; arrow function
+  if (!f.prototype) {
+    return false
+  }
+
+  const entire = f + ''
+
+  // std lib: String, Number...
+  if (entire === `function ${f.name}() { [native code] }`) {
+    return true
+  }
+
+  // native class definition
+  if (entire.indexOf('class ') === 0) {
+    return true
+  }
+
+  const fnbody = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}")).trim()
+
+  // babel transformed class, begin with '_classCallCheck(this,', may by minified by compile tool
+  if (/^[a-zA-Z0-9_$]+\(this,/.test(fnbody)) {
+    return true
+  }
+
+  // function() { this.name = 'xx' }
+  const topctx = fnbody.replace(/function.*?\{.*?\}/g, '').replace(/\n+/g, ';').replace(/\s+/g, '').replace(/;;/g, ';')
+  if (topctx.indexOf('this.') === 0 || topctx.indexOf(';this.') > -1 || topctx.indexOf('=this;') > -1) {
+    return true
+  }
+
+  // there are some properties on f.prototype
+  const protos = Object.getOwnPropertyDescriptors(f.prototype)
+  const keys = Object.keys(protos).filter(item => item !== 'constructor')
+  if (keys.length) {
+    return true
+  }
+
+  return false
 }
 
 /** */
@@ -259,25 +305,6 @@ export function isPromise(value) {
       &amp;&amp; (typeof value === 'object' || typeof value === 'function')
       &amp;&amp; typeof value.then === 'function'
     )
-}
-
-/** */
-export function isConstructor(f) {
-  if (typeof f !== 'function') {
-    return false
-  }
-
-  if (f === Symbol) {
-    return false
-  }
-
-  // bond function &amp;&amp; arrow function
-  const prototype = f.prototype
-  if (!prototype) {
-    return false
-  }
-
-  return true
 }
 
 /** */
