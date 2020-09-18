@@ -176,11 +176,11 @@ export function isEmpty(value) {
 
 /** */
 export function isFunction(value) {
-  return typeof value === 'function' &amp;&amp; !isConstructor(value)
+  return typeof value === 'function' &amp;&amp; !isConstructor(value, true)
 }
 
 /** */
-export function isConstructor(f) {
+export function isConstructor(f, loose) {
   if (typeof f !== 'function') {
     return false
   }
@@ -206,24 +206,26 @@ export function isConstructor(f) {
     return true
   }
 
-  const fnbody = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}")).trim()
-
-  // babel transformed class, begin with '_classCallCheck(this,', may by minified by compile tool
-  if (/^[a-zA-Z0-9_$]+\(this,/.test(fnbody)) {
-    return true
-  }
-
-  // function() { this.name = 'xx' }
-  const topctx = fnbody.replace(/function.*?\{.*?\}/g, '').replace(/\n+/g, ';').replace(/\s+/g, '').replace(/;;/g, ';')
-  if (topctx.indexOf('this.') === 0 || topctx.indexOf(';this.') > -1 || topctx.indexOf('=this;') > -1) {
-    return true
-  }
-
   // there are some properties on f.prototype
   const protos = Object.getOwnPropertyDescriptors(f.prototype)
   const keys = Object.keys(protos).filter(item => item !== 'constructor')
   if (keys.length) {
     return true
+  }
+
+  const fnbody = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}")).trim()
+
+  // babel transformed class, begin with '_classCallCheck(this,', may by minified by compile tool
+  if (/^[a-zA-Z0-9_]+\(this,/.test(fnbody)) {
+    return true
+  }
+
+  if (!loose) {
+    // function() { this.name = 'xx' }
+    const topctx = fnbody.replace(/function.*?\{.*?\}/g, '').replace(/\n+/g, ';').replace(/\s+/g, '').replace(/;;/g, ';')
+    if (topctx.indexOf('this.') === 0 || topctx.indexOf(';this.') > -1 || topctx.indexOf('=this;') > -1) {
+      return true
+    }
   }
 
   return false
