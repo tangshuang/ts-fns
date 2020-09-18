@@ -7,7 +7,7 @@
     "postversion": "git add . && git commit -m \"update version to $npm_package_version\"",
     "prepublishOnly": "npm run build && npm run test",
     "build": "node gulpfile.js && webpack",
-    "test": "jest",
+    "test": "cross-env NODE_ENV=test jest",
     "docs": "jsdoc -c ./jsdoc.json"
   },
   "author": "tangshuang",
@@ -19,6 +19,7 @@
     "@babel/preset-env": "^7.9.0",
     "babel-loader": "^8.1.0",
     "clean-jsdoc-theme": "^2.2.11",
+    "cross-env": "^7.0.2",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "jest": "^25.2.4",
