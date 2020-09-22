@@ -350,6 +350,11 @@ export function inObject(key, obj, own) {
     const keys = Object.getOwnPropertyNames(obj)
     return inArray(key, keys)
   }
+  // array keys will be ['0', '1', '2']
+  else if (isArray(obj)) {
+    const keys = Object.keys(obj)
+    return inArray('' + key, keys)
+  }
   else {
     const keys = Object.keys(obj)
     return inArray(key, keys)
