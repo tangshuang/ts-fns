@@ -291,7 +291,10 @@ export function inObject(key, obj, own) {
     const keys = Object.getOwnPropertyNames(obj)
     return inArray(key, keys)
   }
-  return key in obj
+  else {
+    const keys = Object.keys(obj)
+    return inArray(key, keys)
+  }
 }
 
 /** */
