@@ -54,11 +54,13 @@ describe('is', () => {
     expect(isConstructor(Tx, 1)).toBe(true)
     expect(isConstructor(Tx, 2)).toBe(true)
     expect(isConstructor(Tx, 3)).toBe(true)
+    expect(isConstructor(Tx, 4)).toBe(true)
 
     expect(isConstructor(String)).toBe(true)
     expect(isConstructor(String, 1)).toBe(true)
     expect(isConstructor(String, 2)).toBe(true)
     expect(isConstructor(String, 3)).toBe(true)
+    expect(isConstructor(String, 4)).toBe(true)
 
     const sy = test.bind(null)
     expect(isConstructor(sy)).toBe(false)

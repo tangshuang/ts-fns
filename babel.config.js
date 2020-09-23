@@ -9,7 +9,10 @@ module.exports = {
     test: {
       presets: [
         ['@babel/preset-env', {
-          exclude: ['@babel/plugin-transform-arrow-functions'],
+          exclude: [
+            '@babel/plugin-transform-arrow-functions',
+            '@babel/plugin-transform-classes'
+          ],
         }],
       ],
     },
