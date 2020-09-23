@@ -124,7 +124,8 @@ export function isFunction(value) {
  * judge whether a value is a Constructor
  * @param {*} f
  * @param {int} [strict] strict level
- * - 3: should must be one of native code, native class definition or babel transformed class
+ * - 4: should must be one of native code, native class
+ * - 3: can be babel transformed class
  * - 2: can be some function whose prototype has more than one properties
  * - 1: can be some function which has this inside
  * - 0: can be some function which has prototype
@@ -146,20 +147,30 @@ export function isConstructor(f, strict) {
   const entire = f + ''
   const fnBody = entire.slice(entire.indexOf("{") + 1, entire.lastIndexOf("}")).trim()
 
-  // std lib: String, Number...
-  const isNativeSTD = entire === `function ${f.name}() { [native code] }`
-
   // native class definition
   const isNativeClass = entire.indexOf('class ') === 0
+  // std lib: String, Number...
+  const isNativeSTD = fnBody === `[native code]`
 
+  const level4 = isNativeClass || isNativeSTD
+  if (strict >= 4) {
+    return level4
+  }
+
+  const topCtx = fnBody.replace(/function.*?\{.*?\}/g, '')
+    .replace(/\n+/g, ';')
+    .replace(/\s+/g, '')
+    .replace(/;;/g, ';')
   // babel transformed class, begin with '_classCallCheck(this,', may by minified by compile tool
-  const isBabelTransformedClass = /^[_a-zA-Z0-9]+\(this,/.test(fnBody)
+  const isBabelTransformedClass = /^_classCallCheck\(this,/.test(topCtx)
   // @babel/plugin-transform-runtime '(0, _classCallCheck2["default"])(this,'
-  const isBabelRuntimeTransformedClass = /^\(.*?\)\(this,/.test(fnBody)
+  const isBabelRuntimeTransformedClass = /^\(.*?_classCallCheck.*?\)\(this,/.test(topCtx)
+  // webpack minified
+  const isBabelTransformedMinifiedClass = /^\!\(this,/.test(topCtx)
 
-  const isMostStrict = isNativeSTD || isNativeClass || isBabelTransformedClass || isBabelRuntimeTransformedClass
+  const level3 = level4 || isBabelTransformedClass || isBabelRuntimeTransformedClass || isBabelTransformedMinifiedClass
   if (strict == 3) {
-    return isMostStrict
+    return level3
   }
 
   // there are some properties on f.prototype
@@ -167,19 +178,17 @@ export function isConstructor(f, strict) {
   const keys = Object.keys(protos).filter(item => item !== 'constructor')
   const hasProtos = !!keys.length
 
+  const level2 = level3 || hasProtos
   if (strict == 2) {
-    return isMostStrict || hasProtos
+    return level2
   }
 
   // function() { this.name = 'xx' }
-  const topctx = fnBody.replace(/function.*?\{.*?\}/g, '')
-    .replace(/\n+/g, ';')
-    .replace(/\s+/g, '')
-    .replace(/;;/g, ';')
-  const hasThisInside = topctx.indexOf('this.') === 0 || topctx.indexOf(';this.') > -1 || topctx.indexOf('=this;') > -1
+  const hasThisInside = topCtx.indexOf('this.') === 0 || topCtx.indexOf(';this.') > -1 || topCtx.indexOf('=this;') > -1
 
+  const level1 = level2 || hasThisInside
   if (strict == 1) {
-    return isMostStrict || hasProtos || hasThisInside
+    return level1
   }
 
   return true
