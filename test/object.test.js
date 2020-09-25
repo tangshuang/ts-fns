@@ -16,6 +16,50 @@ describe('object', () => {
     expect(obj.body.left).toBe(true)
     expect(obj.body.right).toBe(true)
   })
+
+  test('extend', () => {
+    const o = {}
+    const e = {
+      body: {
+        hand: 2,
+        foot: 2,
+      },
+    }
+
+    extend(o, e)
+
+    expect(o.body.hand).toBe(2)
+    expect(o.body.foot).toBe(2)
+  })
+
+  test('each', () => {
+    let count = 0
+
+    each({
+      name: 'name',
+      do() {},
+      get len() { return this.name.length },
+    }, () => count ++)
+
+    expect(count).toBe(3)
+
+    let b = 0
+    let c = 0
+
+    class Dog {
+      static name = 'dog'
+      static bark() {}
+      static get age() {
+        return 10
+      }
+    }
+
+    each(Dog, () => b ++, true)
+    expect(b).toBe(3)
+
+    each(Dog, () => c ++)
+    expect(c).toBe(1) // only `name` was found
+  })
 })
 
 describe('reactive', () => {
@@ -235,47 +279,45 @@ describe('proxy', () => {
     expect(some.body.hand).toBe(false)
   })
 
-  test('extend', () => {
-    const o = {}
-    const e = {
-      body: {
-        hand: 2,
-        foot: 2,
+  test('push into top array', () => {
+    let match = ''
+
+    const arr = createProxy([], {
+      set(keyPath, value) {
+        match = keyPath.join('.')
+        return value
       },
-    }
+    })
 
-    extend(o, e)
+    arr.push({
+      name: 'xxx',
+      age: 'xxx',
+    })
+    // push will trigger set in proxy
+    expect(match).toBe('0.age')
 
-    expect(o.body.hand).toBe(2)
-    expect(o.body.foot).toBe(2)
-  })
+    arr[0].name = 'bbb'
+    expect(match).toBe('0.name')
 
-  test('each', () => {
-    let count = 0
+    const obj = createProxy({
+      items: [],
+    }, {
+      set(keyPath, value) {
+        match = keyPath.join('.')
+        return value
+      },
+    })
+    // init will trigger set
+    expect(match).toBe('items')
 
-    each({
-      name: 'name',
-      do() {},
-      get len() { return this.name.length },
-    }, () => count ++)
+    obj.items.push({
+      name: 'a',
+      age: 0,
+    })
+    // push will trigger set in proxy
+    expect(match).toBe('items.0.age')
 
-    expect(count).toBe(3)
-
-    let b = 0
-    let c = 0
-
-    class Dog {
-      static name = 'dog'
-      static bark() {}
-      static get age() {
-        return 10
-      }
-    }
-
-    each(Dog, () => b ++, true)
-    expect(b).toBe(3)
-
-    each(Dog, () => c ++)
-    expect(c).toBe(1) // only `name` was found
+    obj.items[0].name = 'b'
+    expect(match).toBe('items.0.name')
   })
 })

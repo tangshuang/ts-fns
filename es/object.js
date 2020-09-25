@@ -1001,10 +1001,41 @@ export function createProxy(origin, options = {}) {
               args = options[key](args) || args
             }
 
+            const max = origin.length
+            let output = null
+
             // change original data
             Array.prototype[key].apply(origin, args)
 
-            const output = Array.prototype[key].apply(media, args.map(item => create(item, parents)))
+            // create sub children
+            if (key === 'push') {
+              const medias = args.map((item, i) => {
+                const index = max + i
+                return create(item, [...parents, index])
+              })
+              output = Array.prototype.push.apply(media, medias)
+            }
+            else if (key === 'splice') {
+              const [start, end, ...items] = args
+              const medias = items.map((item, i) => {
+                const index = max + i
+                return create(item, [...parents, index])
+              })
+              const params = [start, end, ...medias]
+              output = Array.prototype.splice.apply(media, params)
+            }
+            else if (key === 'fill') {
+              const [item, start = 0, end = max] = args
+              const items = []
+              for (let i = start; i < end; i ++) {
+                items.push(create(item, [...parents, i]))
+              }
+              const params = [start, end - start, items]
+              output = Array.prototype.splice.apply(media, params)
+            }
+            else {
+              output = Array.prototype[key].apply(media, args)
+            }
 
             if (isFunction(dispatch)) {
               dispatch({
