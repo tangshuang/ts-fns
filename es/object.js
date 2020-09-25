@@ -699,6 +699,11 @@ export function createReactive(origin, options = {}) {
           }
         }
 
+        // a hook to modify args for array push, shift inputs
+        if (inObject(fn, options) && isFunction(options[fn])) {
+          args = options[fn](args) || args
+        }
+
         // deal with original data
         const before = origin.length
         let output = Array.prototype[fn].apply(origin, args)
@@ -989,6 +994,11 @@ export function createProxy(origin, options = {}) {
               else {
                 return origin
               }
+            }
+
+            // a hook to modify args for array push, shift inputs
+            if (inObject(key, options) && isFunction(options[key])) {
+              args = options[key](args) || args
             }
 
             // change original data
