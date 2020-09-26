@@ -320,4 +320,20 @@ describe('proxy', () => {
     obj.items[0].name = 'b'
     expect(match).toBe('items.0.name')
   })
+
+  test('splice', () => {
+    const arr = createProxy([
+      { id: 1 },
+      { id: 2 },
+      { id: 3 },
+      { id: 4 },
+    ])
+
+    const deleted = arr.splice(1, 0, { id: 'new' })
+    expect(arr[1].id).toBe('new')
+    expect(deleted.length).toBe(0)
+
+    const removed = arr.splice(2, 2, { id: 'a' }, { id: 'b' })
+    expect(removed.length).toBe(2)
+  })
 })
