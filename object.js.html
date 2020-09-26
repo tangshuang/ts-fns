@@ -1075,13 +1075,30 @@ export function createProxy(origin, options = {}) {
               output = Array.prototype.push.apply(media, medias)
             }
             else if (key === 'splice') {
-              const [start, end, ...items] = args
-              const medias = items.map((item, i) => {
-                const index = max + i
-                return create(item, [...parents, index])
-              })
-              const params = [start, end, ...medias]
-              output = Array.prototype.splice.apply(media, params)
+              const [start, len, ...items] = args
+              if (!items.length) {
+                output = Array.prototype.splice.call(media, start, len)
+              }
+              else if (len === items.length) {
+                const medias = items.map((item, i) => {
+                  const index = start + i
+                  return create(item, [...parents, index])
+                })
+                const params = [start, len, ...medias]
+                output = Array.prototype.splice.apply(media, params)
+              }
+              // the ones which are right in media will be changed
+              else {
+                output = media.slice(start, start + len)
+
+                const items = origin.slice(start)
+                const medias = items.map((item, i) => {
+                  const index = start + i
+                  return create(item, [...parents, index])
+                })
+                const params = [start, origin.length, ...medias]
+                Array.prototype.splice.apply(media, params)
+              }
             }
             else if (key === 'fill') {
               const [item, start = 0, end = max] = args
