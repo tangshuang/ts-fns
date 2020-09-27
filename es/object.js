@@ -499,44 +499,70 @@ export function createReactive(origin, options = {}) {
     const media = {}
     const reactive = {}
 
+    const setValue = (key, value, trigger) => {
+      const keyPath = [...parents, key]
+      const prev = origin[key]
+      const invalid = media[key]
+      const input = isFunction(set) ? set(keyPath, value) : value
+
+      let active
+      let next
+      if (inObject(key, media) && (
+        value === prev
+        || value === invalid
+        || input === prev
+        || input === invalid
+      )) {
+        next = prev
+        active = invalid
+      }
+      else {
+        next = input
+        active = create(next, keyPath)
+      }
+
+      origin[key] = next
+      media[key] = active
+
+      if (trigger && isFunction(dispatch)) {
+        dispatch({
+          keyPath,
+          value,
+          next, active,
+          prev, invalid,
+        })
+      }
+
+      return active
+    }
+
+    const delValue = (key, trigger) => {
+      const keyPath = [...parents, key]
+      const prev = origin[key]
+      const invalid = media[key]
+
+      if (isFunction(del)) {
+        del(keyPath)
+      }
+
+      delete reactive[key]
+      delete media[key]
+      delete origin[key]
+
+      if (trigger && isFunction(dispatch)) {
+        const none = void 0
+        dispatch({
+          keyPath,
+          value: none,
+          next: none,
+          active: none,
+          prev, invalid,
+        }, isUndefined(prev))
+      }
+    }
+
     const put = (key, value, trigger) => {
       const keyPath = [...parents, key]
-
-      const setValue = (value, trigger) => {
-        const prev = origin[key]
-        const invalid = media[key]
-        const input = isFunction(set) ? set(keyPath, value) : value
-
-        let active
-        let next
-        if (inObject(key, media) && (
-          value === prev
-          || value === invalid
-          || input === prev
-          || input === invalid
-        )) {
-          next = prev
-          active = invalid
-        }
-        else {
-          next = input
-          active = create(next, keyPath)
-        }
-
-        origin[key] = next
-        media[key] = active
-
-        if (trigger && isFunction(dispatch)) {
-          dispatch({
-            keyPath,
-            value,
-            next, active,
-            prev, invalid,
-          })
-        }
-
-        return active
-      }
 
       Object.defineProperty(reactive, key, {
         get: () => {
@@ -549,7 +575,7 @@ export function createReactive(origin, options = {}) {
             return media[key]
           }
 
-          const active = setValue(value, true)
+          const active = setValue(key, value, true)
           return active
         },
         enumerable: true,
@@ -557,7 +583,7 @@ export function createReactive(origin, options = {}) {
       })
 
       // initialize the current value at the first time
-      const active = setValue(value, trigger)
+      const active = setValue(key, value, trigger)
       return active
     }
 
@@ -570,37 +596,24 @@ export function createReactive(origin, options = {}) {
         value: key => reactive[key],
       },
       $set: {
-        value: (key, value) => put(key, value, true),
+        value: (key, value) => {
+          const keyPath = [...parents, key]
+          if (isFunction(writable) && !writable(keyPath)) {
+            return media[key]
+          }
+
+          const active = inObject(key, reactive) ? setValue(key, value, true) : put(key, value, true)
+          return active
+        },
       },
       $del: {
         value: (key) => {
           const keyPath = [...parents, key]
-
           if (isFunction(writable) && !writable(keyPath)) {
             return
           }
 
-          const prev = origin[key]
-          const invalid = media[key]
-
-          if (isFunction(del)) {
-            del(keyPath)
-          }
-
-          delete reactive[key]
-          delete media[key]
-          delete origin[key]
-
-          if (isFunction(dispatch)) {
-            const none = void 0
-            dispatch({
-              keyPath,
-              value: none,
-              next: none,
-              active: none,
-              prev, invalid,
-            }, isUndefined(prev))
-          }
+          delValue(key, true)
         },
       },
     })
@@ -612,48 +625,49 @@ export function createReactive(origin, options = {}) {
     const media = []
     const reactive = []
 
+    const setValue = (i, value, trigger) => {
+      const keyPath = [...parents, i]
+      const prev = origin[i]
+      const invalid = media[i]
+      const input = isFunction(set) ? set(keyPath, value) : value
+
+      let active
+      let next
+      if (inObject(i, media) && (
+        value === prev
+        || value === invalid
+        || input === prev
+        || input === invalid
+      )) {
+        next = prev
+        active = invalid
+      }
+      else {
+        next = input
+        active = create(next, keyPath)
+      }
+
+      origin[i] = next
+      media[i] = active
+
+      if (trigger && isFunction(dispatch)) {
+        dispatch({
+          keyPath,
+          value,
+          next, active,
+          prev, invalid,
+        })
+      }
+
+      return active
+    }
+
     // fill items into output array
     // start and end, where to start and end
     // items, original data to use
     const shuffle = (start, end) => {
       for (let i = start; i <= end; i ++) {
         const keyPath = [...parents, i]
-
-        const setValue = (value, trigger) => {
-          const prev = origin[i]
-          const invalid = media[i]
-          const input = isFunction(set) ? set(keyPath, value) : value
-
-          let active
-          let next
-          if (inObject(i, media) && (
-            value === prev
-            || value === invalid
-            || input === prev
-            || input === invalid
-          )) {
-            next = prev
-            active = invalid
-          }
-          else {
-            next = input
-            active = create(next, keyPath)
-          }
-
-          origin[i] = next
-          media[i] = active
-
-          if (trigger && isFunction(dispatch)) {
-            dispatch({
-              keyPath,
-              value,
-              next, active,
-              prev, invalid,
-            })
-          }
-
-          return active
-        }
 
         Object.defineProperty(reactive, i, {
           get: () => {
@@ -666,7 +680,7 @@ export function createReactive(origin, options = {}) {
               return media[i]
             }
 
-            const active = setValue(value, true)
+            const active = setValue(i, value, true)
             return active
           },
           enumerable: true,
@@ -674,7 +688,7 @@ export function createReactive(origin, options = {}) {
         })
 
         // initialize
-        setValue(origin[i])
+        setValue(i, origin[i])
       }
     }
 
@@ -683,19 +697,19 @@ export function createReactive(origin, options = {}) {
       value: function(...args) {
         if (isFunction(writable) && !writable(parents, origin)) {
           if (fn === 'push' || fn === 'unshift') {
-            return origin.length
+            return media.length
           }
           else if (fn === 'splice') {
             return []
           }
           else if (fn === 'shift') {
-            return origin[0]
+            return media[0]
           }
           else if (fn === 'pop') {
-            return origin[origin.length - 1]
+            return media[media.length - 1]
           }
           else {
-            return origin
+            return media
           }
         }
 
@@ -710,50 +724,52 @@ export function createReactive(origin, options = {}) {
         const after = origin.length
 
         if (fn === 'push') {
-          output = origin.length
+          output = after
+          media.length = after
+          reactive.length = after
           shuffle(before - 1, after - 1)
         }
         else if (fn === 'unshift') {
-          output = origin.length
-          shuffle(0, after - before - 1)
+          output = after
+          media.length = after
+          reactive.length = after
+          shuffle(0, after - 1)
         }
         else if (fn === 'splice') {
-          const [_start, _count, ...items] = args
-          output = media[fn](...args)
+          const [start, len, ...items] = args
+          output = media.slice(start, start + len)
+
+          media.length = after
           reactive.length = after
 
-          // new items inserted
-          if (items.length) {
-            // find the index inserted at
-            let index = -1
-            for (let i = 0, len = media.length; i < len; i ++) {
-              let matched = true
-              for (let n = 0, l = items.length; n < l; n ++) {
-                const o = media[i + n] // use media so that it should must equal origin items
-                const t = items[n]
-                if (o !== t) {
-                  matched = false
-                  break
-                }
-              }
-              if (matched) {
-                index = i
-                break
-              }
-            }
-
-            const start = index
-            const end = start + items.length - 1
-
-            shuffle(start, end)
+          if (!items.length) {
+            shuffle(start, after - 1)
+          }
+          else if (len === items.length) {
+            shuffle(start, start + len - 1)
+          }
+          else {
+            shuffle(start, after - 1)
           }
         }
-        else if (inArray(fn, ['shift', 'pop'])) {
-          output = media[fn](...args)
+        else if (fn === 'shift') {
+          output = media[0]
+          media.length = after
+          reactive.length = after
+          shuffle(0, after - 1)
+        }
+        else if (fn === 'pop') {
+          output = media[media.length - 1]
+          media.length = after
           reactive.length = after
         }
-        else if (inArray(fn, ['sort', 'reverse', 'fill'])) {
-          output = media[fn](...args)
+        else if (fn === 'fill') {
+          const [item, start = 0, end = before] = args
+          output = media
+          shuffle(start, end - 1)
+        }
+        else {
+          output = media
         }
 
         if (isFunction(dispatch)) {
@@ -986,13 +1002,13 @@ export function createProxy(origin, options = {}) {
                 return []
               }
               else if (key === 'shift') {
-                return origin[0]
+                return media[0]
               }
               else if (key === 'pop') {
-                return origin[origin.length - 1]
+                return media[origin.length - 1]
               }
               else {
-                return origin
+                return media
               }
             }
 
@@ -1048,7 +1064,8 @@ export function createProxy(origin, options = {}) {
                 items.push(create(item, [...parents, i]))
               }
               const params = [start, end - start, items]
-              output = Array.prototype.splice.apply(media, params)
+              Array.prototype.splice.apply(media, params)
+              output = media
             }
             else {
               output = Array.prototype[key].apply(media, args)
