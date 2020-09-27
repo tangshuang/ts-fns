@@ -167,7 +167,7 @@ export function isConstructor(f, strict) {
   // @babel/plugin-transform-runtime '(0, _classCallCheck2["default"])(this,'
   const isBabelRuntimeTransformedClass = /^\(.*?_classCallCheck.*?\)\(this,/.test(topCtx)
   // webpack minified
-  const isBabelTransformedMinifiedClass = /^[0-9a-zA-Z_;]*?\(this,/.test(topCtx)
+  const isBabelTransformedMinifiedClass = /^[0-9a-zA-Z_;!?:]*?\(this,/.test(topCtx)
 
   const level3 = level4 || isBabelTransformedClass || isBabelRuntimeTransformedClass || isBabelTransformedMinifiedClass
   if (strict == 3) {
