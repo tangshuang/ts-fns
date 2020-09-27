@@ -216,16 +216,17 @@ export function isConstructor(f, strict) {
     return level4
   }
 
-  const topCtx = fnBody.replace(/function.*?\{.*?\}/g, '')
-    .replace(/\n+/g, ';')
-    .replace(/\s+/g, '')
-    .replace(/;;/g, ';')
+  const topCtx = fnBody.replace(/function.*?\{.*?\}/gm, '')
+    .replace(/return/gm, '')
+    .replace(/\n+/gm, ';')
+    .replace(/\s+/gm, '')
+    .replace(/;;/gm, ';')
   // babel transformed class, begin with '_classCallCheck(this,', may by minified by compile tool
   const isBabelTransformedClass = /^_classCallCheck\(this,/.test(topCtx)
   // @babel/plugin-transform-runtime '(0, _classCallCheck2["default"])(this,'
   const isBabelRuntimeTransformedClass = /^\(.*?_classCallCheck.*?\)\(this,/.test(topCtx)
   // webpack minified
-  const isBabelTransformedMinifiedClass = /^\!\(this,/.test(topCtx)
+  const isBabelTransformedMinifiedClass = /^[0-9a-zA-Z_;]*?\(this,/.test(topCtx)
 
   const level3 = level4 || isBabelTransformedClass || isBabelRuntimeTransformedClass || isBabelTransformedMinifiedClass
   if (strict == 3) {
