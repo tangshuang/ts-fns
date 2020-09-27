@@ -715,7 +715,7 @@ export function createReactive(origin, options = {}) {
 
         // a hook to modify args for array push, shift inputs
         if (inObject(fn, options) && isFunction(options[fn])) {
-          args = options[fn](args) || args
+          args = options[fn](parents, args) || args
         }
 
         // deal with original data
@@ -1014,7 +1014,7 @@ export function createProxy(origin, options = {}) {
 
             // a hook to modify args for array push, shift inputs
             if (inObject(key, options) && isFunction(options[key])) {
-              args = options[key](args) || args
+              args = options[key](parents, args) || args
             }
 
             const max = origin.length
