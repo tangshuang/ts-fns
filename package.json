@@ -3,12 +3,14 @@
   "version": "8.1.8",
   "description": "Public Functions.",
   "main": "cjs/index.js",
+  "types": "./types.d.ts",
   "scripts": {
     "postversion": "git add . && git commit -m \"update version to $npm_package_version\"",
     "prepublishOnly": "npm run build && npm run test",
-    "build": "node gulpfile.js && webpack",
+    "build": "node gulpfile.js && webpack && npm run declare",
     "test": "cross-env NODE_ENV=test jest",
-    "docs": "jsdoc -c ./jsdoc.json"
+    "docs": "jsdoc -c ./jsdoc.json",
+    "declare": "jsdoc -c ./declare.jsdoc.json"
   },
   "author": "tangshuang",
   "license": "ISC",
@@ -24,6 +26,7 @@
     "gulp-babel": "^8.0.0",
     "jest": "^25.2.4",
     "jsdoc": "^3.6.3",
+    "tsd-jsdoc": "^2.5.0",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
     "webpack-deep-scope-plugin": "^1.6.2"

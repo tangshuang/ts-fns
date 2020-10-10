@@ -1,14 +1,10 @@
-/**
- * @module function
- */
-
 import { getObjectHash, each } from './object.js'
 
 /**
  * Create a function which cache result by parameters.
  * @param {function} fn the original function to calculate result
- * @param {number} expire the time to expire cache, if set 0 (or not set), the cache will never be expired, default 0.
- * @return {function} you can call a .clear() method on this function to clear the cache
+ * @param {number} [expire] the time to expire cache, if set 0 (or not set), the cache will never be expired, default 0.
+ * @returns {function} you can call a .clear() method on this function to clear the cache
  * @example const compute = compute_((x, y) => {
  *   return x + y
  * })
@@ -68,13 +64,13 @@ export function compute_(fn, expire = 0) {
 /**
  * create a getter function which will cache the result, cache will be released automaticly
  * @param {function} fn the getter function, notice, without parameters
- * @param {number} type the type of automatic releasing, default 1.
+ * @param {number} [type] the type of automatic releasing, default 1.
  *  - 0: never released
  *  - 1: in Promise microtask
  *  - 2: in timeout task
  *  - 3: in requestAnimationFrame
  *  - 4: in requestIdleCallback
- * @return {function} you can call .clear() to clear cache immediately
+ * @returns {function} you can call .clear() to clear cache immediately
  * @example const get = get_(() => {
  *   return Math.random()
  * })
@@ -155,8 +151,8 @@ export function get_(fn, type = 1) {
 /**
  * Create a function which return a Promise and cached by parameters.
  * @param {function} fn a function, can be async function or normal function
- * @param {number} expire the expire time for releasing cache
- * @return {function} .clear() is available
+ * @param {number} [expire] the expire time for releasing cache
+ * @returns {function} .clear() is available
  * @example const fn = async_(async () => {})
  *
  * const a = fn()
@@ -220,9 +216,9 @@ export function async_(fn, expire = 0) {
 /**
  * create a function whose result will be cached, and the cache will be released by invoke count
  * @param {function} fn
- * @param {number} count
- * @param {number} expire the expire time after latest invoke
- * @return {function} .clear() is avaliable
+ * @param {number} [count]
+ * @param {number} [expire] the expire time after latest invoke
+ * @returns {function} .clear() is avaliable
  * @example const invoke = invoke_(() => {
  *   return Math.random()
  * }, 2)
@@ -286,6 +282,8 @@ export function invoke_(fn, count = 1, expire = 0) {
 }
 
 /**
+ * @param {...function} fns
+ * @returns {function}
  * @example const pipe = pipe_(
  *   x => x + 1,
  *   x => x - 1,

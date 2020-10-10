@@ -1,80 +1,121 @@
-/**
- * @module is
- */
-
 import { unionArray } from './array.js'
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isUndefined(value) {
   return typeof value === 'undefined'
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isNull(value) {
   return value === null
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isNone(value) {
   return isUndefined(value) || isNull(value)
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isArray(value) {
   return Array.isArray(value)
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isObject(value) {
   return value && typeof value === 'object' && value.constructor === Object
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isDate(value) {
   return isInstanceOf(value, Date)
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isString(value) {
   return typeof value === 'string'
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isNumber(value) {
   return typeof value === 'number' && !isNaN(value)
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isNaN(value) {
   return typeof value === 'number' && Number.isNaN(value)
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isSymbol(value) {
   return typeof value === 'symbol'
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isFinite(value) {
   return typeof value === 'number' && Number.isFinite(value)
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isInfinite(value) {
   return !isNaN(value) && !Number.isFinite(value)
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isBoolean(value) {
   return value === true || value === false
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isNumeric(value) {
   return isString(value) && /^\-{0,1}[0-9]+\.{0,1}([0-9]+){0,1}$/.test(value)
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isBlob(value) {
   return isInstanceOf(value, Blob)
     || (
@@ -84,7 +125,10 @@ export function isBlob(value) {
     )
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isFile(value) {
   return isInstanceOf(value, File)
     || (
@@ -94,12 +138,18 @@ export function isFile(value) {
     )
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isFormData(value) {
   return isInstanceOf(value, FormData)
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isEmpty(value) {
   if (isNone(value) || value === '' || isNaN(value)) {
     return true
@@ -116,8 +166,9 @@ export function isEmpty(value) {
 }
 
 /**
- * @param {any} value
+ * @param {*} value
  * @param {boolean} [isStrict] where Constructor is to return false
+ * @returns {boolean}
  */
 export function isFunction(value, isStrict) {
   if (typeof value !== 'function') {
@@ -129,12 +180,13 @@ export function isFunction(value, isStrict) {
 /**
  * judge whether a value is a Constructor
  * @param {*} f
- * @param {int} [strict] strict level
+ * @param {number} [strict] strict level
  * - 4: should must be one of native code, native class
  * - 3: can be babel transformed class
  * - 2: can be some function whose prototype has more than one properties
  * - 1: can be some function which has this inside
  * - 0: can be some function which has prototype
+ * @returns {boolean}
  */
 export function isConstructor(f, strict) {
   if (typeof f !== 'function') {
@@ -201,17 +253,26 @@ export function isConstructor(f, strict) {
   return true
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isTruthy(value) {
   return !!value
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isFalsy(value) {
   return !value
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isEqual(val1, val2) {
   const equal = (obj1, obj2) => {
     const keys1 = Object.getOwnPropertyNames(obj1)
@@ -249,27 +310,46 @@ export function isEqual(val1, val2) {
   }
 }
 
-/** */
+/**
+ * @param {*} a
+ * @param {*} b
+ * @returns {boolean}
+ */
 export function isLt(a, b) {
   return a < b
 }
 
-/** */
+/**
+ * @param {*} a
+ * @param {*} b
+ * @returns {boolean}
+ */
 export function isLte(a, b) {
   return a <= b
 }
 
-/** */
+/**
+ * @param {*} a
+ * @param {*} b
+ * @returns {boolean}
+ */
 export function isGt(a, b) {
   return a > b
 }
 
-/** */
+/**
+ * @param {*} a
+ * @param {*} b
+ * @returns {boolean}
+ */
 export function isGte(a, b) {
   return a >= b
 }
 
-/** */
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 export function isPromise(value) {
   return isInstanceOf(value, Promise)
     || (
@@ -279,12 +359,17 @@ export function isPromise(value) {
     )
 }
 
-/** */
-export function isInstanceOf(value, Constructor, real = false) {
+/**
+ * @param {*} value
+ * @param {Class} Constructor
+ * @param {boolean} [isStrict]
+ * @returns {boolean}
+ */
+export function isInstanceOf(value, Constructor, isStrict) {
   if (!value || typeof value !== 'object') {
     return false
   }
-  if (real) {
+  if (isStrict) {
     return value.constructor === Constructor
   }
   else {
@@ -292,8 +377,13 @@ export function isInstanceOf(value, Constructor, real = false) {
   }
 }
 
-/** */
-export function isInheritedOf(SubConstructor, Constructor, strict) {
+/**
+ * @param {Class} SubConstructor
+ * @param {Class} Constructor
+ * @param {boolean} [isStrict]
+ * @returns {boolean}
+ */
+export function isInheritedOf(SubConstructor, Constructor, isStrict) {
   if (typeof SubConstructor !== 'function') {
     return false
   }
@@ -303,10 +393,15 @@ export function isInheritedOf(SubConstructor, Constructor, strict) {
     return false
   }
 
-  return isInstanceOf(ins, Constructor, strict)
+  return isInstanceOf(ins, Constructor, isStrict)
 }
 
-/** */
+/**
+ * @param {string} key
+ * @param {object} obj
+ * @param {boolean} [own] whether use getOwnPropertyNames to determine
+ * @returns {boolean}
+ */
 export function inObject(key, obj, own) {
   if (typeof obj !== 'object') {
     return false
@@ -326,7 +421,11 @@ export function inObject(key, obj, own) {
   }
 }
 
-/** */
+/**
+ * @param {*} item
+ * @param {array} arr
+ * @returns {boolean}
+ */
 export function inArray(item, arr) {
   return isArray(arr) && arr.includes(item)
 }

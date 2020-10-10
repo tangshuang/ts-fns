@@ -1,8 +1,7 @@
 /**
- * @module regexp
+ * @param {string} exp
+ * @returns {string}
  */
-
-/** */
 export function createSafeExp(exp) {
   const sign = '*.?+-$^!<>[](){}|\\/'
   const signArr = sign.split('')
@@ -12,7 +11,11 @@ export function createSafeExp(exp) {
   return safeExp
 }
 
-/** */
+/**
+ * @param {RegExp} regexp
+ * @param {string} str
+ * @returns {array}
+ */
 export function matchAll(regexp, str) {
   const results = []
   let match

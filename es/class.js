@@ -1,11 +1,10 @@
-/**
- * @module class
- */
-
 import { each, define } from './object.js'
 import { inObject } from './is.js'
 
-/** */
+/**
+ * @param {*} ins
+ * @returns {boolean}
+ */
 export function getConstructorOf(ins) {
   return Object.getPrototypeOf(ins).constructor
 }
@@ -15,6 +14,7 @@ export function getConstructorOf(ins) {
  * @param {Class} Parent
  * @param {object} proptotypes
  * @param {object} statics
+ * @returns {Class}
  */
 export function inherit(Parent, proptotypes, statics) {
   class Child extends Parent {}
@@ -48,8 +48,9 @@ export function inherit(Parent, proptotypes, statics) {
 
 /**
  * mix Extend into Source, (notice: will override Source)
- * @param {*} Source
- * @param {*} Extend
+ * @param {Class} Source
+ * @param {Class} Extend
+ * @param {Class}
  */
 export function mixin(Source, Extend) {
   each(Extend, (descriptor, key) => {

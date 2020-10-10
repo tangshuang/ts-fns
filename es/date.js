@@ -1,14 +1,9 @@
-/**
- * @module date
- */
-
 import { isFunction, isInstanceOf, isNumber, isNumeric, isString } from './is.js'
 import { padRight, padLeft } from './string.js'
 import { createArray } from './array.js'
 
 const pad = num => num < 10 ? '0' + num : num + ''
 
-/** */
 export const DATE_MONTHS = [
   'Jan',
   'Feb',
@@ -24,7 +19,6 @@ export const DATE_MONTHS = [
   'Dec',
 ]
 
-/** */
 export const DATE_WEEKS = [
   'Sun',
   'Mon',
@@ -35,7 +29,6 @@ export const DATE_WEEKS = [
   'Sat',
 ]
 
-/** */
 export const DATE_EXPS = {
   YYYY: '[12][0-9]{3}',
   YY: '[0-9]{2}',
@@ -60,7 +53,6 @@ export const DATE_EXPS = {
   SSS: '[0-9]{3}',
 }
 
-/** */
 export const DATE_FORMATTERS = {
   YYYY: date => date.getFullYear() + '',
   YY: date => (date.getFullYear() % 100) + '',
@@ -186,7 +178,11 @@ const parseFormalDate = (dateString) => {
   return [+Y, +M - 1, +D, +H, +m, +s, +sss]
 }
 
-/** */
+/**
+ * @param {Date|string|number} datetime
+ * @param {string} [givenFormatter]
+ * @returns {Date}
+ */
 export function createDate(datetime, givenFormatter) {
   if (isInstanceOf(datetime, Date)) {
     return datetime
@@ -252,7 +248,12 @@ export function createDate(datetime, givenFormatter) {
   return new Date(Y, M, D, H, m, s, ms)
 }
 
-/** */
+/**
+ * @param {Date|string|number} datetime
+ * @param {string} formatter
+ * @param {string} [givenFormatter]
+ * @returns {string}
+ */
 export function formatDate(datetime, formatter, givenFormatter) {
   if (!datetime) {
     return

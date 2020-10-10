@@ -1,11 +1,9 @@
-/**
- * @module object
- */
-
 import { getStringHash } from './string.js'
 import { isArray, isObject, isFile, isDate, isFunction, inArray, isSymbol, inObject, isUndefined } from './is.js'
 
-/** */
+/**
+ * @param {*} obj
+ */
 export function clone(obj) {
   const parents = []
   const clone = function(origin) {
@@ -40,9 +38,10 @@ export function clone(obj) {
 
 /**
  * Deep extend an object
- * @param {*} obj1
- * @param {*} obj2
- * @param {*} mixArr 0: extend array as object, 1: push into array, 2: replace all items
+ * @param {object} obj1
+ * @param {object} obj2
+ * @param {0|1|2} [mixArr] 0: extend array as object, 1: push into array, 2: replace all items
+ * @returns {object}
  */
 export function extend(obj1, obj2, mixArr = 0) {
   const exists = []
@@ -118,7 +117,12 @@ export function extend(obj1, obj2, mixArr = 0) {
   return extend(obj1, obj2)
 }
 
-/** */
+/**
+ * @param {object} obj1
+ * @param {object} obj2
+ * @param {boolean} [concatArray]
+ * @returns {object}
+ */
 export function merge(obj1, obj2, concatArray = true) {
   obj1 = clone(obj1)
 
@@ -175,7 +179,10 @@ export function merge(obj1, obj2, concatArray = true) {
   return merge(obj1, obj2)
 }
 
-/** */
+/**
+ * @param {object} obj
+ * @returns {string}
+ */
 export function stringify(obj) {
   const exists = [obj]
   const used = []
@@ -239,7 +246,10 @@ export function stringify(obj) {
   return str
 }
 
-/** */
+/**
+ * @param {object} obj
+ * @returns {string}
+ */
 export function getObjectHash(obj) {
   if (typeof obj !== 'object') {
     return
@@ -250,7 +260,12 @@ export function getObjectHash(obj) {
   return hash
 }
 
-/** */
+/**
+ * @param {object} obj
+ * @param {string} key
+ * @param {object|function} value
+ * @returns {object}
+ */
 export function define(obj, key, value) {
   if (isFunction(value)) {
     return Object.defineProperty(obj, key, { get: value })
@@ -274,7 +289,11 @@ export function define(obj, key, value) {
   }
 }
 
-/** */
+/**
+ * @param {object|array} obj
+ * @param {function} [determine]
+ * @returns {object}
+ */
 export function flat(obj, determine) {
   const flat = (input, path = '', result = {}) => {
     if (isArray(input)) {
@@ -300,8 +319,13 @@ export function flat(obj, determine) {
   return flat(obj)
 }
 
-/** */
-export function each(obj, fn, descriptor = false) {
+/**
+ * @param {object|array} obj
+ * @param {function} fn
+ * @param {boolean} descriptor
+ * @returns {object|array}
+ */
+export function each(obj, fn, descriptor) {
   const withDescriptor = () => {
     const descriptors = Object.getOwnPropertyDescriptors(obj)
     const keys = Object.keys(descriptors)
@@ -330,7 +354,11 @@ export function each(obj, fn, descriptor = false) {
   return descriptor ? withDescriptor() : withIterator()
 }
 
-/** */
+/**
+ * @param {object|array} obj
+ * @param {function} fn
+ * @returns {object}
+ */
 export function map(obj, fn) {
   if (isArray(obj)) {
     return obj.map(fn)
@@ -344,7 +372,11 @@ export function map(obj, fn) {
   }
 }
 
-/** */
+/**
+ * @param {object|array} obj
+ * @param {function} fn
+ * @returns {object}
+ */
 export function filter(obj, fn) {
   if (isArray(obj)) {
     return obj.filter(fn)
@@ -362,7 +394,10 @@ export function filter(obj, fn) {
   }
 }
 
-/** */
+/**
+ * @param {object|array} obj
+ * @param {function} fn
+ */
 export function iterate(obj, fn) {
   if (isArray(obj)) {
     for (let i = 0, len = obj.length; i < len; i ++) {
@@ -386,7 +421,10 @@ export function iterate(obj, fn) {
   }
 }
 
-/** */
+/**
+ * @param {object|array} obj
+ * @param {function} fn
+ */
 export function find(obj, fn) {
   return iterate(obj, (value, key) => {
     const res = fn(value, key, obj)
@@ -396,7 +434,11 @@ export function find(obj, fn) {
   })
 }
 
-/** */
+/**
+ * @param {object} obj
+ * @param {array} keys
+ * @returns {object}
+ */
 export function extract(obj, keys) {
   const results = {}
   keys.forEach((key) => {
@@ -409,7 +451,8 @@ export function extract(obj, keys) {
 
 /**
  * deep freeze
- * @param {*} o
+ * @param {object} o
+ * @returns {object}
  */
 export function freeze(o) {
 	if (!Object.freeze) {
@@ -442,6 +485,7 @@ export function freeze(o) {
  * @param {function} options.set to modify input value of each node, receive (keyPath, nextValue), nextValue is the given passed value, the return value will be transformed to be reactive object/array as if
  * @param {function} options.dispatch to notify change with keyPath, receive (keypath, next, prev), it will be called after value is set into
  * @param {function} options.writable whether be able to change value, return false to disable writable, default is true
+ * @returns {object|array}
  * @example
  * const some = {
  *   body: {
@@ -816,6 +860,7 @@ export function createReactive(origin, options = {}) {
  * @param {function} options.set to modify input value of each node, receive (keyPath, nextValue), nextValue is the given passed value, the return value will be transformed to be reactive object/array as if
  * @param {function} options.dispatch to notify change with keyPath, receive (keypath, next, prev), it will be called after value is set into
  * @param {function} options.writable whether be able to change value, return false to disable writable, default is true
+ * @returns {Proxy}
  * @example
  * const some = {
  *   body: {

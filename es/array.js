@@ -1,37 +1,57 @@
-/**
- * @module array
- */
-
 import { inArray, isNaN, isString, isArray, isFunction } from './is.js'
 
-/** */
+/**
+ * @param {*} value
+ * @param {number} [count]
+ * @returns {array}
+ */
 export function createArray(value, count = 1) {
   return [].fill.call(new Array(count), value)
 }
 
-/** */
+/**
+ * @param {array} a
+ * @param {array} b
+ * @returns {array}
+ */
 export function unionArray(a, b) {
   return a.concat(b.filter(v => !inArray(v, a)))
 }
 
-/** */
+/**
+ * @param {array} a
+ * @param {array} b
+ * @returns {array}
+ */
 export function interArray(a, b) {
   return a.filter(v => b.includes(v))
 }
 
-/** */
+/**
+ * @param {array} a
+ * @param {array} b
+ * @returns {array}
+ */
 export function diffArray(a, b) {
   return a.filter(v => !b.includes(v))
 }
 
-/** */
+/**
+ * @param {array} a
+ * @param {array} b
+ * @returns {array}
+ */
 export function compArray(a, b) {
   const diffa = diffArray(a, b)
   const diffb = diffArray(b, a)
   return diffa.concat(diffb)
 }
 
-/** */
+/**
+ * @param {array} arr
+ * @param {string} [prop] unique by which property
+ * @returns {array}
+ */
 export function uniqueArray(arr, prop) {
   const exists = []
   return arr.filter((item) => {
@@ -57,7 +77,12 @@ export function uniqueArray(arr, prop) {
   })
 }
 
-/** */
+/**
+ * @param {array} items
+ * @param {string} [by] which property sort by
+ * @param {boolean} [decs]
+ * @returns {array}
+ */
 export function sortArray(items, by, decs = false) {
   const res = [].concat(items)
   res.sort((a, b) => {
@@ -80,12 +105,18 @@ export function sortArray(items, by, decs = false) {
   return res
 }
 
-/** */
+/**
+ * @param {*} arr
+ * @returns {array}
+ */
 export function toArray(arr) {
   return Array.from(arr)
 }
 
-/** */
+/**
+ * @param {array} arr
+ * @returns {array}
+ */
 export function flatArray(arr) {
   const res = []
   arr.forEach((item) => {
@@ -95,7 +126,12 @@ export function flatArray(arr) {
   return res
 }
 
-/** */
+/**
+ * slice an array into [count] sub-array
+ * @param {array} arr
+ * @param {number} count
+ * @returns {array[]}
+ */
 export function groupArray(arr, count) {
   const results = []
   arr.forEach((item, i) => {
@@ -108,8 +144,9 @@ export function groupArray(arr, count) {
 
 /**
  * split an array to sevral
- * @param {*} arr
+ * @param {array} arr
  * @param {*|function} split
+ * @returns {array[]}
  */
 export function splitArray(arr, split) {
   const results = []
@@ -129,7 +166,11 @@ export function splitArray(arr, split) {
   return results
 }
 
-/** */
+/**
+ * @param {array[]} arr
+ * @param {*} join
+ * @returns {array}
+ */
 export function joinArray(arr, join) {
   const results = []
   arr.forEach((items) => {

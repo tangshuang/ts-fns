@@ -1,13 +1,9 @@
 /**
- * @module timeout
- */
-
-/**
  * 创建防抖函数
  * @param {function} fn
  * @param {number} wait
- * @param {boolean} immediate 是否立即执行函数
- * @return {function}
+ * @param {boolean} [immediate] 是否立即执行函数
+ * @returns {function}
  */
 export function debounce(fn, wait, immediate) {
   let timeout = null
@@ -34,7 +30,8 @@ export function debounce(fn, wait, immediate) {
  * 创建节流函数
  * @param {function} fn
  * @param {number} wait
- * @param {boolean} immediate 是否立即执行
+ * @param {boolean} [immediate] 是否立即执行
+ * @returns {function}
  */
 export function throttle(fn, wait, immediate) {
   let timeout = null

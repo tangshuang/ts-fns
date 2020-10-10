@@ -1,12 +1,10 @@
-/**
- * @module number
- */
-
-
 import { formatString, padRight, padLeft, CHARS } from './string.js'
 import { isString, isNumeric, isNumber, isNaN, isUndefined } from './is.js'
 
-/** */
+/**
+ * @param {number|string}
+ * @returns {string}
+ */
 export function numerify(num) {
 	if (isString(num)) {
 		if (!isNumeric(num)) {
@@ -29,7 +27,10 @@ export function numerify(num) {
 	}
 }
 
-/** */
+/**
+ * @param {number|string}
+ * @returns {string}
+ */
 export function enumerify(input) {
   let num = parseFloat(input);
   if (isNaN(num)) {
@@ -80,7 +81,10 @@ export function enumerify(input) {
   }
 }
 
-/** */
+/**
+ * @param {number|string}
+ * @returns {string}
+ */
 export function clearNum00(input) {
   input = input.toString()
   let [ integerPart, decimalPart = '' ] = input.split('.')
@@ -95,7 +99,11 @@ export function clearNum00(input) {
   return value
 }
 
-/** */
+/**
+ * @param {number|string} a
+ * @param {number|string} b
+ * @returns {string}
+ */
 export function plusby(a, b) {
   a = numerify(a)
   b = numerify(b)
@@ -185,7 +193,11 @@ export function plusby(a, b) {
   return sum
 }
 
-/** */
+/**
+ * @param {number|string} a
+ * @param {number|string} b
+ * @returns {string}
+ */
 export function minusby(a, b) {
   a = numerify(a)
   b = numerify(b)
@@ -300,7 +312,11 @@ export function minusby(a, b) {
   return diff
 }
 
-/** */
+/**
+ * @param {number|string} a
+ * @param {number|string} b
+ * @returns {string}
+ */
 export function multiplyby(a, b) {
   a = numerify(a)
   b = numerify(b)
@@ -414,7 +430,12 @@ export function multiplyby(a, b) {
   return value
 }
 
-/** */
+/**
+ * @param {number|string} a
+ * @param {number|string} b
+ * @param {number} [decimal] decimal length
+ * @returns {string}
+ */
 export function divideby(a, b, decimal) {
   if (isUndefined(decimal)) {
     decimal = divideby.InfiniteDecimalLength || 15
@@ -567,7 +588,11 @@ export function divideby(a, b, decimal) {
   return value
 }
 
-/** */
+/**
+ * @param {number|string} a
+ * @param {number|string} b
+ * @returns {number}
+ */
 export function compareby(a, b) {
   a = numerify(a)
   b = numerify(b)
@@ -640,7 +665,11 @@ export function compareby(a, b) {
   return 0
 }
 
-/** */
+/**
+ * @param {string} exp
+ * @param {number} [decimal]
+ * @returns {string}
+ */
 export function calculate(exp, decimal) {
   const contains = (str, items) => {
     for (let i = 0, len = items.length; i < len; i ++) {
@@ -882,7 +911,13 @@ export function calculate(exp, decimal) {
   return result
 }
 
-/** */
+/**
+ * @param {number|string} input
+ * @param {number} [decimal]
+ * @param {boolean} [pad]
+ * @param {boolean} [floor]
+ * @returns {string}
+ */
 export function fixNum(input, decimal = 2, pad = false, floor = false) {
   let num = parseFloat(input)
   if (isNaN(num)) {
@@ -975,7 +1010,13 @@ export function fixNum(input, decimal = 2, pad = false, floor = false) {
   return value
 }
 
-/** */
+/**
+ * @param {number|string} input
+ * @param {string} separator
+ * @param {number} count
+ * @param {boolean} [formatdecimal]
+ * @returns {string}
+ */
 export function formatNum(input, separator, count, formatdecimal = false) {
   if (!input) {
     return '';
@@ -1020,13 +1061,20 @@ export function formatNum(input, separator, count, formatdecimal = false) {
   return result;
 }
 
-/** */
+/**
+ * @param {number|string} input
+ * @param {boolean} [formatdecimal]
+ * @returns {string}
+ */
 export function formatNum1000(input, formatdecimal = false) {
   return formatNumber(input, ',', 3, formatdecimal);
 }
 
 // http://www.softwhy.com/article-4813-1.html
-/** */
+/**
+ * @param {number|string} num
+ * @returns {string}
+ */
 export function num10to62(num) {
   const chars = CHARS.split('')
   const radix = chars.length
@@ -1041,7 +1089,11 @@ export function num10to62(num) {
   const code = arr.join('')
   return code
 }
-/** */
+
+/**
+ * @param {string} code
+ * @returns {number}
+ */
 export function num62to10(code) {
   const radix = CHARS.length
   const len = code.length

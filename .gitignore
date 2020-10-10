@@ -3,3 +3,4 @@ cjs/
 umd/
 dist/
 docs/
+/types.d.ts

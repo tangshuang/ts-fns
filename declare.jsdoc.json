@@ -1,0 +1,17 @@
+{
+  "source": {
+    "include": ["es"],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+  "plugins": [
+    "./node_modules/tsd-jsdoc/dist/plugin"
+  ],
+  "opts": {
+    "encoding": "utf8",
+    "destination": "./",
+    "recurse": true,
+    "verbose": true,
+    "template": "./node_modules/tsd-jsdoc/dist"
+  }
+}

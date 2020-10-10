@@ -1,15 +1,15 @@
-/**
- * @module string
- */
-
 import { createArray } from './array.js'
 
-/**
- * @notice the order could never be changed, becuase we use it for number convertion
- */
+// the order could never be changed, becuase we use it for number convertion
 export const CHARS = '0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ'
 
-/** */
+/**
+ * @param {string} input
+ * @param {string} separator
+ * @param {array} segments
+ * @param {boolean} alignright
+ * @returns {string}
+ */
 export function formatString(input, separator, segments, alignright) {
   if (typeof input !== 'string' || !input) {
     return ''
@@ -57,7 +57,12 @@ export function formatString(input, separator, segments, alignright) {
   return output
 }
 
-/** */
+/**
+ * @param {string} str
+ * @param {number} len
+ * @param {boolean} pad
+ * @returns {string}
+ */
 export function padLeft(str, len, pad) {
   if (str.length >= len) {
     return str
@@ -69,7 +74,12 @@ export function padLeft(str, len, pad) {
   return letters.join('') + str
 }
 
-/** */
+/**
+ * @param {string} str
+ * @param {number} len
+ * @param {boolean} pad
+ * @returns {string}
+ */
 export function padRight(str, len, pad) {
   if (str.length >= len) {
     return str
@@ -81,7 +91,10 @@ export function padRight(str, len, pad) {
   return str + letters.join('')
 }
 
-/** */
+/**
+ * @param {string} str
+ * @returns {string}
+ */
 export function getStringHash(str) {
   let hash = 5381
   let i = str.length
@@ -93,17 +106,25 @@ export function getStringHash(str) {
   return hash >>> 0
 }
 
-/** */
-export function createRandomString(length = 16) {
+/**
+ * @param {number} len
+ * @returns {string}
+ */
+export function createRandomString(len = 16) {
   let text = ''
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < len; i++) {
     text += CHARS.charAt(Math.floor(Math.random() * CHARS.length))
   }
   return text
 }
 
 // https://github.com/gillesruppert/node-interpolate/blob/master/lib/interpolate.js
-/** */
+/**
+ * @param {string} template
+ * @param {object} data
+ * @param {object} [opts]
+ * @returns {string}
+ */
 export function interpolate(template, data, opts) {
   let regex,
     lDel,
