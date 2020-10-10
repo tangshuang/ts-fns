@@ -19,16 +19,20 @@ describe('is', () => {
     function Some() {
       this.name = 'some'
     }
-    expect(isFunction(Some)).toBe(true) // notice this line
+    expect(isFunction(Some)).toBe(true)
+    expect(isFunction(Some, true)).toBe(true) // notice this line
 
-    expect(isFunction(String)).toBe(false)
+    expect(isFunction(String)).toBe(true)
+    expect(isFunction(String, true)).toBe(false)
 
     class Tx {}
-    expect(isFunction(Tx)).toBe(false)
+    expect(isFunction(Tx)).toBe(true)
+    expect(isFunction(Tx, true)).toBe(false)
 
     function Next() {}
     Next.prototype.get = function() {}
-    expect(isFunction(Next)).toBe(false)
+    expect(isFunction(Next)).toBe(true)
+    expect(isFunction(Next, true)).toBe(false)
   })
   test('isConstructor', () => {
     function test() {}

@@ -115,9 +115,15 @@ export function isEmpty(value) {
   }
 }
 
-/** */
-export function isFunction(value) {
-  return typeof value === 'function' && !isConstructor(value, 2)
+/**
+ * @param {any} value
+ * @param {boolean} [isStrict] where Constructor is to return false
+ */
+export function isFunction(value, isStrict) {
+  if (typeof value !== 'function') {
+    return false
+  }
+  return isStrict ? !isConstructor(value, 2) : true
 }
 
 /**
