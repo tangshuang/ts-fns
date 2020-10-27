@@ -1222,7 +1222,7 @@ export function createProxy(origin, options = {}) {
         }
 
         delete origin[key]
-        Reflect.defineProperty(target, key)
+        Reflect.deleteProperty(target, key)
 
         if (isFunction(dispatch)) {
           const none = undefined
