@@ -138,7 +138,7 @@ export function assign(obj, key, value) {
     if (isString(next) && /^[0-9]+$/.test(next) && !isArray(target[current])) {
       target[current] = []
     }
-    else if (typeof target[current] !== 'object') {
+    else if (target[current] === null || typeof target[current] !== 'object') {
       target[current] = {}
     }
 
