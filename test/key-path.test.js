@@ -73,4 +73,20 @@ describe('key-path', () => {
     expect(makeKeyPath(['body', 'hand', 1, 'finger'])).toBe('body.hand.1.finger')
     expect(makeKeyPath(['body', 'hand', 1, 'finger'], true)).toBe('body.hand[1].finger')
   })
+
+  test('parse [*]', () => {
+    const data = {
+      name: 'data',
+      books: [
+        {
+          name: 'book1',
+        },
+        {
+          name: 'book2',
+        },
+      ],
+    }
+
+    expect(parse(data, 'books[*].name')).toEqual(['book1', 'book2'])
+  })
 })
