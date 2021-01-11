@@ -147,7 +147,7 @@ export function makeKey(keyPath) {
  * @param {string|array} key
  */
 export function parse(obj, key) {
-  let chain = isArray(key) ? [...key] : makeKeyChain(key)
+  const chain = isArray(key) ? [...key] : makeKeyChain(key)
 
   if (!chain.length) {
     return obj
@@ -155,11 +155,26 @@ export function parse(obj, key) {
 
   let target = obj
   for (let i = 0, len = chain.length; i &lt; len; i ++) {
-    const one = chain[i]
-    if (isUndefined(target[one])) {
+    const key = chain[i]
+
+    // want an array
+    if (key === '*') {
+      if (!isArray(target)) {
+        return
+      }
+      if (i + 1 >= len) {
+        return target
+      }
+      const restChain = chain.slice(i + 1)
+      const items = target.map(item => parse(item, restChain))
+      return items
+    }
+
+    if (isUndefined(target[key])) {
       return
     }
-    target = target[one]
+
+    target = target[key]
   }
   return target
 }
