@@ -150,7 +150,10 @@ export function assign(obj, key, value) {
       next = tail
     }
 
-    if (isString(next) && /^[0-9]+$/.test(next) && !isArray(target[current])) {
+    if (isNumber(next)) {
+      target[current] = []
+    }
+    else if (isString(next) && /^[0-9]+$/.test(next) && !isArray(target[current])) {
       target[current] = []
     }
     else if (target[current] === null || typeof target[current] !== 'object') {
