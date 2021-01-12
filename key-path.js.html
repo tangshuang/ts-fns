@@ -209,7 +209,7 @@ export function assign(obj, key, value) {
       next = tail
     }
 
-    if (isNumber(next)) {
+    if (isNumber(next) &amp;&amp; !isArray(target[current])) {
       target[current] = []
     }
     else if (isString(next) &amp;&amp; /^[0-9]+$/.test(next) &amp;&amp; !isArray(target[current])) {
