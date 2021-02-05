@@ -1006,9 +1006,13 @@ export function createProxy(origin, options = {}) {
 
     each(origin, (value, key) => {
       const keyPath = [...parents, key]
-      const next = isFunction(set) && !isSymbol(key) ? set(keyPath, value) : value
+      const needRewrite = isFunction(set) && !isSymbol(key)
+      const next = needRewrite ? set(keyPath, value) : value
 
-      origin[key] = next
+      if (needRewrite) {
+        origin[key] = next
+      }
+
       media[key] = create(next, keyPath)
     })
 
@@ -1241,9 +1245,13 @@ export function createProxy(origin, options = {}) {
 
     origin.forEach((value, i) => {
       const keyPath = [...parents, i]
-      const next = isFunction(set) && !isSymbol(i) ? set(keyPath, value) : value
+      const needRewrite = isFunction(set) && !isSymbol(i)
+      const next = needRewrite ? set(keyPath, value) : value
 
-      origin[i] = next
+      if (needRewrite) {
+        origin[i] = next
+      }
+
       media[i] = create(next, keyPath)
     })
 
