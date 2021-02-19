@@ -21,7 +21,7 @@ export function isNull(value) {
  * @returns {boolean}
  */
 export function isNone(value) {
-  return isUndefined(value) || isNull(value)
+  return isUndefined(value) || isNull(value) || isNaN(value)
 }
 
 /**
@@ -93,7 +93,7 @@ export function isFinite(value) {
  * @returns {boolean}
  */
 export function isInfinite(value) {
-  return !isNaN(value) && !Number.isFinite(value)
+  return typeof value === 'number' && !Number.isNaN(value) && !Number.isFinite(value)
 }
 
 /**
@@ -428,4 +428,48 @@ export function inObject(key, obj, own) {
  */
 export function inArray(item, arr) {
   return isArray(arr) && arr.includes(item)
+}
+
+/**
+ * @param {object} objA
+ * @param {object} objB
+ */
+export function isShallowEqual(objA,objB){
+  if(objA === objB) {
+    return true
+  }
+
+  if(!(typeof objA === 'object' && objA !== null) || !(typeof objB === 'object' && objB !== null)) {
+    return false
+  }
+
+  const keysA = Object.keys(objA)
+  const keysB = Object.keys(objB)
+
+  if (keysA.length !== keysB.length) {
+    return false
+  }
+
+  for (let i = 0; i < keysA.length; i ++) {
+    const keyA = keysA[i]
+    const keyB = keysB[i]
+
+    if (!Object.prototype.hasOwnProperty.call(objB, keyA)) {
+      return false
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(objA, keyB)) {
+      return false
+    }
+
+    if (objA[keyA] !== objB[keyA]) {
+      return false
+    }
+
+    if (objA[keyB] !== objB[keyB]) {
+      return false
+    }
+  }
+
+  return true
 }

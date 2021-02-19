@@ -1,4 +1,4 @@
-import { isFunction, isConstructor } from '../es/index.js'
+import { isFunction, isConstructor, isNone } from '../es/index.js'
 
 describe('is', () => {
   test('isFunction', () => {
@@ -82,5 +82,12 @@ describe('is', () => {
       this.xx = null
     }
     expect(isConstructor(xs)).toBe(false)
+  })
+  test('isNone', () => {
+    expect(isNone(null)).toBe(true)
+    expect(isNone(undefined)).toBe(true)
+    expect(isNone(+'~')).toBe(true)
+    expect(isNone(0)).toBe(false)
+    expect(isNone('')).toBe(false)
   })
 })
