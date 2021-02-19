@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>string.js</title>
+    <title>syntax.js</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -47,7 +47,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">string.js</h1>
+    <h1 class="page-title">syntax.js</h1>
     
 
     
@@ -57,179 +57,25 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { createArray } from './array.js'
-
-// the order could never be changed, becuase we use it for number convertion
-export const CHARS = '0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ'
+            <pre class="prettyprint source linenums"><code>/**
+ * get value by using a function
+ * @param {function} decide
+ * @param {...any} args
+ */
+export function decideby(decide, ...args) {
+  return decide(...args)
+}
 
 /**
- * @param {string} input
- * @param {string} separator
- * @param {array} segments
- * @param {boolean} alignright
- * @returns {string}
+ * get value by different conditions
+ * @param {Array&lt;Function,Function>} entries [[condition, getter]]
  */
-export function formatString(input, separator, segments, alignright) {
-  if (typeof input !== 'string' || !input) {
-    return ''
-  }
-  if (typeof separator !== 'string' || !separator) {
-    return input
-  }
-  if (!segments) {
-    return input
-  }
-
-  let letters = input.split('')
-
-  if (alignright) {
-    letters.reverse()
-  }
-
-  let points = Array.isArray(segments) ? [].concat(segments) : [segments]
-  let result = []
-  let count = points[0]
-
-  for (let i = 0, len = letters.length; i &lt; len; i ++) {
-    if (typeof segments === 'number') {
-      if (i > 0 &amp;&amp; i % count === 0) {
-        result.push(separator)
-      }
+export function caseby(entries, ...args) {
+  for (let [cond, get] of entries) {
+    if (cond(...args)) {
+      return get(...args)
     }
-    else if (Array.isArray(segments) &amp;&amp; points.length) {
-      if (i > 0 &amp;&amp; i % count === 0) {
-        result.push(separator)
-        points.shift()
-        count += points.length ? points[0] : 0
-      }
-    }
-
-    let char = letters[i]
-    result.push(char)
   }
-
-  if (alignright) {
-    result.reverse()
-  }
-
-  let output = result.join('')
-  return output
-}
-
-/**
- * @param {string} str
- * @param {number} len
- * @param {boolean} pad
- * @returns {string}
- */
-export function padLeft(str, len, pad) {
-  if (str.length >= len) {
-    return str
-  }
-
-  let diff = len - str.length
-  let letters = createArray(pad, diff)
-
-  return letters.join('') + str
-}
-
-/**
- * @param {string} str
- * @param {number} len
- * @param {boolean} pad
- * @returns {string}
- */
-export function padRight(str, len, pad) {
-  if (str.length >= len) {
-    return str
-  }
-
-  let diff = len - str.length
-  let letters = createArray(pad, diff)
-
-  return str + letters.join('')
-}
-
-/**
- * @param {string} str
- * @returns {string}
- */
-export function getStringHash(str) {
-  let hash = 5381
-  let i = str.length
-
-  while(i) {
-    hash = (hash * 33) ^ str.charCodeAt(--i)
-  }
-
-  return hash >>> 0
-}
-
-/**
- * @param {number} len
- * @returns {string}
- */
-export function createRandomString(len = 16) {
-  let text = ''
-  for (let i = 0; i &lt; len; i++) {
-    text += CHARS.charAt(Math.floor(Math.random() * CHARS.length))
-  }
-  return text
-}
-
-// https://github.com/gillesruppert/node-interpolate/blob/master/lib/interpolate.js
-/**
- * @param {string} template
- * @param {object} data
- * @param {object} [opts]
- * @returns {string}
- */
-export function interpolate(template, data, opts) {
-  let regex,
-    lDel,
-    rDel,
-    delLen,
-    lDelLen,
-    delimiter,
-    // For escaping strings to go in regex
-    regexEscape = /([$\^\\\/()|?+*\[\]{}.\-])/g;
-
-  opts = opts || {};
-
-  delimiter = opts.delimiter || '{}';
-  delLen = delimiter.length;
-  lDelLen = Math.ceil(delLen / 2);
-  // escape delimiters for regex
-  lDel = delimiter.substr(0, lDelLen).replace(regexEscape, "\\$1");
-  rDel = delimiter.substr(lDelLen, delLen).replace(regexEscape, "\\$1") || lDel;
-
-  // construct the new regex
-  regex = new RegExp(lDel + "[^" + lDel + rDel + "]+" + rDel, "g");
-
-  return template.replace(regex, function (placeholder) {
-    let key = placeholder.slice(lDelLen, -lDelLen),
-      keyParts = key.split("."),
-      val,
-      i = 0,
-      len = keyParts.length;
-
-    if (key in data) {
-      // need to be backwards compatible with "flattened" data.
-      val = data[key];
-    }
-    else {
-      // look up the chain
-      val = data;
-      for (; i &lt; len; i++) {
-        if (keyParts[i] in val) {
-          val = val[ keyParts[i] ];
-        } else {
-          return placeholder;
-        }
-      }
-    }
-    return val;
-  });
 }
 </code></pre>
         </article>
