@@ -529,7 +529,7 @@ export function createReactive(origin, options = {}) {
       return origin
     }
 
-    if (isFunction(disable) && disable(origin, parents)) {
+    if (isFunction(disable) && disable(parents, origin)) {
       return origin
     }
 
@@ -902,7 +902,7 @@ export function createProxy(origin, options = {}) {
       return origin
     }
 
-    if (isFunction(disable) && disable(origin, parents)) {
+    if (isFunction(disable) && disable(parents, origin)) {
       return origin
     }
 
