@@ -485,6 +485,7 @@ export function freeze(o) {
  * @param {function} options.set to modify input value of each node, receive (keyPath, nextValue), nextValue is the given passed value, the return value will be transformed to be reactive object/array as if
  * @param {function} options.dispatch to notify change with keyPath, receive (keypath, next, prev), it will be called after value is set into
  * @param {function} options.writable whether be able to change value, return false to disable writable, default is true
+ * @param {function} options.disable return true to disable create nest reactive on this node
  * @returns {object|array}
  * @example
  * const some = {
@@ -521,10 +522,14 @@ export function freeze(o) {
  * some.body.hand === false // original data changed
  */
 export function createReactive(origin, options = {}) {
-  const { get, set, del, dispatch, writable } = options
+  const { get, set, del, dispatch, writable, disable } = options
 
   const create = (origin, parents = []) => {
     if (!isObject(origin) && !isArray(origin)) {
+      return origin
+    }
+
+    if (isFunction(disable) && disable(origin, parents)) {
       return origin
     }
 
@@ -890,10 +895,14 @@ export function createReactive(origin, options = {}) {
  * some.body.hand === false // some.body.hand changes to false
  */
 export function createProxy(origin, options = {}) {
-  const { get, set, del, dispatch, writable } = options
+  const { get, set, del, dispatch, writable, disable } = options
 
   const create = (origin, parents = []) => {
     if (!isObject(origin) && !isArray(origin)) {
+      return origin
+    }
+
+    if (isFunction(disable) && disable(origin, parents)) {
       return origin
     }
 
