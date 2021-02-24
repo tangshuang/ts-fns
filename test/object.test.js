@@ -336,4 +336,15 @@ describe('proxy', () => {
     const removed = arr.splice(2, 2, { id: 'a' }, { id: 'b' })
     expect(removed.length).toBe(2)
   })
+
+  test('Symbol(ORIGIN)', () => {
+    const obj = {
+      sub: { a: 1 },
+    }
+    const proxy = createProxy(obj)
+
+    const sub = proxy.sub
+    expect(sub).not.toBe(obj.sub)
+    expect(sub[Symbol('ORIGIN')]).toBe(obj.sub)
+  })
 })

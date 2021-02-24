@@ -923,8 +923,13 @@ export function createProxy(origin, options = {}) {
       get: (target, key, receiver) => {
         // primitive property
         // such as 'a' + obj, and obj[Symbol.toPrimitive](hint) defined
-        if (isSymbol(key) && key.description && key.description.indexOf('Symbol.') === 0) {
+        if (isSymbol(key) && getSymbolContent(key).indexOf('Symbol.') === 0) {
           return Reflect.get(target, key, receiver)
+        }
+
+        // get original property value
+        if (isSymbol(key) && getSymbolContent(key) === 'ORIGIN') {
+          return origin
         }
 
         const active = Reflect.get(target, key, receiver)
@@ -1034,8 +1039,13 @@ export function createProxy(origin, options = {}) {
       get: (target, key, receiver) => {
         // primitive property
         // such as 'a' + obj, and obj[Symbol.toPrimitive](hint) defined
-        if (isSymbol(key) && key.description && key.description.indexOf('Symbol.') === 0) {
+        if (isSymbol(key) && getSymbolContent(key).indexOf('Symbol.') === 0) {
           return Reflect.get(target, key, receiver)
+        }
+
+        // get original property value
+        if (isSymbol(key) && getSymbolContent(key) === 'ORIGIN') {
+          return origin
         }
 
         // array primitive operation
@@ -1269,4 +1279,12 @@ export function createProxy(origin, options = {}) {
 
   const output = create(origin)
   return output
+}
+
+export function getSymbolContent(symb) {
+  if (symb.description) {
+    return symb.description
+  }
+  const str = symb.toString()
+  return str.substring(7, str.length - 1)
 }
