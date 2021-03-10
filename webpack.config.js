@@ -1,5 +1,6 @@
 const path = require('path')
 const DeepScopePlugin = require('webpack-deep-scope-plugin').default
+const babelConfig = require('./babel.config.js')
 
 const root = path.resolve(__dirname)
 
@@ -19,6 +20,7 @@ const config = {
         test: /\.js$/,
         loader: 'babel-loader',
         options: {
+          ...babelConfig,
           presets: [
             ['@babel/preset-env', { modules: false }],
           ],
