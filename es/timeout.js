@@ -8,12 +8,12 @@
 export function debounce(fn, wait, immediate) {
   let timeout = null
 
-  return function() {
+  return function(...args) {
     const callNow = immediate && !timeout
     const next = () => {
       timeout = null
       if (!immediate) {
-        fn.apply(this, arguments)
+        fn.apply(this, args)
       }
     }
 
@@ -21,7 +21,7 @@ export function debounce(fn, wait, immediate) {
     timeout = setTimeout(next, wait)
 
     if (callNow) {
-      fn.apply(this, arguments)
+      fn.apply(this, args)
     }
   }
 }
@@ -37,12 +37,12 @@ export function throttle(fn, wait, immediate) {
   let timeout = null
   let lastTime = 0
 
-  return function() {
+  return function(...args) {
     const callNow = immediate && !timeout
     const nowTime = Date.now()
     const next = () => {
       timeout = null
-      fn.apply(this, arguments)
+      fn.apply(this, args)
     }
 
     if (timeout || (lastTime && nowTime < lastTime + wait)) {
@@ -52,7 +52,7 @@ export function throttle(fn, wait, immediate) {
     lastTime = nowTime
 
     if (callNow) {
-      fn.apply(this, arguments)
+      fn.apply(this, args)
     }
     else {
       timeout = setTimeout(next, wait)
