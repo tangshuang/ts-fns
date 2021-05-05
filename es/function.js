@@ -296,11 +296,6 @@ export function invoke_(fn, count = 1, expire = 0) {
 export function pipe_(...fns) {
   const funcs = fns.filter(fn => typeof fn === 'function')
   return function(arg) {
-    let result = arg
-    for (let i = 0, len = funcs.length; i < len; i ++) {
-      const fn = funcs[i]
-      result = fn.call(this, result)
-    }
-    return result
+    return funcs.reduce((res, fn) => fn.call(this, res), arg)
   }
 }

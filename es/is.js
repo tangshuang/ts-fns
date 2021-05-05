@@ -473,3 +473,11 @@ export function isShallowEqual(objA,objB){
 
   return true
 }
+
+export function isOneInArray(items, arr) {
+  return arr.some(one => items.includes(one))
+}
+
+export function isAllInArray(items, arr) {
+  return !arr.some(one => !items.includes(one))
+}

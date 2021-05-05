@@ -1288,3 +1288,23 @@ export function getSymbolContent(symb) {
   const str = symb.toString()
   return str.substring(7, str.length - 1)
 }
+
+export function toEntries(obj) {
+  const keys = Object.keys(obj)
+  return keys.map(key => [key, obj[key]])
+}
+
+export function fromEntries(entries, kv = false) {
+  const obj = {}
+  entries.forEach((item) => {
+    if (kv) {
+      const { key, value } = item
+      obj[key] = value
+    }
+    else {
+      const [key, value] = item
+      obj[key] = value
+    }
+  })
+  return obj
+}
