@@ -1,6 +1,6 @@
 {
   "name": "ts-fns",
-  "version": "10.1.0",
+  "version": "10.2.0",
   "description": "Public Functions.",
   "main": "cjs/index.js",
   "types": "./types.d.ts",
