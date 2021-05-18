@@ -744,7 +744,7 @@ export function createReactive(origin, options = {}) {
     // change array prototype methods
     const modify = (fn) => ({
       value: function(...args) {
-        if (isFunction(writable) && !writable(parents, origin)) {
+        const nonAs = () => {
           if (fn === 'push' || fn === 'unshift') {
             return media.length
           }
@@ -762,9 +762,27 @@ export function createReactive(origin, options = {}) {
           }
         }
 
+        if (isFunction(writable) && !writable(parents, origin)) {
+          return nonAs()
+        }
+
         // a hook to modify args for array push, shift inputs
         if (inObject(fn, options) && isFunction(options[fn])) {
-          args = options[fn](parents, args) || args
+          const res = options[fn](parents, args)
+          // when return false, it means don't change the value
+          if (res === false) {
+            return nonAs()
+          }
+          // when return array, use it as new args
+          if (isArray(res)) {
+            args = res
+          }
+          // when return object, switch to another method
+          else if (isObject(res)) {
+            const { to, args: newArgs } = res
+            fn = to
+            args = newArgs
+          }
         }
 
         // deal with original data
@@ -1062,7 +1080,7 @@ export function createProxy(origin, options = {}) {
         ]
         if (inArray(key, methods)) {
           return (...args) => {
-            if (isFunction(writable) && !writable(parents, origin)) {
+            const nonAs = () => {
               if (key === 'push' || key === 'unshift') {
                 return origin.length
               }
@@ -1080,9 +1098,27 @@ export function createProxy(origin, options = {}) {
               }
             }
 
+            if (isFunction(writable) && !writable(parents, origin)) {
+              return nonAs()
+            }
+
             // a hook to modify args for array push, shift inputs
             if (inObject(key, options) && isFunction(options[key])) {
-              args = options[key](parents, args) || args
+              const res = options[key](parents, args)
+              // when return false, it means don't change the value
+              if (res === false) {
+                return nonAs()
+              }
+              // when return array, use it as new args
+              if (isArray(res)) {
+                args = res
+              }
+              // when return object, switch to another method
+              else if (isObject(res)) {
+                const { to, args: newArgs } = res
+                key = to
+                args = newArgs
+              }
             }
 
             const max = origin.length
