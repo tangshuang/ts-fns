@@ -347,4 +347,28 @@ describe('proxy', () => {
     expect(sub).not.toBe(obj.sub)
     expect(sub[Symbol('ORIGIN')]).toBe(obj.sub)
   })
+
+  test('proxy frozen object & receive option', () => {
+    const obj = {
+      name: 'tomy',
+    }
+    const fo = Object.freeze(obj)
+
+    let count = 0
+    let received = ''
+    const proxy = createProxy(fo, {
+      receive(_, value) {
+        received = value
+      },
+      dispatch() {
+        count ++
+      },
+    })
+    expect(proxy.name).toBe('tomy')
+
+    proxy.name = 'tom'
+    expect(proxy.name).toBe('tomy')
+    expect(count).toBe(0)
+    expect(received).toBe('tom')
+  })
 })

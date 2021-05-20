@@ -522,7 +522,7 @@ export function freeze(o) {
  * some.body.hand === false // original data changed
  */
 export function createReactive(origin, options = {}) {
-  const { get, set, del, dispatch, writable, disable } = options
+  const { get, set, del, dispatch, writable, disable, receive } = options
 
   const create = (origin, parents = []) => {
     if (!isObject(origin) && !isArray(origin)) {
@@ -550,6 +550,12 @@ export function createReactive(origin, options = {}) {
 
     const setValue = (key, value, trigger) => {
       const keyPath = [...parents, key]
+
+      if (Object.isFrozen(origin)) {
+        const active = create(value, keyPath)
+        return active
+      }
+
       const prev = origin[key]
       const invalid = media[key]
       const input = isFunction(set) ? set(keyPath, value) : value
@@ -620,6 +626,14 @@ export function createReactive(origin, options = {}) {
           return output
         },
         set: (value) => {
+          if (isFunction(receive)) {
+            receive(keyPath, value)
+          }
+
+          if (Object.isFrozen(origin)) {
+            return media[key]
+          }
+
           if (isFunction(writable) && !writable(keyPath, value)) {
             return media[key]
           }
@@ -647,6 +661,15 @@ export function createReactive(origin, options = {}) {
       $set: {
         value: (key, value) => {
           const keyPath = [...parents, key]
+
+          if (isFunction(receive)) {
+            receive(keyPath, value)
+          }
+
+          if (Object.isFrozen(origin)) {
+            return media[key]
+          }
+
           if (isFunction(writable) && !writable(keyPath)) {
             return media[key]
           }
@@ -658,6 +681,15 @@ export function createReactive(origin, options = {}) {
       $del: {
         value: (key) => {
           const keyPath = [...parents, key]
+
+          if (isFunction(receive)) {
+            receive(keyPath)
+          }
+
+          if (Object.isFrozen(origin)) {
+            return
+          }
+
           if (isFunction(writable) && !writable(keyPath)) {
             return
           }
@@ -676,6 +708,12 @@ export function createReactive(origin, options = {}) {
 
     const setValue = (i, value, trigger) => {
       const keyPath = [...parents, i]
+
+      if (Object.isFrozen(origin)) {
+        const active = create(value, keyPath)
+        return active
+      }
+
       const prev = origin[i]
       const invalid = media[i]
       const input = isFunction(set) ? set(keyPath, value) : value
@@ -760,6 +798,14 @@ export function createReactive(origin, options = {}) {
           else {
             return media
           }
+        }
+
+        if (isFunction(receive)) {
+          receive(parents, origin, fn)
+        }
+
+        if (Object.isFrozen(origin)) {
+          return nonAs()
         }
 
         if (isFunction(writable) && !writable(parents, origin)) {
@@ -913,7 +959,7 @@ export function createReactive(origin, options = {}) {
  * some.body.hand === false // some.body.hand changes to false
  */
 export function createProxy(origin, options = {}) {
-  const { get, set, del, dispatch, writable, disable } = options
+  const { get, set, del, dispatch, writable, disable, receive } = options
 
   const create = (origin, parents = []) => {
     if (!isObject(origin) && !isArray(origin)) {
@@ -966,6 +1012,14 @@ export function createProxy(origin, options = {}) {
       set: (target, key, value, receiver) => {
         const keyPath = [...parents, key]
 
+        if (isFunction(receive)) {
+          receive(keyPath, value)
+        }
+
+        if (Object.isFrozen(origin)) {
+          return true
+        }
+
         if (isFunction(writable) && !writable(keyPath, value)) {
           return true
         }
@@ -1007,6 +1061,14 @@ export function createProxy(origin, options = {}) {
       deleteProperty: (target, key) => {
         const keyPath = [...parents, key]
 
+        if (isFunction(receive)) {
+          receive(keyPath)
+        }
+
+        if (Object.isFrozen(origin)) {
+          return true
+        }
+
         if (isFunction(writable) && !writable(keyPath)) {
           return true
         }
@@ -1038,14 +1100,20 @@ export function createProxy(origin, options = {}) {
 
     each(origin, (value, key) => {
       const keyPath = [...parents, key]
-      const needRewrite = isFunction(set) && !isSymbol(key)
-      const next = needRewrite ? set(keyPath, value) : value
 
-      if (needRewrite) {
-        origin[key] = next
+      if (Object.isFrozen(origin)) {
+        media[key] = create(value, keyPath)
       }
+      else {
+        const needRewrite = isFunction(set) && !isSymbol(key)
+        const next = needRewrite ? set(keyPath, value) : value
 
-      media[key] = create(next, keyPath)
+        if (needRewrite) {
+          origin[key] = next
+        }
+
+        media[key] = create(next, keyPath)
+      }
     })
 
     return proxy
@@ -1096,6 +1164,14 @@ export function createProxy(origin, options = {}) {
               else {
                 return media
               }
+            }
+
+            if (isFunction(receive)) {
+              receive(parents, origin, key)
+            }
+
+            if (Object.isFrozen(origin)) {
+              return nonAs()
             }
 
             if (isFunction(writable) && !writable(parents, origin)) {
@@ -1206,6 +1282,14 @@ export function createProxy(origin, options = {}) {
       set: (target, key, value, receiver) => {
         const keyPath = [...parents, key]
 
+        if (isFunction(receive)) {
+          receive(keyPath, value)
+        }
+
+        if (Object.isFrozen(origin)) {
+          return true
+        }
+
         if (isFunction(writable) && !writable(keyPath, value)) {
           return true
         }
@@ -1269,6 +1353,14 @@ export function createProxy(origin, options = {}) {
       deleteProperty: (target, key) => {
         const keyPath = [...parents, key]
 
+        if (isFunction(receive)) {
+          receive(keyPath)
+        }
+
+        if (Object.isFrozen(origin)) {
+          return true
+        }
+
         if (isFunction(writable) && !writable(keyPath)) {
           return true
         }
@@ -1300,14 +1392,20 @@ export function createProxy(origin, options = {}) {
 
     origin.forEach((value, i) => {
       const keyPath = [...parents, i]
-      const needRewrite = isFunction(set) && !isSymbol(i)
-      const next = needRewrite ? set(keyPath, value) : value
 
-      if (needRewrite) {
-        origin[i] = next
+      if (Object.isFrozen(origin)) {
+        media[i] = create(value, keyPath)
       }
+      else {
+        const needRewrite = isFunction(set) && !isSymbol(i)
+        const next = needRewrite ? set(keyPath, value) : value
 
-      media[i] = create(next, keyPath)
+        if (needRewrite) {
+          origin[i] = next
+        }
+
+        media[i] = create(next, keyPath)
+      }
     })
 
     return proxy
