@@ -111,11 +111,16 @@ export function parse(obj, key) {
       return items
     }
 
-    if (isUndefined(target[key])) {
+    if (target === null) {
       return
     }
 
-    target = target[key]
+    const node = target[key]
+    if (isUndefined(node)) {
+      return
+    }
+
+    target = node
   }
   return target
 }
