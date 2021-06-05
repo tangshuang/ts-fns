@@ -568,8 +568,19 @@ export function createReactive(origin, options = {}) {
         || input === prev
         || input === invalid
       )) {
-        next = prev
-        active = invalid
+        // origin property is changed any where else
+        if ((typeof prev !== 'object' || prev === null) && prev !== invalid) {
+          next = prev
+          active = prev
+        }
+        else if (invalid && typeof invalid === 'object' && invalid.$$_ORIGIN !== prev) {
+          next = prev
+          active = create(prev, keyPath)
+        }
+        else {
+          next = prev
+          active = invalid
+        }
       }
       else {
         next = input
@@ -697,6 +708,9 @@ export function createReactive(origin, options = {}) {
           delValue(key, true)
         },
       },
+      $$_ORIGIN: {
+        get: () => origin,
+      },
     })
 
     return reactive
@@ -726,8 +740,19 @@ export function createReactive(origin, options = {}) {
         || input === prev
         || input === invalid
       )) {
-        next = prev
-        active = invalid
+        // origin property is changed any where else
+        if ((typeof prev !== 'object' || prev === null) && prev !== invalid) {
+          next = prev
+          active = prev
+        }
+        else if (invalid && typeof invalid === 'object' && invalid.$$_ORIGIN !== prev) {
+          next = prev
+          active = create(prev, keyPath)
+        }
+        else {
+          next = prev
+          active = invalid
+        }
       }
       else {
         next = input
@@ -909,6 +934,9 @@ export function createReactive(origin, options = {}) {
       sort: modify('sort'),
       reverse: modify('reverse'),
       fill: modify('fill'),
+      $$_ORIGIN: {
+        get: () => origin,
+      },
     })
 
     shuffle(0, origin.length - 1)
