@@ -1,7 +1,7 @@
 import { unionArray } from './array.js'
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isUndefined(value) {
@@ -9,7 +9,7 @@ export function isUndefined(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isNull(value) {
@@ -17,7 +17,7 @@ export function isNull(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isNone(value) {
@@ -25,7 +25,7 @@ export function isNone(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isArray(value) {
@@ -33,7 +33,7 @@ export function isArray(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isObject(value) {
@@ -41,7 +41,7 @@ export function isObject(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isDate(value) {
@@ -49,7 +49,7 @@ export function isDate(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isString(value) {
@@ -57,7 +57,7 @@ export function isString(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isNumber(value) {
@@ -65,7 +65,7 @@ export function isNumber(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isNaN(value) {
@@ -73,7 +73,7 @@ export function isNaN(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isSymbol(value) {
@@ -81,7 +81,7 @@ export function isSymbol(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isFinite(value) {
@@ -89,7 +89,7 @@ export function isFinite(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isInfinite(value) {
@@ -97,7 +97,7 @@ export function isInfinite(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isBoolean(value) {
@@ -105,7 +105,7 @@ export function isBoolean(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isNumeric(value) {
@@ -113,7 +113,7 @@ export function isNumeric(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isBlob(value) {
@@ -126,7 +126,7 @@ export function isBlob(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isFile(value) {
@@ -139,7 +139,7 @@ export function isFile(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isFormData(value) {
@@ -147,7 +147,7 @@ export function isFormData(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isEmpty(value) {
@@ -166,7 +166,7 @@ export function isEmpty(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @param {boolean} [isStrict] where Constructor is to return false
  * @returns {boolean}
  */
@@ -179,7 +179,7 @@ export function isFunction(value, isStrict) {
 
 /**
  * judge whether a value is a Constructor
- * @param {*} f
+ * @param {any} f
  * @param {number} [strict] strict level
  * - 4: should must be one of native code, native class
  * - 3: can be babel transformed class
@@ -254,7 +254,7 @@ export function isConstructor(f, strict) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isTruthy(value) {
@@ -262,7 +262,7 @@ export function isTruthy(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isFalsy(value) {
@@ -270,7 +270,7 @@ export function isFalsy(value) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isEqual(val1, val2) {
@@ -311,8 +311,8 @@ export function isEqual(val1, val2) {
 }
 
 /**
- * @param {*} a
- * @param {*} b
+ * @param {any} a
+ * @param {any} b
  * @returns {boolean}
  */
 export function isLt(a, b) {
@@ -320,8 +320,8 @@ export function isLt(a, b) {
 }
 
 /**
- * @param {*} a
- * @param {*} b
+ * @param {any} a
+ * @param {any} b
  * @returns {boolean}
  */
 export function isLte(a, b) {
@@ -329,8 +329,8 @@ export function isLte(a, b) {
 }
 
 /**
- * @param {*} a
- * @param {*} b
+ * @param {any} a
+ * @param {any} b
  * @returns {boolean}
  */
 export function isGt(a, b) {
@@ -338,8 +338,8 @@ export function isGt(a, b) {
 }
 
 /**
- * @param {*} a
- * @param {*} b
+ * @param {any} a
+ * @param {any} b
  * @returns {boolean}
  */
 export function isGte(a, b) {
@@ -347,7 +347,7 @@ export function isGte(a, b) {
 }
 
 /**
- * @param {*} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function isPromise(value) {
@@ -360,8 +360,8 @@ export function isPromise(value) {
 }
 
 /**
- * @param {*} value
- * @param {Class} Constructor
+ * @param {any} value
+ * @param {any} Constructor
  * @param {boolean} [isStrict]
  * @returns {boolean}
  */
@@ -378,8 +378,8 @@ export function isInstanceOf(value, Constructor, isStrict) {
 }
 
 /**
- * @param {Class} SubConstructor
- * @param {Class} Constructor
+ * @param {any} SubConstructor
+ * @param {any} Constructor
  * @param {boolean} [isStrict]
  * @returns {boolean}
  */
@@ -422,7 +422,7 @@ export function inObject(key, obj, own) {
 }
 
 /**
- * @param {*} item
+ * @param {any} item
  * @param {array} arr
  * @returns {boolean}
  */

@@ -2,7 +2,7 @@ import { getStringHash } from './string.js'
 import { isArray, isObject, isFile, isDate, isFunction, inArray, isSymbol, inObject, isUndefined } from './is.js'
 
 /**
- * @param {*} obj
+ * @param {any} obj
  */
 export function clone(obj) {
   const parents = []

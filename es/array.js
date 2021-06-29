@@ -1,9 +1,10 @@
 import { inArray, isNaN, isString, isArray, isFunction } from './is.js'
 
 /**
- * @param {*} value
+ * @template T
+ * @param {T} value
  * @param {number} [count]
- * @returns {array}
+ * @returns {T[]}
  */
 export function createArray(value, count = 1) {
   return [].fill.call(new Array(count), value)
@@ -106,7 +107,7 @@ export function sortArray(items, by, decs = false) {
 }
 
 /**
- * @param {*} arr
+ * @param {any} arr
  * @returns {array}
  */
 export function toArray(arr) {
@@ -114,8 +115,8 @@ export function toArray(arr) {
 }
 
 /**
- * @param {array} arr
- * @returns {array}
+ * @param {any[][]} arr
+ * @returns {any[]}
  */
 export function flatArray(arr) {
   const res = []
@@ -147,6 +148,7 @@ export function groupArray(arr, count) {
  * @param {array} arr
  * @param {*|function} split
  * @returns {array[]}
+ * @ts_declare function splitArray(arr: any[], split: any | ((item: any, i: number) => boolean)): any[]
  */
 export function splitArray(arr, split) {
   const results = []
@@ -167,9 +169,9 @@ export function splitArray(arr, split) {
 }
 
 /**
- * @param {array[]} arr
- * @param {*} join
- * @returns {array}
+ * @param {any[][]} arr
+ * @param {any} join
+ * @returns {any[]}
  */
 export function joinArray(arr, join) {
   const results = []
