@@ -14,7 +14,7 @@ describe('number', () => {
   })
 
   it('divideby', () => {
-    const decimalNum = divideby(1111, 111)
-    console.log(decimalNum)
+    const decimalNum = divideby(1111, 111, 5)
+    expect(decimalNum).toBe('1.009')
   })
 })

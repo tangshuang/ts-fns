@@ -572,7 +572,7 @@ export function divideby(a, b, decimal) {
 
       nextto = remainder + '0'
 
-      if (result.length > decimal) {
+      if (result.length >= decimal) {
         break
       }
     }
