@@ -643,7 +643,7 @@ export function compareby(a, b) {
     }
   }
 
-  const ci = compareby(ia, ib)
+  const ci = compare(ia, ib)
   if (ci) {
     return ci
   }
@@ -657,7 +657,7 @@ export function compareby(a, b) {
   if (dblen < dlen) {
     db = padRight(db, dlen, '0')
   }
-  const cd = compareby(da, db)
+  const cd = compare(da, db)
   if (cd) {
     return cd
   }

@@ -1,4 +1,4 @@
-import { fixNum, num10to62, num62to10 } from '../es/number.js'
+import { fixNum, num10to62, num62to10, divideby } from '../es/number.js'
 
 describe('number', () => {
   it('fixNum', () => {
@@ -11,5 +11,10 @@ describe('number', () => {
   })
   it('num62to10', () => {
     expect(num62to10('1C')).toBe(100)
+  })
+
+  it('divideby', () => {
+    const decimalNum = divideby(1111, 111)
+    console.log(decimalNum)
   })
 })
