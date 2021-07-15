@@ -1,4 +1,4 @@
-import { isObject, isSymbol, isArray, isUndefined, isNumber, isString } from './is.js'
+import { isObject, isSymbol, isArray, isUndefined, isNumber, isString, inObject } from './is.js'
 
 /**
  * convert a keyPath string to be an array
@@ -200,4 +200,25 @@ export function remove(obj, key) {
 
   delete target[tail]
   return obj
+}
+
+export function keyin(key, obj) {
+  const chain = isArray(key) ? [...key] : makeKeyChain(key)
+
+  if (!chain.length) {
+    return false
+  }
+
+  const tail = chain.pop()
+
+  if (!chain.length) {
+    return tail in obj
+  }
+
+  const target = parse(obj, chain)
+  if (target && typeof target === 'object') {
+    return tail in target
+  }
+
+  return false
 }
