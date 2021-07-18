@@ -1566,6 +1566,12 @@ export function createProxy(origin, options = {}) {
 
         return true
       },
+      has(target, key) {
+        if (inArray(key, ['remove', 'insert'])) {
+          return true
+        }
+        return key in target
+      },
     })
 
     origin.forEach((value, i) => {
