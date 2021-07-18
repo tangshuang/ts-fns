@@ -1,5 +1,6 @@
 import { getStringHash } from './string.js'
 import { isArray, isObject, isFile, isDate, isFunction, inArray, isSymbol, inObject, isUndefined } from './is.js'
+import { decideby } from './syntax.js'
 
 /**
  * @param {any} obj
@@ -802,6 +803,14 @@ export function createReactive(origin, options = {}) {
         // initialize
         setValue(i, origin[i])
       }
+
+      // make sure the no use items are removed
+      if (media.length > origin.length) {
+        media.length = origin.length
+      }
+      if (reactive.length > media.length) {
+        reactive.length = media.length
+      }
     }
 
     // change array prototype methods
@@ -819,6 +828,9 @@ export function createReactive(origin, options = {}) {
           }
           else if (fn === 'pop') {
             return media[media.length - 1]
+          }
+          else if (fn === 'insert' || fn === 'remove') {
+            return -1
           }
           else {
             return media
@@ -856,24 +868,33 @@ export function createReactive(origin, options = {}) {
           }
         }
 
+        let output = null
+
         // deal with original data
-        const before = origin.length
-        let output = Array.prototype[fn].apply(origin, args)
-        const after = origin.length
+        const operate = () => {
+          const before = origin.length
+          output = Array.prototype[fn].apply(origin, args)
+          const after = origin.length
+          return [after, before]
+        }
 
         if (fn === 'push') {
+          const [after, before] = operate()
           output = after
           media.length = after
           reactive.length = after
           shuffle(before - 1, after - 1)
         }
         else if (fn === 'unshift') {
+          const [after] = operate()
           output = after
           media.length = after
           reactive.length = after
           shuffle(0, after - 1)
         }
         else if (fn === 'splice') {
+          const [after] = operate()
+
           const [start, len, ...items] = args
           output = media.slice(start, start + len)
 
@@ -891,22 +912,83 @@ export function createReactive(origin, options = {}) {
           }
         }
         else if (fn === 'shift') {
+          const [after] = operate()
           output = media[0]
           media.length = after
           reactive.length = after
           shuffle(0, after - 1)
         }
         else if (fn === 'pop') {
+          const [after] = operate()
           output = media[media.length - 1]
           media.length = after
           reactive.length = after
         }
         else if (fn === 'fill') {
-          const [item, start = 0, end = before] = args
+          const [, before] = operate()
+          const [, start = 0, end = before] = args
           output = media
           shuffle(start, end - 1)
         }
+        else if (fn === 'insert') {
+          if (args.length < 1) {
+            return -1
+          }
+          else if (args.length < 2) {
+            const [item] = args
+            output = origin.length
+            Array.prototype.push.call(origin, item)
+            shuffle(output, output)
+          }
+          else {
+            const [item, before] = args
+            const beforeIndex = decideby(() => {
+              const mediaIndex = media.indexOf(before)
+              if (mediaIndex > -1) {
+                return mediaIndex
+              }
+
+              const originIndex = origin.indexOf(before)
+              return originIndex
+            })
+
+            if (beforeIndex < 0) {
+              return -1
+            }
+
+            Array.prototype.splice.call(origin, beforeIndex, 0, item)
+            shuffle(beforeIndex, origin.length - 1)
+            output = beforeIndex
+          }
+        }
+        else if (fn === 'remove') {
+          if (args.length < 1) {
+            return -1
+          }
+          else {
+            const [item] = args
+            const index = decideby(() => {
+              const mediaIndex = media.indexOf(item)
+              if (mediaIndex > -1) {
+                return mediaIndex
+              }
+
+              const originIndex = origin.indexOf(item)
+              return originIndex
+            })
+
+            if (index < 0) {
+              return index
+            }
+
+            Array.prototype.splice.call(origin, index, 1)
+            Array.prototype.splice.call(media, index, 1)
+            shuffle(index, origin.length - 1)
+            output = index
+          }
+        }
         else {
+          operate()
           output = media
         }
 
@@ -934,6 +1016,8 @@ export function createReactive(origin, options = {}) {
       sort: modify('sort'),
       reverse: modify('reverse'),
       fill: modify('fill'),
+      insert: modify('insert'),
+      remove: modify('remove'),
       $$_ORIGIN: {
         get: () => origin,
       },
@@ -1173,6 +1257,8 @@ export function createProxy(origin, options = {}) {
           'shift', 'pop',
           // the following 1 line will return the changed original array
           'sort', 'reverse', 'fill',
+          // provided method
+          'insert', 'remove',
         ]
         if (inArray(key, methods)) {
           return (...args) => {
@@ -1188,6 +1274,9 @@ export function createProxy(origin, options = {}) {
               }
               else if (key === 'pop') {
                 return media[origin.length - 1]
+              }
+              else if (key === 'insert') {
+                return -1
               }
               else {
                 return media
@@ -1228,11 +1317,11 @@ export function createProxy(origin, options = {}) {
             const max = origin.length
             let output = null
 
-            // change original data
-            Array.prototype[key].apply(origin, args)
-
             // create sub children
             if (key === 'push') {
+              // change original data
+              Array.prototype[key].apply(origin, args)
+
               const medias = args.map((item, i) => {
                 const index = max + i
                 return create(item, [...parents, index])
@@ -1240,6 +1329,9 @@ export function createProxy(origin, options = {}) {
               output = Array.prototype.push.apply(media, medias)
             }
             else if (key === 'splice') {
+              // change original data
+              Array.prototype[key].apply(origin, args)
+
               const [start, len, ...items] = args
               if (!items.length) {
                 output = Array.prototype.splice.call(media, start, len)
@@ -1266,6 +1358,9 @@ export function createProxy(origin, options = {}) {
               }
             }
             else if (key === 'fill') {
+              // change original data
+              Array.prototype[key].apply(origin, args)
+
               const [item, start = 0, end = max] = args
               const items = []
               for (let i = start; i < end; i ++) {
@@ -1275,7 +1370,60 @@ export function createProxy(origin, options = {}) {
               Array.prototype.splice.apply(media, params)
               output = media
             }
+            else if (key === 'insert') {
+              if (args.length < 1) {
+                return -1
+              }
+              else if (args.length < 2) {
+                const [item] = args
+                output = origin.length
+                Array.prototype.push.call(origin, item)
+                Array.prototype.push.call(media, item)
+              }
+              else {
+                const [item, before] = args
+                const beforeIndex = decideby(() => {
+                  const mediaIndex = media.indexOf(before)
+                  if (mediaIndex > -1) {
+                    return mediaIndex
+                  }
+
+                  const originIndex = origin.indexOf(before)
+                  return originIndex
+                })
+
+                if (beforeIndex < 0) {
+                  return -1
+                }
+
+                Array.prototype.splice.call(origin, beforeIndex, 0, item)
+                Array.prototype.splice.call(media, beforeIndex, 0, item)
+                output = beforeIndex
+              }
+            }
+            else if (key === 'remove') {
+              const [item] = args
+              const index = decideby(() => {
+                const mediaIndex = media.indexOf(item)
+                if (mediaIndex > -1) {
+                  return mediaIndex
+                }
+
+                const originIndex = origin.indexOf(item)
+                return originIndex
+              })
+
+              if (index < 0) {
+                return index
+              }
+
+              Array.prototype.splice.call(origin, index, 1)
+              Array.prototype.splice.call(media, index, 1)
+              output = index
+            }
             else {
+              // change original data
+              Array.prototype[key].apply(origin, args)
               output = Array.prototype[key].apply(media, args)
             }
 
@@ -1287,6 +1435,8 @@ export function createProxy(origin, options = {}) {
                 active: proxy,
                 prev: origin,
                 invalid: proxy,
+                fn: key,
+                result: output,
               }, true)
             }
 

@@ -201,6 +201,39 @@ describe('reactive', () => {
     expect(a.body.hand).toBe('false')
     expect(some.body.hand).toBe(false)
   })
+
+  test('reactive array methods', () => {
+    const o = {
+      items: [{ a: 1}],
+    }
+
+    let count = 0
+    const proxy = createReactive(o, {
+      dispatch() {
+        count ++
+      },
+    })
+
+    expect(proxy.items.length).toBe(1)
+    expect(proxy.items[0]).toEqual({ a: 1 })
+
+    const item = { a: 2}
+    proxy.items.push(item)
+    expect(proxy.items[1]).toEqual({ a: 2 })
+    expect(count).toBe(1)
+
+    proxy.items.unshift({ a: 3})
+    expect(proxy.items[0]).toEqual({ a: 3 })
+    expect(count).toBe(2)
+
+    proxy.items.insert({ a: 4 }, item)
+    expect(proxy.items[2]).toEqual({ a: 4 })
+    expect(count).toBe(3)
+
+    proxy.items.remove(item)
+    expect(proxy.items.length).toBe(3)
+    expect(count).toBe(4)
+  })
 })
 
 describe('proxy', () => {
@@ -370,5 +403,38 @@ describe('proxy', () => {
     expect(proxy.name).toBe('tomy')
     expect(count).toBe(0)
     expect(received).toBe('tom')
+  })
+
+  test('proxy array methods', () => {
+    const o = {
+      items: [{ a: 1}],
+    }
+
+    let count = 0
+    const proxy = createProxy(o, {
+      dispatch() {
+        count ++
+      },
+    })
+
+    expect(proxy.items.length).toBe(1)
+    expect(proxy.items[0]).toEqual({ a: 1 })
+
+    const item = { a: 2}
+    proxy.items.push(item)
+    expect(proxy.items[1]).toEqual({ a: 2 })
+    expect(count).toBe(1)
+
+    proxy.items.unshift({ a: 3})
+    expect(proxy.items[0]).toEqual({ a: 3 })
+    expect(count).toBe(2)
+
+    proxy.items.insert({ a: 4 }, item)
+    expect(proxy.items[2]).toEqual({ a: 4 })
+    expect(count).toBe(3)
+
+    proxy.items.remove(item)
+    expect(proxy.items.length).toBe(3)
+    expect(count).toBe(4)
   })
 })
