@@ -403,22 +403,23 @@ export function isInheritedOf(SubConstructor, Constructor, isStrict) {
  * @returns {boolean}
  */
 export function inObject(key, obj, own) {
-  if (typeof obj !== 'object') {
+  if (!obj || typeof obj !== 'object') {
     return false
   }
+
   if (own) {
     const keys = Object.getOwnPropertyNames(obj)
     return inArray(key, keys)
   }
+
   // array keys will be ['0', '1', '2']
-  else if (isArray(obj)) {
+  if (isArray(obj)) {
     const keys = Object.keys(obj)
     return inArray('' + key, keys)
   }
-  else {
-    const keys = Object.keys(obj)
-    return inArray(key, keys)
-  }
+
+  const keys = Object.keys(obj)
+  return inArray(key, keys)
 }
 
 /**

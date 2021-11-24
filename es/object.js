@@ -1627,6 +1627,14 @@ export function fromEntries(entries, kv = false) {
   return obj
 }
 
-export function hasOwnKey(obj, key) {
+export function hasOwnKey(obj, key, enumerable) {
+  if (!obj || typeof obj !== 'object') {
+    return false
+  }
+
+  if (enumerable) {
+    return typeof key !== 'symbol' && Object.prototype.propertyIsEnumerable.call(obj, key)
+  }
+
   return Object.prototype.hasOwnProperty.call(obj, key)
 }
