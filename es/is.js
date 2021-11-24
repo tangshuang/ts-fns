@@ -397,9 +397,13 @@ export function isInheritedOf(SubConstructor, Constructor, isStrict) {
 }
 
 /**
+ * check wether a property is the given object's own property,
+ * it will check:
+ * - only string properties (except symbol properties, different from hasOwnKey),
+ * - only enumerable properties;
  * @param {string} key
  * @param {object} obj
- * @param {boolean} [own] whether use getOwnPropertyNames to determine
+ * @param {boolean} [own] use hasOwnKey to check
  * @returns {boolean}
  */
 export function inObject(key, obj, own) {
@@ -408,18 +412,28 @@ export function inObject(key, obj, own) {
   }
 
   if (own) {
-    const keys = Object.getOwnPropertyNames(obj)
-    return inArray(key, keys)
+    return hasOwnKey(obj, key)
   }
 
-  // array keys will be ['0', '1', '2']
-  if (isArray(obj)) {
-    const keys = Object.keys(obj)
-    return inArray('' + key, keys)
+  return typeof key !== 'symbol' && Object.prototype.propertyIsEnumerable.call(obj, key)
+}
+
+/**
+ * check wether a property is the given object's own property,
+ * as default, it will check:
+ * - both string and symbol properties (different from inObject),
+ * - both enumerable and non-enumerable properties;
+ * @param {object|array} obj
+ * @param {string} key
+ * @param {boolean} [enumerable]
+ * @returns {boolean}
+ */
+ export function hasOwnKey(obj, key) {
+  if (!obj || typeof obj !== 'object') {
+    return false
   }
 
-  const keys = Object.keys(obj)
-  return inArray(key, keys)
+  return Object.prototype.hasOwnProperty.call(obj, key)
 }
 
 /**

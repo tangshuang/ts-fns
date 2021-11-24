@@ -1,5 +1,4 @@
 import { isObject, isSymbol, isArray, isUndefined, isNumber, isString } from './is.js'
-import { hasOwnKey } from './object.js'
 
 /**
  * convert a keyPath string to be an array
@@ -203,7 +202,25 @@ export function remove(obj, key) {
   return obj
 }
 
-export function keyin(key, obj) {
+/**
+ * check whether a keyPath is in the given object,
+ * both string and symbol properties will be checked,
+ * as default, it will check:
+ *  - both enumerable and non-enumerable properties;
+ *  - both own and prototype-chain properties;
+ * if enumerable=true, it will check:
+ *  - only enumerable properties;
+ *  - only own properties;
+ * @param {*} key
+ * @param {*} obj
+ * @param {*} [enumerable]
+ * @returns
+ */
+export function keyin(key, obj, enumerable) {
+  if (!obj || typeof obj !== 'object') {
+    return false
+  }
+
   const chain = isArray(key) ? [...key] : makeKeyChain(key)
 
   if (!chain.length) {
@@ -211,15 +228,23 @@ export function keyin(key, obj) {
   }
 
   const tail = chain.pop()
+  const has = (obj, key) => Object.prototype.propertyIsEnumerable.call(obj, key)
 
   if (!chain.length) {
-    return hasOwnKey(obj, tail)
+    return enumerable ? has(obj, tail) : tail in obj
   }
 
-  const target = parse(obj, chain)
-  if (target && typeof target === 'object') {
-    return hasOwnKey(target, tail)
+  let target = obj
+  for (let i = 0, len = chain.length; i < len; i ++) {
+    const key = chain[i]
+    const node = enumerable ? (has(target, key) ? target[key] : null) : target[key]
+
+    if (!node || typeof node !== 'object') {
+      return false
+    }
+
+    target = node
   }
 
-  return false
+  return enumerable ? has(target, tail) : tail in target
 }

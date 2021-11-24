@@ -1,5 +1,5 @@
 import { getStringHash } from './string.js'
-import { isArray, isObject, isFile, isDate, isFunction, inArray, isSymbol, inObject, isUndefined } from './is.js'
+import { isArray, isObject, isFile, isDate, isFunction, inArray, isSymbol, inObject, isUndefined, hasOwnKey } from './is.js'
 import { decideby } from './syntax.js'
 
 /**
@@ -443,7 +443,7 @@ export function find(obj, fn) {
 export function extract(obj, keys) {
   const results = {}
   keys.forEach((key) => {
-    if (inObject(key, obj)) {
+    if (hasOwnKey(obj, key)) {
       results[key] = obj[key]
     }
   })
@@ -1625,16 +1625,4 @@ export function fromEntries(entries, kv = false) {
     }
   })
   return obj
-}
-
-export function hasOwnKey(obj, key, enumerable) {
-  if (!obj || typeof obj !== 'object') {
-    return false
-  }
-
-  if (enumerable) {
-    return typeof key !== 'symbol' && Object.prototype.propertyIsEnumerable.call(obj, key)
-  }
-
-  return Object.prototype.hasOwnProperty.call(obj, key)
 }
