@@ -1,4 +1,5 @@
-import { isObject, isSymbol, isArray, isUndefined, isNumber, isString, inObject } from './is.js'
+import { isObject, isSymbol, isArray, isUndefined, isNumber, isString } from './is.js'
+import { hasOwnKey } from './object.js'
 
 /**
  * convert a keyPath string to be an array
@@ -212,12 +213,12 @@ export function keyin(key, obj) {
   const tail = chain.pop()
 
   if (!chain.length) {
-    return tail in obj
+    return hasOwnKey(obj, tail)
   }
 
   const target = parse(obj, chain)
   if (target && typeof target === 'object') {
-    return tail in target
+    return hasOwnKey(target, tail)
   }
 
   return false

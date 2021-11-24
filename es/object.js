@@ -272,13 +272,13 @@ export function define(obj, key, value) {
     return Object.defineProperty(obj, key, { get: value })
   }
   else if (isObject(value)) {
-    if ('enumerable' in value || 'configurable' in value) {
+    if (hasOwnKey(value, 'enumerable') || hasOwnKey(value, 'configurable')) {
       return Object.defineProperty(obj, key, value)
     }
     else if ((isFunction(value.set) && isFunction(value.get))) {
       return Object.defineProperty(obj, key, value)
     }
-    else if ('value' in value) {
+    else if (hasOwnKey(value, 'value')) {
       return Object.defineProperty(obj, key, value)
     }
     else {
@@ -1570,7 +1570,7 @@ export function createProxy(origin, options = {}) {
         if (inArray(key, ['remove', 'insert'])) {
           return true
         }
-        return key in target
+        return hasOwnKey(target, key)
       },
     })
 
@@ -1625,4 +1625,8 @@ export function fromEntries(entries, kv = false) {
     }
   })
   return obj
+}
+
+export function hasOwnKey(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key)
 }
