@@ -214,7 +214,7 @@ export function remove(obj, key) {
  * @param {*} key
  * @param {*} obj
  * @param {*} [enumerable]
- * @returns
+ * @returns {boolean}
  */
 export function keyin(key, obj, enumerable) {
   if (!obj || typeof obj !== 'object') {
