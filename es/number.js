@@ -956,7 +956,7 @@ export function fixNum(input, decimal = 2, pad = false, floor = false) {
     let isNegative = num < 0
     if (decimalPart) {
       if (isNegative) {
-        let usePart = decimalPart.substr(0, decimal)
+        let usePart = decimalPart.substring(0, decimal)
         let dropPart = decimalPart.substring(decimal)
 
         usePart = '0.' + usePart
@@ -968,7 +968,7 @@ export function fixNum(input, decimal = 2, pad = false, floor = false) {
         value = minusby(integerPart, usePart)
       }
       else {
-        value = integerPart + '.' + decimalPart.substr(0, decimal)
+        value = integerPart + '.' + decimalPart.substring(0, decimal)
       }
     }
     else {
@@ -978,8 +978,8 @@ export function fixNum(input, decimal = 2, pad = false, floor = false) {
   else if (decimal > 0) {
     value = integerPart
     if (decimalPart) {
-      let usePart = decimalPart.substr(0, decimal)
-      let dropPart = decimalPart.substr(decimal, 1)
+      let usePart = decimalPart.substring(0, decimal)
+      let dropPart = decimalPart.substring(decimal, decimal + 1)
 
       usePart = '0.' + usePart
 
@@ -1067,7 +1067,7 @@ export function formatNum(input, separator, count, formatdecimal = false) {
  * @returns {string}
  */
 export function formatNum1000(input, formatdecimal = false) {
-  return formatNumber(input, ',', 3, formatdecimal);
+  return formatNum(input, ',', 3, formatdecimal);
 }
 
 // http://www.softwhy.com/article-4813-1.html
