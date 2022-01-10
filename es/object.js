@@ -1570,7 +1570,7 @@ export function createProxy(origin, options = {}) {
         if (inArray(key, ['remove', 'insert'])) {
           return true
         }
-        return hasOwnKey(target, key)
+        return key in target
       },
     })
 

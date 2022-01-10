@@ -14,12 +14,23 @@ jobs:
         with:
           node-version: 12.x
           registry-url: https://registry.npmjs.org/
-      - run: npm set config loglevel=info
-      - run: npx can-npm-publish
-      - name: Install
-        run: npm ci
+      - name: Prepare
+        run: |
+          git clean -df
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          npm set config loglevel=info
+      - name: Install Dependencies
+        run: npm ci --verbose || npm i --verbose
+      - name: Update Version
+        run: |
+          npx standard-version
+          npx can-npm-publish
+      - name: Build
+        run: npm run build
+      - name: Testing
+        run: npm test
       - name: Publish
-        ## prepublishOnly has done build and test tasks
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{secrets.NPM_AUTH_TOKEN}}
@@ -28,3 +39,8 @@ jobs:
         with:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           tag_prefix: "v"
+      - name: Git Push Changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
