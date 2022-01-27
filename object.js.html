@@ -1130,7 +1130,7 @@ export function createReactive(origin, options = {}) {
  * some.body.hand === false // some.body.hand changes to false
  */
 export function createProxy(origin, options = {}) {
-  const { get, set, del, dispatch, writable, disable, receive } = options
+  const { get, set, del, dispatch, writable, disable, receive, extensible, enumerable } = options
 
   const create = (origin, parents = []) => {
     if (!isObject(origin) &amp;&amp; !isArray(origin)) {
@@ -1265,6 +1265,20 @@ export function createProxy(origin, options = {}) {
           }, !isUndefined(prev))
         }
 
+        return true
+      },
+      has(target, key) {
+        if (isFunction(enumerable)) {
+          const keyPath = [...parents, key]
+          return enumerable(keyPath)
+        }
+        return key in target
+      },
+      isExtensible() {
+        const keyPath = [...parents]
+        if (isFunction(extensible)) {
+          return extensible(keyPath)
+        }
         return true
       },
     })
@@ -1629,7 +1643,18 @@ export function createProxy(origin, options = {}) {
         if (inArray(key, ['remove', 'insert'])) {
           return true
         }
+        if (isFunction(enumerable)) {
+          const keyPath = [...parents, key]
+          return enumerable(keyPath)
+        }
         return key in target
+      },
+      isExtensible() {
+        if (isFunction(extensible)) {
+          const keyPath = [...parents]
+          return extensible(keyPath)
+        }
+        return true
       },
     })
 
