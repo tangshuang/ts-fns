@@ -407,20 +407,20 @@ export declare function freeze(o: any): any;
  * @param options.disable - return true to disable create nest reactive on this node
  */
 export declare function createReactive(origin: any | any[], options: {
-    get: (...params: any[]) => any;
-    set: (...params: any[]) => any;
-    del: (...params: any[]) => any;
-    dispatch: (...params: any[]) => any;
-    writable: (...params: any[]) => any;
-    disable: (...params: any[]) => any;
-    receive: (...params: any[]) => any;
-    push: (...params: any[]) => any;
-    shift: (...params: any[]) => any;
-    unshift: (...params: any[]) => any;
-    splice: (...params: any[]) => any;
-    pop: (...params: any[]) => any;
-    insert: (...params: any[]) => any;
-    remove: (...params: any[]) => any;
+    get?: (...params: any[]) => any;
+    set?: (...params: any[]) => any;
+    del?: (...params: any[]) => any;
+    dispatch?: (...params: any[]) => any;
+    writable?: (...params: any[]) => any;
+    disable?: (...params: any[]) => any;
+    receive?: (...params: any[]) => any;
+    push?: (...params: any[]) => any;
+    shift?: (...params: any[]) => any;
+    unshift?: (...params: any[]) => any;
+    splice?: (...params: any[]) => any;
+    pop?: (...params: any[]) => any;
+    insert?: (...params: any[]) => any;
+    remove?: (...params: any[]) => any;
 }): any | any[];
 
 /**
@@ -459,20 +459,20 @@ export declare function createReactive(origin: any | any[], options: {
  * @param options.writable - whether be able to change value, return false to disable writable, default is true
  */
 export declare function createProxy(origin: any | any[], options: {
-    get: (...params: any[]) => any;
-    set: (...params: any[]) => any;
-    del: (...params: any[]) => any;
-    dispatch: (...params: any[]) => any;
-    writable: (...params: any[]) => any;
-    disable: (...params: any[]) => any;
-    receive: (...params: any[]) => any;
-    push: (...params: any[]) => any;
-    shift: (...params: any[]) => any;
-    unshift: (...params: any[]) => any;
-    splice: (...params: any[]) => any;
-    pop: (...params: any[]) => any;
-    insert: (...params: any[]) => any;
-    remove: (...params: any[]) => any;
+    get?: (...params: any[]) => any;
+    set?: (...params: any[]) => any;
+    del?: (...params: any[]) => any;
+    dispatch?: (...params: any[]) => any;
+    writable?: (...params: any[]) => any;
+    disable?: (...params: any[]) => any;
+    receive?: (...params: any[]) => any;
+    push?: (...params: any[]) => any;
+    shift?: (...params: any[]) => any;
+    unshift?: (...params: any[]) => any;
+    splice?: (...params: any[]) => any;
+    pop?: (...params: any[]) => any;
+    insert?: (...params: any[]) => any;
+    remove?: (...params: any[]) => any;
 }): any;
 
 export declare function createSafeExp(exp: string): string;
