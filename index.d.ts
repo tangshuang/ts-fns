@@ -203,7 +203,7 @@ export declare function isFunction(value: any, isStrict?: boolean): boolean;
 
 /**
  * judge whether a value is a Constructor
- * @param [strict] - strict level
+ * @param {number} [strict] - strict level
  * - 4: should must be one of native code, native class
  * - 3: can be babel transformed class
  * - 2: can be some function whose prototype has more than one properties
@@ -237,7 +237,7 @@ export declare function isInheritedOf(SubConstructor: any, Constructor: any, isS
  * it will check:
  * - only string properties (except symbol properties, different from hasOwnKey),
  * - only enumerable properties;
- * @param [own] - use hasOwnKey to check
+ * @param {boolean} [own] - use hasOwnKey to check
  */
 export declare function inObject(key: string, obj: any, own?: boolean): boolean;
 
@@ -347,7 +347,7 @@ export declare function define(obj: any, key: string, value: any | ((...params: 
 
 export declare function flat(obj: any | any[], determine?: (...params: any[]) => any): any;
 
-export declare function each(obj: any | any[], fn: (...params: any[]) => any, descriptor: boolean): any | any[];
+export declare function each(obj: any | any[], fn: (...params: any[]) => any, descriptor?: boolean): any | any[];
 
 export declare function map(obj: any | any[], fn: (...params: any[]) => any): any;
 
@@ -409,9 +409,18 @@ export declare function freeze(o: any): any;
 export declare function createReactive(origin: any | any[], options: {
     get: (...params: any[]) => any;
     set: (...params: any[]) => any;
+    del: (...params: any[]) => any;
     dispatch: (...params: any[]) => any;
     writable: (...params: any[]) => any;
     disable: (...params: any[]) => any;
+    receive: (...params: any[]) => any;
+    push: (...params: any[]) => any;
+    shift: (...params: any[]) => any;
+    unshift: (...params: any[]) => any;
+    splice: (...params: any[]) => any;
+    pop: (...params: any[]) => any;
+    insert: (...params: any[]) => any;
+    remove: (...params: any[]) => any;
 }): any | any[];
 
 /**
@@ -452,15 +461,32 @@ export declare function createReactive(origin: any | any[], options: {
 export declare function createProxy(origin: any | any[], options: {
     get: (...params: any[]) => any;
     set: (...params: any[]) => any;
+    del: (...params: any[]) => any;
     dispatch: (...params: any[]) => any;
     writable: (...params: any[]) => any;
+    disable: (...params: any[]) => any;
+    receive: (...params: any[]) => any;
+    push: (...params: any[]) => any;
+    shift: (...params: any[]) => any;
+    unshift: (...params: any[]) => any;
+    splice: (...params: any[]) => any;
+    pop: (...params: any[]) => any;
+    insert: (...params: any[]) => any;
+    remove: (...params: any[]) => any;
 }): any;
 
 export declare function createSafeExp(exp: string): string;
 
 export declare function matchAll(regexp: RegExp, str: string): any[];
 
-export declare function formatString(input: string, separator: string, segments: any[], alignright: boolean): string;
+/**
+ *
+ * @param input input string
+ * @param separator separator between two sliced string words
+ * @param segments slice input at these points
+ * @param alignright slice from right to left
+ */
+export declare function formatString(input: string, separator: string, segments: number | number[], alignright?: boolean): string;
 
 export declare function padLeft(str: string, len: number, pad: boolean): string;
 
