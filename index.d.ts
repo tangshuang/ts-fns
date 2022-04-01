@@ -216,7 +216,7 @@ export declare function isTruthy(value: any): boolean;
 
 export declare function isFalsy(value: any): boolean;
 
-export declare function isEqual(value: any): boolean;
+export declare function isEqual(value: any, target: any): boolean;
 
 export declare function isLt(a: any, b: any): boolean;
 
