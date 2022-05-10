@@ -1,3 +1,5 @@
+type IKeyPath = string | (string|symbol|number)[]
+
 export declare function createArray<T>(value: T, count?: number): T[];
 
 export declare function unionArray(a: any[], b: any[]): any[];
@@ -269,22 +271,22 @@ export declare function makeKeyPath(chain: (string|symbol)[], isStrict?: boolean
 /**
  * convert a keyPath array or string to be a keyPath string
  */
-export declare function makeKey(keyPath: string | (string|symbol)[]): string;
+export declare function makeKey(keyPath: IKeyPath): string;
 
 /**
  * parse a property's value by its keyPath
  */
-export declare function parse(obj: object | any[], key: string | (string|symbol)[]): any;
+export declare function parse(obj: object | any[], keyPath: IKeyPath): any;
 
 /**
  * assign a property's value by its keyPath
  */
-export declare function assign<T>(obj: T, key: string | (string|symbol)[], value: any): T;
+export declare function assign<T>(obj: T, keyPath: IKeyPath, value: any): T;
 
 /**
  * remove a property by its keyPath
  */
-export declare function remove<T>(obj: T, key: string | (string|symbol)[]): T;
+export declare function remove<T>(obj: T, keyPath: IKeyPath): T;
 
 /**
  * check whether a keyPath is in the given object,
@@ -296,7 +298,7 @@ export declare function remove<T>(obj: T, key: string | (string|symbol)[]): T;
  *  - only enumerable properties;
  *  - only own properties;
  */
-export declare function keyin(key: string | (string|symbol)[], obj: object, enumerable?: any): boolean;
+export declare function keyin(keyPath: IKeyPath, obj: object, enumerable?: any): boolean;
 
 export declare function numerify(num: number | string): string;
 
