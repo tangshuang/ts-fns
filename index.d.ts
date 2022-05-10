@@ -364,6 +364,47 @@ export declare function extract(obj: any, keys: any[]): any;
  */
 export declare function freeze(o: any): any;
 
+type ProxyArrayMethods = 'push' | 'unshift' | 'splice' | 'shift' | 'pop' | 'sort' | 'reverse' | 'fill' | 'insert' | 'remove'
+type ProxyArrayFn = (keyPath?: (string | number | symbol)[], args?: any[]) => any[] | false | {
+    to: ProxyArrayMethods;
+    args: any[];
+}
+type ProxyHandler = {
+    get?: (keyPath?: (string | number | symbol)[], active?: any) => any;
+    set?: (keyPath?: (string | number | symbol)[], active?: any) => any;
+    del?: (keyPath?: (string | number | symbol)[]) => void;
+
+    dispatch?: (info?: {
+        keyPath: (string | number | symbol)[];
+        value: any;
+        prev: any;
+        next: any;
+        invalid: any;
+        active: any;
+
+        /**
+         * only for array
+         */
+        fn?: ProxyArrayMethods;
+        reuslt?: any;
+    }, isSameWithPrev?: boolean) => void;
+    writable?: (keyPath?: (string | number | symbol)[], value?: any) => boolean;
+    disable?: (keyPath?: (string | number | symbol)[], value?: any) => boolean;
+    receive?: (keyPath?: (string | number | symbol)[], value?: any, fn?: ProxyArrayMethods) => void;
+
+    push?: ProxyArrayFn;
+    unshift?: ProxyArrayFn;
+    splice?: ProxyArrayFn;
+    shift?: ProxyArrayFn;
+    pop?: ProxyArrayFn;
+    sort?: ProxyArrayFn;
+    reverse?: ProxyArrayFn;
+    fill?: ProxyArrayFn;
+
+    insert?: ProxyArrayFn;
+    remove?: ProxyArrayFn;
+}
+
 /**
  * create a reactive object.
  * it will change your original data
@@ -406,22 +447,7 @@ export declare function freeze(o: any): any;
  * @param options.writable - whether be able to change value, return false to disable writable, default is true
  * @param options.disable - return true to disable create nest reactive on this node
  */
-export declare function createReactive(origin: any | any[], options: {
-    get?: (...params: any[]) => any;
-    set?: (...params: any[]) => any;
-    del?: (...params: any[]) => any;
-    dispatch?: (...params: any[]) => any;
-    writable?: (...params: any[]) => any;
-    disable?: (...params: any[]) => any;
-    receive?: (...params: any[]) => any;
-    push?: (...params: any[]) => any;
-    shift?: (...params: any[]) => any;
-    unshift?: (...params: any[]) => any;
-    splice?: (...params: any[]) => any;
-    pop?: (...params: any[]) => any;
-    insert?: (...params: any[]) => any;
-    remove?: (...params: any[]) => any;
-}): any | any[];
+export declare function createReactive(origin: any | any[], options: ProxyHandler): any | any[];
 
 /**
  * create a proxy object.
@@ -458,22 +484,7 @@ export declare function createReactive(origin: any | any[], options: {
  * @param options.dispatch - to notify change with keyPath, receive (keypath, next, prev), it will be called after value is set into
  * @param options.writable - whether be able to change value, return false to disable writable, default is true
  */
-export declare function createProxy(origin: any | any[], options: {
-    get?: (...params: any[]) => any;
-    set?: (...params: any[]) => any;
-    del?: (...params: any[]) => any;
-    dispatch?: (...params: any[]) => any;
-    writable?: (...params: any[]) => any;
-    disable?: (...params: any[]) => any;
-    receive?: (...params: any[]) => any;
-    push?: (...params: any[]) => any;
-    shift?: (...params: any[]) => any;
-    unshift?: (...params: any[]) => any;
-    splice?: (...params: any[]) => any;
-    pop?: (...params: any[]) => any;
-    insert?: (...params: any[]) => any;
-    remove?: (...params: any[]) => any;
-}): any;
+export declare function createProxy(origin: any | any[], options: ProxyHandler): any;
 
 export declare function createSafeExp(exp: string): string;
 

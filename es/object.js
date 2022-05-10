@@ -1000,6 +1000,8 @@ export function createReactive(origin, options = {}) {
             active: reactive,
             prev: origin,
             invalid: reactive,
+            fn,
+            result: output,
           }, true)
         }
 
