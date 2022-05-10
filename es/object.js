@@ -838,7 +838,7 @@ export function createReactive(origin, options = {}) {
         }
 
         if (isFunction(receive)) {
-          receive(parents, origin, fn)
+          receive(parents, origin, fn, args)
         }
 
         if (Object.isFrozen(origin)) {
@@ -1300,7 +1300,7 @@ export function createProxy(origin, options = {}) {
             }
 
             if (isFunction(receive)) {
-              receive(parents, origin, key)
+              receive(parents, origin, key, args)
             }
 
             if (Object.isFrozen(origin)) {

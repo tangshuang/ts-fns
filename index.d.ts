@@ -390,7 +390,7 @@ type ProxyHandler = {
     }, isSameWithPrev?: boolean) => void;
     writable?: (keyPath?: (string | number | symbol)[], value?: any) => boolean;
     disable?: (keyPath?: (string | number | symbol)[], value?: any) => boolean;
-    receive?: (keyPath?: (string | number | symbol)[], value?: any, fn?: ProxyArrayMethods) => void;
+    receive?: (keyPath?: (string | number | symbol)[], value?: any, fn?: ProxyArrayMethods, args?: any[]) => void;
 
     push?: ProxyArrayFn;
     unshift?: ProxyArrayFn;
