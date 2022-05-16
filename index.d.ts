@@ -48,6 +48,18 @@ export declare function inherit(Parent: any, proptotypes?: any, statics?: any): 
  */
 export declare function mixin(Source: any, Extend: any): void;
 
+/**
+ * transfer subClass's inherited class to superClass
+ * @example
+ * class A { a = 1 }
+ * class B { a = 2 }
+ * class C extends A {}
+ * transfer(C, B)
+ * var c = new C()
+ * c.a === 2
+ */
+export declare function transfer(subClass: any, superClass: any): void;
+
 export declare function createDate(datetime: Date | string | number, givenFormatter?: string): Date;
 
 export declare function formatDate(datetime: Date | string | number, formatter: string, givenFormatter?: string): string;

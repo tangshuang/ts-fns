@@ -66,3 +66,32 @@ export function mixin(Source, Extend) {
 
   return Source
 }
+
+/**
+ * transfer subClass's inherited class to superClass
+ * @param {*} subClass
+ * @param {*} superClass
+ * @example
+ * class A { a = 1 }
+ * class B { a = 2 }
+ * class C extends A {}
+ * transfer(C, B)
+ * var c = new C()
+ * c.a === 2
+ */
+export function transfer(subClass, superClass) {
+  subClass.prototype = Object.create(superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  })
+  if (Object.setPrototypeOf) {
+    Object.setPrototypeOf(subClass, superClass)
+  }
+  else {
+    subClass.__proto__ = superClass
+  }
+}
