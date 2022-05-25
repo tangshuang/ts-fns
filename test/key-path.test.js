@@ -80,14 +80,35 @@ describe('key-path', () => {
       books: [
         {
           name: 'book1',
+          children: [
+            {
+              name: 'child1',
+            },
+            {
+              name: 'child2',
+            },
+          ],
         },
         {
           name: 'book2',
+          children: [
+            {
+              name: 'child1',
+            },
+            {
+              name: 'child2',
+            },
+            {
+              name: 'child3',
+            },
+          ],
         },
       ],
     }
 
     expect(parse(data, 'books[*].name')).toEqual(['book1', 'book2'])
+
+    expect(parse(data, 'books[*].children[*].name')).toEqual([['child1', 'child2'], ['child1', 'child2', 'child3']])
   })
 
   test('keyin', () => {
