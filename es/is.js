@@ -17,8 +17,8 @@ export function isNull(value) {
 }
 
 /**
- * @param {*} value
- * @returns
+ * @param {any} value
+ * @returns {boolean}
  */
 export function isNullish(value) {
   return isUndefined(value) || isNull(value)
