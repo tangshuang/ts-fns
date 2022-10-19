@@ -17,11 +17,19 @@ export function isNull(value) {
 }
 
 /**
+ * @param {*} value
+ * @returns
+ */
+export function isNullish(value) {
+  return isUndefined(value) || isNull(value)
+}
+
+/**
  * @param {any} value
  * @returns {boolean}
  */
 export function isNone(value) {
-  return isUndefined(value) || isNull(value) || isNaN(value)
+  return isNullish(value) || isNaN(value)
 }
 
 /**
