@@ -21,7 +21,7 @@ export function isNull(value) {
  * @returns {boolean}
  */
 export function isNone(value) {
-  return isUndefined(value) || isNull(value)
+  return isUndefined(value) || isNull(value) || isNaN(value)
 }
 
 /**
