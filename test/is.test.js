@@ -86,7 +86,7 @@ describe('is', () => {
   test('isNone', () => {
     expect(isNone(null)).toBe(true)
     expect(isNone(undefined)).toBe(true)
-    expect(isNone(+'~')).toBe(false) // NaN
+    expect(isNone(+'~')).toBe(true) // NaN
     expect(isNone(0)).toBe(false)
     expect(isNone('')).toBe(false)
   })
