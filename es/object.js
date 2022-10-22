@@ -1085,6 +1085,7 @@ export function createReactive(origin, options = {}) {
   return output
 }
 
+const ProxySymbol = Symbol('Proxy')
 /**
  * create a proxy object.
  * it will change your original data
@@ -1123,7 +1124,6 @@ export function createReactive(origin, options = {}) {
  * a.body.hand = false // now a.body.hand is 'false', a string
  * some.body.hand === false // some.body.hand changes to false
  */
-const ProxySymbol = Symbol('Proxy')
 export function createProxy(origin, options = {}) {
   const { get, set, del, dispatch, writable, disable, receive, extensible, enumerable } = options
 
@@ -1725,10 +1725,11 @@ export function createProxy(origin, options = {}) {
   const output = create(origin)
   return output
 }
+
 /**
  * determine whether an object is a Proxy
  * @param {any} value
- * @returns
+ * @returns {boolean}
  */
 export function isProxy(value) {
   return !!value[ProxySymbol]
@@ -1736,7 +1737,7 @@ export function isProxy(value) {
 /**
  * refine the original value from a Proxy
  * @param {object} obj
- * @returns
+ * @returns {any}
  */
 export function refineProxy(obj) {
   return obj[ProxySymbol]
@@ -1745,7 +1746,7 @@ export function refineProxy(obj) {
 /**
  * get the string of a symbol
  * @param {symbol} symb
- * @returns
+ * @returns {string}
  */
 export function getSymbolContent(symb) {
   if (symb.description) {
@@ -1758,7 +1759,7 @@ export function getSymbolContent(symb) {
 /**
  * convert an object to an entry array
  * @param {object} obj
- * @returns {Array<[string, any]>}
+ * @returns {array[]}
  */
 export function toEntries(obj) {
   const keys = Object.keys(obj)
@@ -1767,9 +1768,9 @@ export function toEntries(obj) {
 
 /**
  * conver an entry/key-value array to an object
- * @param {Array<[string, any]> | Array<{ key: string, value: any }>} entries
+ * @param {array[] | object[]} entries
  * @param {boolean} kv
- * @returns
+ * @returns {object}
  */
 export function fromEntries(entries, kv = false) {
   const obj = {}

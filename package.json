@@ -5,10 +5,10 @@
   "main": "cjs/index.js",
   "typings": "index.d.ts",
   "scripts": {
-    "build": "node gulpfile.js && webpack && npm run declare",
+    "build": "node gulpfile.js && webpack && npm run tsd",
     "test": "cross-env NODE_ENV=test jest",
     "docs": "jsdoc -c ./jsdoc.json",
-    "declare": "jsdoc -c ./declare.jsdoc.json"
+    "tsd": "jsdoc -c ./declare.jsdoc.json"
   },
   "author": "tangshuang",
   "license": "ISC",
