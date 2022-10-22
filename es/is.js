@@ -20,8 +20,16 @@ export function isNull(value) {
  * @param {any} value
  * @returns {boolean}
  */
-export function isNone(value) {
+export function isNullish(value) {
   return isUndefined(value) || isNull(value)
+}
+
+/**
+ * @param {any} value
+ * @returns {boolean}
+ */
+export function isNone(value) {
+  return isNullish(value) || isNaN(value)
 }
 
 /**
