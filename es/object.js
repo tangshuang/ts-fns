@@ -650,6 +650,19 @@ export function createReactive(origin, options = {}) {
             return media[key]
           }
 
+          const descriptor = Object.getOwnPropertyDescriptor(media, key)
+          if (descriptor) {
+            if (!('value' in descriptor)) {
+              if ('set' in descriptor) {
+                origin[key] = value
+              }
+              return value
+            }
+            if (!descriptor.writable) {
+              return descriptor.value
+            }
+          }
+
           const active = setValue(key, value, true)
           return active
         },
@@ -662,9 +675,15 @@ export function createReactive(origin, options = {}) {
       return active
     }
 
-    each(origin, (value, key) => {
-      put(key, value)
-    })
+    each(origin, (descriptor, key) => {
+      if ('value' in descriptor) {
+        const value = descriptor.value
+        put(key, value)
+      }
+      else {
+        Object.defineProperty(media, key, descriptor)
+      }
+    }, true)
 
     Object.defineProperties(reactive, {
       $get: {
@@ -686,6 +705,19 @@ export function createReactive(origin, options = {}) {
             return media[key]
           }
 
+          const descriptor = Object.getOwnPropertyDescriptor(media, key)
+          if (descriptor) {
+            if (!('value' in descriptor)) {
+              if ('set' in descriptor) {
+                origin[key] = value
+              }
+              return value
+            }
+            if (!descriptor.writable) {
+              return descriptor.value
+            }
+          }
+
           const active = inObject(key, reactive) ? setValue(key, value, true) : put(key, value, true)
           return active
         },
@@ -699,14 +731,20 @@ export function createReactive(origin, options = {}) {
           }
 
           if (Object.isFrozen(origin)) {
-            return
+            return false
           }
 
           if (isFunction(writable) && !writable(keyPath)) {
-            return
+            return false
+          }
+
+          const descriptor = Object.getOwnPropertyDescriptor(media, key)
+          if (!descriptor.configurable) {
+            return false
           }
 
           delValue(key, true)
+          return true
         },
       },
       $$_ORIGIN: {
@@ -791,6 +829,19 @@ export function createReactive(origin, options = {}) {
           set: (value) => {
             if (isFunction(writable) && !writable(keyPath, value)) {
               return media[i]
+            }
+
+            const descriptor = Object.getOwnPropertyDescriptor(media, i)
+            if (descriptor) {
+              if (!('value' in descriptor)) {
+                if ('set' in descriptor) {
+                  origin[i] = value
+                }
+                return value
+              }
+              if (!descriptor.writable) {
+                return descriptor.value
+              }
             }
 
             const active = setValue(i, value, true)
@@ -1072,6 +1123,7 @@ export function createReactive(origin, options = {}) {
  * a.body.hand = false // now a.body.hand is 'false', a string
  * some.body.hand === false // some.body.hand changes to false
  */
+const ProxySymbol = Symbol('Proxy')
 export function createProxy(origin, options = {}) {
   const { get, set, del, dispatch, writable, disable, receive, extensible, enumerable } = options
 
@@ -1099,15 +1151,15 @@ export function createProxy(origin, options = {}) {
     const media = {}
     const proxy = new Proxy(media, {
       get: (target, key, receiver) => {
+        // get original property value
+        if (isSymbol(key) && key === ProxySymbol) {
+          return origin
+        }
+
         // primitive property
         // such as 'a' + obj, and obj[Symbol.toPrimitive](hint) defined
         if (isSymbol(key) && getSymbolContent(key).indexOf('Symbol.') === 0) {
           return Reflect.get(target, key, receiver)
-        }
-
-        // get original property value
-        if (isSymbol(key) && getSymbolContent(key) === 'ORIGIN') {
-          return origin
         }
 
         const active = Reflect.get(target, key, receiver)
@@ -1136,6 +1188,19 @@ export function createProxy(origin, options = {}) {
 
         if (isFunction(writable) && !writable(keyPath, value)) {
           return true
+        }
+
+        const descriptor = Object.getOwnPropertyDescriptor(media, key)
+        if (descriptor) {
+          if (!('value' in descriptor)) {
+            if ('set' in descriptor) {
+              origin[key] = value
+            }
+            return true
+          }
+          if (!descriptor.writable) {
+            return true
+          }
         }
 
         const prev = origin[key]
@@ -1187,6 +1252,11 @@ export function createProxy(origin, options = {}) {
           return true
         }
 
+        const descriptor = Object.getOwnPropertyDescriptor(media, key)
+        if (!descriptor.configurable) {
+          return true
+        }
+
         const prev = origin[key]
         const invalid = media[key]
 
@@ -1226,23 +1296,29 @@ export function createProxy(origin, options = {}) {
       },
     })
 
-    each(origin, (value, key) => {
-      const keyPath = [...parents, key]
+    each(origin, (descriptor, key) => {
+      if ('value' in descriptor) {
+        const value = descriptor.value
+        const keyPath = [...parents, key]
 
-      if (Object.isFrozen(origin)) {
-        media[key] = create(value, keyPath)
+        if (Object.isFrozen(origin)) {
+          media[key] = create(value, keyPath)
+        }
+        else {
+          const needRewrite = isFunction(set) && !isSymbol(key)
+          const next = needRewrite ? set(keyPath, value) : value
+
+          if (needRewrite) {
+            origin[key] = next
+          }
+
+          media[key] = create(next, keyPath)
+        }
       }
       else {
-        const needRewrite = isFunction(set) && !isSymbol(key)
-        const next = needRewrite ? set(keyPath, value) : value
-
-        if (needRewrite) {
-          origin[key] = next
-        }
-
-        media[key] = create(next, keyPath)
+        Object.defineProperty(media, key, descriptor)
       }
-    })
+    }, true)
 
     return proxy
   }
@@ -1251,15 +1327,15 @@ export function createProxy(origin, options = {}) {
     const media = []
     const proxy = new Proxy(media, {
       get: (target, key, receiver) => {
+        // get original property value
+        if (isSymbol(key) && key === ProxySymbol) {
+          return origin
+        }
+
         // primitive property
         // such as 'a' + obj, and obj[Symbol.toPrimitive](hint) defined
         if (isSymbol(key) && getSymbolContent(key).indexOf('Symbol.') === 0) {
           return Reflect.get(target, key, receiver)
-        }
-
-        // get original property value
-        if (isSymbol(key) && getSymbolContent(key) === 'ORIGIN') {
-          return origin
         }
 
         // array primitive operation
@@ -1488,6 +1564,19 @@ export function createProxy(origin, options = {}) {
           return true
         }
 
+        const descriptor = Object.getOwnPropertyDescriptor(media, key)
+        if (descriptor) {
+          if (!('value' in descriptor)) {
+            if ('set' in descriptor) {
+              origin[key] = value
+            }
+            return true
+          }
+          if (!descriptor.writable) {
+            return true
+          }
+        }
+
         // operate like media.length = 0
         if (key === 'length') {
           if (isFunction(writable) && !writable(parents, origin)) {
@@ -1559,6 +1648,11 @@ export function createProxy(origin, options = {}) {
           return true
         }
 
+        const descriptor = Object.getOwnPropertyDescriptor(media, key)
+        if (!descriptor.configurable) {
+          return true
+        }
+
         const prev = origin[key]
         const invalid = media[key]
 
@@ -1601,23 +1695,29 @@ export function createProxy(origin, options = {}) {
       },
     })
 
-    origin.forEach((value, i) => {
-      const keyPath = [...parents, i]
+    each(origin, (descriptor, i) => {
+      if ('value' in descriptor) {
+        const value = descriptor.value
+        const keyPath = [...parents, i]
 
-      if (Object.isFrozen(origin)) {
-        media[i] = create(value, keyPath)
+        if (Object.isFrozen(origin)) {
+          media[i] = create(value, keyPath)
+        }
+        else {
+          const needRewrite = isFunction(set) && !isSymbol(i)
+          const next = needRewrite ? set(keyPath, value) : value
+
+          if (needRewrite) {
+            origin[i] = next
+          }
+
+          media[i] = create(next, keyPath)
+        }
       }
       else {
-        const needRewrite = isFunction(set) && !isSymbol(i)
-        const next = needRewrite ? set(keyPath, value) : value
-
-        if (needRewrite) {
-          origin[i] = next
-        }
-
-        media[i] = create(next, keyPath)
+        Object.defineProperty(media, key, descriptor)
       }
-    })
+    }, true)
 
     return proxy
   }
@@ -1625,7 +1725,28 @@ export function createProxy(origin, options = {}) {
   const output = create(origin)
   return output
 }
+/**
+ * determine whether an object is a Proxy
+ * @param {any} value
+ * @returns
+ */
+export function isProxy(value) {
+  return !!value[ProxySymbol]
+}
+/**
+ * refine the original value from a Proxy
+ * @param {object} obj
+ * @returns
+ */
+export function refineProxy(obj) {
+  return obj[ProxySymbol]
+}
 
+/**
+ * get the string of a symbol
+ * @param {symbol} symb
+ * @returns
+ */
 export function getSymbolContent(symb) {
   if (symb.description) {
     return symb.description
@@ -1634,11 +1755,22 @@ export function getSymbolContent(symb) {
   return str.substring(7, str.length - 1)
 }
 
+/**
+ * convert an object to an entry array
+ * @param {object} obj
+ * @returns {Array<[string, any]>}
+ */
 export function toEntries(obj) {
   const keys = Object.keys(obj)
   return keys.map(key => [key, obj[key]])
 }
 
+/**
+ * conver an entry/key-value array to an object
+ * @param {Array<[string, any]> | Array<{ key: string, value: any }>} entries
+ * @param {boolean} kv
+ * @returns
+ */
 export function fromEntries(entries, kv = false) {
   const obj = {}
   entries.forEach((item) => {

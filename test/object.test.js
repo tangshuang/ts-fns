@@ -1,4 +1,4 @@
-import { merge, createReactive, createProxy, extend, each } from '../es/object.js'
+import { merge, createReactive, createProxy, extend, each, refineProxy } from '../es/object.js'
 
 describe('object', () => {
   test('merge', () => {
@@ -370,7 +370,7 @@ describe('proxy', () => {
     expect(removed.length).toBe(2)
   })
 
-  test('Symbol(ORIGIN)', () => {
+  test('refineProxy', () => {
     const obj = {
       sub: { a: 1 },
     }
@@ -378,7 +378,7 @@ describe('proxy', () => {
 
     const sub = proxy.sub
     expect(sub).not.toBe(obj.sub)
-    expect(sub[Symbol('ORIGIN')]).toBe(obj.sub)
+    expect(refineProxy(sub)).toBe(obj.sub)
   })
 
   test('proxy frozen object & receive option', () => {
