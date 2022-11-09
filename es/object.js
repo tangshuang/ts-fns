@@ -1732,15 +1732,16 @@ export function createProxy(origin, options = {}) {
  * @returns {boolean}
  */
 export function isProxy(value) {
-  return !!value[ProxySymbol]
+  return !!(value && value[ProxySymbol])
 }
+
 /**
  * refine the original value from a Proxy
  * @param {object} obj
  * @returns {any}
  */
 export function refineProxy(obj) {
-  return obj[ProxySymbol]
+  return obj ? obj[ProxySymbol] : void 0
 }
 
 /**

@@ -488,6 +488,22 @@ export declare function createReactive(origin: any | any[], options: ProxyHandle
  */
 export declare function createProxy(origin: any | any[], options: ProxyHandler): any;
 
+/**
+ * detect whether an object is a Proxy which created by createProxy
+ * @param value
+ */
+export declare function isProxy(value: any): boolean;
+
+/**
+ * get the original object from a Proxy which created by createProxy
+ * @param proxy
+ */
+export declare function refineProxy(proxy: any): any | undefined;
+
+/**
+ * convert a string to safe expression which can be passed into new RegExp
+ * @param exp
+ */
 export declare function createSafeExp(exp: string): string;
 
 export declare function matchAll(regexp: RegExp, str: string): any[];
