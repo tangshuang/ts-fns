@@ -739,6 +739,9 @@ export function createReactive(origin, options = {}) {
           }
 
           const descriptor = Object.getOwnPropertyDescriptor(media, key)
+          if (!descriptor) {
+            return false
+          }
           if (!descriptor.configurable) {
             return false
           }
@@ -1253,6 +1256,9 @@ export function createProxy(origin, options = {}) {
         }
 
         const descriptor = Object.getOwnPropertyDescriptor(media, key)
+        if (!descriptor) {
+          return true
+        }
         if (!descriptor.configurable) {
           return true
         }
@@ -1649,6 +1655,9 @@ export function createProxy(origin, options = {}) {
         }
 
         const descriptor = Object.getOwnPropertyDescriptor(media, key)
+        if (!descriptor) {
+          return true
+        }
         if (!descriptor.configurable) {
           return true
         }
