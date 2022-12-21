@@ -457,11 +457,12 @@ export function multiplyby(a, b) {
     return result.join('')
   }
 
-  let [ ia, da = '0' ] = a.split('.')
-  let [ ib, db = '0' ] = b.split('.')
+  let [ ia, da = '' ] = a.split('.')
+  let [ ib, db = '' ] = b.split('.')
 
   let na = false
   let nb = false
+  let isNegative = false
   if (ia.indexOf('-') === 0) {
     ia = ia.substring(1)
     na = true
@@ -470,21 +471,24 @@ export function multiplyby(a, b) {
     ib = ib.substring(1)
     nb = true
   }
-
-  let isNegative = false
   if ((na &amp;&amp; !nb) || (!na &amp;&amp; nb)) {
     isNegative = true
   }
 
-  let iProd = multiply(ia, ib)
-  let dProd = multiply(da, db)
+  let totalResult = multiply(clearNum00(ia + da), clearNum00(ib + db))
+  const decimalCount = da.length + db.length
+  let finalResult = totalResult
+  if (decimalCount &amp;&amp; decimalCount > totalResult.length) {
+    finalResult = '0.' + padLeft(totalResult, decimalCount, '0')
+  }
+  else if (decimalCount) {
+    const index = totalResult.length - decimalCount
+    finalResult = totalResult.substring(0, index) + '.' + totalResult.substring(index)
+  }
 
-  dProd = padLeft(dProd, da.length + db.length, '0')
-
-  let value = iProd + '.' + dProd
-  value = clearNum00(value)
-  value = (isNegative ? '-' : '') + value
-  value = value === '' ? '0' : value
+  let value = clearNum00(finalResult)
+  value = (isNegative ? '-' : '') + finalResult
+  value = finalResult === '' ? '0' : finalResult
 
   return value
 }
@@ -534,8 +538,22 @@ export function divideby(a, b, decimal) {
     return value
   }
 
-  let [ ib, db = '' ] = b.split('.')
+  let na = false
+  let nb = false
+  let isNegative = false
+  if (a.indexOf('-') === 0) {
+    a = a.substring(1)
+    na = true
+  }
+  if (b.indexOf('-') === 0) {
+    b = b.substring(1)
+    nb = true
+  }
+  if ((na &amp;&amp; !nb) || (!na &amp;&amp; nb)) {
+    isNegative = true
+  }
 
+  let [, db = ''] = b.split('.')
   if (db.length) {
     let len = db.length
     let pow = Math.pow(10, len)
@@ -543,17 +561,12 @@ export function divideby(a, b, decimal) {
     b = multiplyby(b, pow)
   }
 
-  let [ ia, da = '' ] = a.split('.')
-
-  let na = false
-  let nb = false
-  if (ia.indexOf('-') === 0) {
-    ia = ia.substring(1)
-    na = true
-  }
-  if (b.indexOf('-') === 0) {
-    b = b.substring(1)
-    nb = true
+  let [, da = ''] = a.split('.')
+  if (da.length) {
+    let len = da.length
+    let pow = Math.pow(10, len)
+    a = multiplyby(a, pow)
+    b = multiplyby(b, pow)
   }
 
   const divide = (x, y) => {
@@ -579,22 +592,26 @@ export function divideby(a, b, decimal) {
           break
         }
       }
+      result.push(inrange)
+      if (stillhave === '0') {
+        stillhave = ''
+      }
 
       let stillhavelen = stillhave.length
       let nextlen = uselen - stillhavelen
       nextlen = nextlen > 0 ? nextlen : 1
-      waitforcompare = (stillhave === '0' ? '' : stillhave) + waittouse.substr(0, nextlen)
+      waitforcompare = stillhave + waittouse.substr(0, nextlen)
       waittouse = waittouse.substring(nextlen)
 
-      result.push(inrange)
-      stillhave = waitforcompare
-      inrange = 0
-
-      if (waittouse === '' &amp;&amp; /^0+$/.test(waitforcompare)) {
-        result.push(waitforcompare)
+      const leftletters = waitforcompare + waittouse
+      if (/^0+$/.test(leftletters)) {
+        result.push(leftletters)
         stillhave = ''
         break
       }
+
+      stillhave = waitforcompare
+      inrange = 0
     } while (compareby(stillhave, y) >= 0)
 
     let remainder = stillhave || '0'
@@ -606,24 +623,17 @@ export function divideby(a, b, decimal) {
     return { remainder, quotient }
   }
 
-  let dvi = divide(ia, b)
-  let { remainder, quotient } = dvi
+  let result = divide(a, b)
+  let { remainder, quotient } = result
   let value = quotient
 
-  if (da) {
-    remainder = remainder === '0' ? da : remainder + da
-  }
-  else {
-    remainder = remainder + '0'
-  }
-
   if (remainder &amp;&amp; remainder !== '0') {
-    let result = ''
-    let nextto = remainder
+    let decimalPart = ''
+    let nextto = remainder + '0'
     while (/[1-9]/.test(nextto)) {
       let dvd = divide(nextto, b)
       let { remainder, quotient } = dvd
-      result += quotient
+      decimalPart += quotient
 
       if (remainder === '0') {
         break
@@ -631,16 +641,16 @@ export function divideby(a, b, decimal) {
 
       nextto = remainder + '0'
 
-      if (result.length >= decimal) {
+      if (decimalPart.length >= decimal) {
         break
       }
     }
-    value = quotient + '.' + result
+    value = quotient + '.' + decimalPart
   }
 
   value = clearNum00(value)
 
-  if ((na &amp;&amp; !nb) || (!na &amp;&amp; nb)) {
+  if (isNegative) {
     value = '-' + value
   }
 
