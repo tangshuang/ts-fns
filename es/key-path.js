@@ -96,6 +96,11 @@ export function parse(obj, key) {
 
   let target = obj
   for (let i = 0, len = chain.length; i < len; i ++) {
+    // fallback, without error
+    if (!target || typeof target !== 'object') {
+      return
+    }
+
     const key = chain[i]
 
     // want an array
@@ -111,15 +116,8 @@ export function parse(obj, key) {
       return items
     }
 
-    if (target === null) {
-      return
-    }
-
+    // want a value
     const node = target[key]
-    if (isUndefined(node)) {
-      return
-    }
-
     target = node
   }
   return target
