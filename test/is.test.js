@@ -1,4 +1,4 @@
-import { isFunction, isConstructor, isNone } from '../es/index.js'
+import { isFunction, isConstructor, isNone, isShallowEqual } from '../es/index.js'
 
 describe('is', () => {
   test('isFunction', () => {
@@ -89,5 +89,31 @@ describe('is', () => {
     expect(isNone(+'~')).toBe(true) // NaN
     expect(isNone(0)).toBe(false)
     expect(isNone('')).toBe(false)
+  })
+  test('isShallowEqual', () => {
+    expect(isShallowEqual(1, 1)).toBe(true)
+    expect(isShallowEqual('1', '1')).toBe(true)
+    expect(isShallowEqual(null, null)).toBe(true)
+    expect(isShallowEqual([], [])).toBe(true)
+    expect(isShallowEqual({}, {})).toBe(true)
+    expect(isShallowEqual(true, true)).toBe(true)
+    expect(isShallowEqual([1, 2, 3], [1, 2, 3])).toBe(true)
+    expect(isShallowEqual(['a', 'b', 'c'], ['a', 'b', 'c'])).toBe(true)
+    expect(isShallowEqual([{ a: 1 }], [{ a: 1 }], 1)).toBe(true)
+    expect(isShallowEqual({ a: 1 }, { a: 1 })).toBe(true)
+    expect(isShallowEqual({ a: { b: 1 } }, { a: { b: 1 } }, 1)).toBe(true)
+
+
+    expect(isShallowEqual('1', 1)).toBe(false)
+    expect(isShallowEqual({}, null)).toBe(false)
+    expect(isShallowEqual(0, false)).toBe(false)
+    expect(isShallowEqual([], {})).toBe(false)
+    expect(isShallowEqual('1', 1)).toBe(false)
+    expect(isShallowEqual([1, 2, 3], [3, 2, 1])).toBe(false)
+    expect(isShallowEqual(['a', 'b', 'c'], ['c', 'b', 'a'])).toBe(false)
+    expect(isShallowEqual([{ a: 1 }], [{ a: 1 }])).toBe(false)
+    expect(isShallowEqual([{ a: 1 }], [{ a: 2 }], 1)).toBe(false)
+    expect(isShallowEqual({ a: { b: 1 } }, { a: { b: 1 } })).toBe(false)
+    expect(isShallowEqual({ a: { b: 1 } }, { a: { b: 2 } }, 1)).toBe(false)
   })
 })

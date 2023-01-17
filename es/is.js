@@ -456,18 +456,25 @@ export function inArray(item, arr) {
 /**
  * @param {object} objA
  * @param {object} objB
+ * @param {number} deepth how many deepth to check
  */
-export function isShallowEqual(objA,objB){
+export function isShallowEqual(objA, objB, deepth){
   if(objA === objB) {
     return true
   }
 
+  // not object. number, string, boolean, null
   if(!(typeof objA === 'object' && objA !== null) || !(typeof objB === 'object' && objB !== null)) {
     return false
   }
 
-  const keysA = Object.keys(objA)
-  const keysB = Object.keys(objB)
+  // object vs. array
+  if ([objA, objB].filter(item => isArray(item)).length === 1) {
+    return false
+  }
+
+  const keysA = Object.keys(objA).sort()
+  const keysB = Object.keys(objB).sort()
 
   if (keysA.length !== keysB.length) {
     return false
@@ -477,20 +484,21 @@ export function isShallowEqual(objA,objB){
     const keyA = keysA[i]
     const keyB = keysB[i]
 
-    if (!Object.prototype.hasOwnProperty.call(objB, keyA)) {
+    if (keyA !== keyB) {
       return false
     }
 
-    if (!Object.prototype.hasOwnProperty.call(objA, keyB)) {
-      return false
-    }
+    const key = keyA
 
-    if (objA[keyA] !== objB[keyA]) {
-      return false
-    }
-
-    if (objA[keyB] !== objB[keyB]) {
-      return false
+    if (objA[key] !== objB[key]) {
+      if (deepth && typeof objA[key] === 'object' && typeof objB[key] === 'object') {
+        if (!isShallowEqual(objA[key], objB[key], deepth - 1)) {
+          return false
+        }
+      }
+      else {
+        return false
+      }
     }
   }
 

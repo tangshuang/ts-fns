@@ -253,7 +253,13 @@ export declare function hasOwnKey(obj: any | any[], key: string, enumerable?: bo
 
 export declare function inArray(item: any, arr: any[]): boolean;
 
-export declare function isShallowEqual(objA: any, objB: any): boolean;
+/**
+ * compare two value whether they are shallow equal
+ * @param objA
+ * @param objB
+ * @param deepth how deep to compare, default 0
+ */
+export declare function isShallowEqual(objA: any, objB: any, deepth?: number): boolean;
 
 /**
  * convert a keyPath string to be an array
