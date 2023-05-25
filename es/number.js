@@ -1,4 +1,4 @@
-import { formatString, padRight, padLeft, CHARS } from './string.js'
+import { formatString, padRight, padLeft, getAllChars } from './string.js'
 import { isString, isNumeric, isNumber, isNaN, isUndefined } from './is.js'
 
 /**
@@ -1086,6 +1086,7 @@ export function formatNum1000(input, formatdecimal = false) {
  * @returns {string}
  */
 export function num10to62(num) {
+  const CHARS = getAllChars()
   const chars = CHARS.split('')
   const radix = chars.length
   const arr = []
@@ -1105,6 +1106,7 @@ export function num10to62(num) {
  * @returns {number}
  */
 export function num62to10(code) {
+  const CHARS = getAllChars()
   const radix = CHARS.length
   const len = code.length
   let i = 0

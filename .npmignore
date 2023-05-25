@@ -8,3 +8,4 @@ jsdoc.json
 declare.jsdoc.json
 .github/
 types.d.ts
+scripts/

@@ -4,3 +4,4 @@ umd/
 dist/
 docs/
 /types.d.ts
+/exports.json

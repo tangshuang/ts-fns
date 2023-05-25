@@ -1,7 +1,9 @@
 import { createArray } from './array.js'
 
 // the order could never be changed, becuase we use it for number convertion
-export const CHARS = '0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ'
+export function getAllChars() {
+  return '0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ'
+}
 
 /**
  * @param {string} input
@@ -111,6 +113,7 @@ export function getStringHash(str) {
  * @returns {string}
  */
 export function createRandomString(len = 16) {
+  const CHARS = getAllChars()
   let text = ''
   for (let i = 0; i < len; i++) {
     text += CHARS.charAt(Math.floor(Math.random() * CHARS.length))

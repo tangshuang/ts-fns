@@ -3,9 +3,11 @@
   "version": "11.1.0",
   "description": "Public Functions.",
   "main": "cjs/index.js",
+  "module": "es/index.js",
   "typings": "index.d.ts",
+  "sideEffects": false,
   "scripts": {
-    "build": "node gulpfile.js && webpack && npm run tsd",
+    "build": "node gulpfile.js && webpack && npm run tsd && node scripts/gen-exports-json.mjs",
     "test": "cross-env NODE_ENV=test jest",
     "docs": "jsdoc -c ./jsdoc.json",
     "tsd": "jsdoc -c ./declare.jsdoc.json"
