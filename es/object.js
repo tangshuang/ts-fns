@@ -121,10 +121,10 @@ export function extend(obj1, obj2, mixArr = 0) {
 /**
  * @param {object} obj1
  * @param {object} obj2
- * @param {boolean} [concatArray]
+ * @param {0|1|2} [mixArr] 0: extend array as object, 1: push into array, 2: replace all items
  * @returns {object}
  */
-export function merge(obj1, obj2, concatArray = true) {
+export function merge(obj1, obj2, mixArr = 0) {
   obj1 = clone(obj1)
 
   if (!isArray(obj2) && !isObject(obj2)) {
@@ -140,8 +140,8 @@ export function merge(obj1, obj2, concatArray = true) {
   const exists = []
   const merge = (obj1, obj2) => {
     if (isArray(obj1)) {
-      if (isArray(obj2) && concatArray) {
-        return [...obj1, ...obj2]
+      if (isArray(obj2) && mixArr) {
+        return mixArr === 1 ?  [...obj1, ...obj2] : obj2
       }
     }
 
@@ -264,29 +264,29 @@ export function getObjectHash(obj) {
 /**
  * @param {object} obj
  * @param {string} key
- * @param {object|function} value
+ * @param {object|function} descriptor
  * @returns {object}
  */
-export function define(obj, key, value) {
-  if (isFunction(value)) {
-    return Object.defineProperty(obj, key, { get: value })
+export function define(obj, key, descriptor) {
+  if (isFunction(descriptor)) {
+    return Object.defineProperty(obj, key, { get: descriptor })
   }
-  else if (isObject(value)) {
-    if (hasOwnKey(value, 'enumerable') || hasOwnKey(value, 'configurable')) {
-      return Object.defineProperty(obj, key, value)
+  else if (isObject(descriptor)) {
+    if (hasOwnKey(descriptor, 'enumerable') || hasOwnKey(descriptor, 'configurable')) {
+      return Object.defineProperty(obj, key, descriptor)
     }
-    else if ((isFunction(value.set) && isFunction(value.get))) {
-      return Object.defineProperty(obj, key, value)
+    else if ((isFunction(descriptor.set) && isFunction(descriptor.get))) {
+      return Object.defineProperty(obj, key, descriptor)
     }
-    else if (hasOwnKey(value, 'value')) {
-      return Object.defineProperty(obj, key, value)
+    else if (hasOwnKey(descriptor, 'value')) {
+      return Object.defineProperty(obj, key, descriptor)
     }
     else {
-      return Object.defineProperty(obj, key, { value })
+      return Object.defineProperty(obj, key, { value: descriptor })
     }
   }
   else {
-    return Object.defineProperty(obj, key, { value })
+    return Object.defineProperty(obj, key, { value: descriptor })
   }
 }
 
@@ -429,8 +429,8 @@ export function iterate(obj, fn) {
 export function find(obj, fn) {
   return iterate(obj, (value, key) => {
     const res = fn(value, key, obj)
-    if (res) {
-      return value
+    if (typeof res !== 'undefined') {
+      return res
     }
   })
 }

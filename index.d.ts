@@ -337,7 +337,7 @@ export declare function num10to62(num: number | string): string;
 
 export declare function num62to10(code: string): number;
 
-export declare function clone(obj: any): void;
+export declare function clone<T extends any>(obj: T): T;
 
 /**
  * Deep extend an object
@@ -351,7 +351,7 @@ export declare function stringify(obj: any): string;
 
 export declare function getObjectHash(obj: any): string;
 
-export declare function define(obj: any, key: string, value: any | ((...params: any[]) => any)): any;
+export declare function define(obj: any, key: string, descriptor: any | ((...params: any[]) => any)): any;
 
 export declare function flat(obj: any | any[], determine?: (...params: any[]) => any): any;
 
@@ -363,7 +363,7 @@ export declare function filter(obj: any | any[], fn: (...params: any[]) => any):
 
 export declare function iterate(obj: any | any[], fn: (...params: any[]) => any): void;
 
-export declare function find(obj: any | any[], fn: (...params: any[]) => any): void;
+export declare function find<T>(obj: any | any[], fn: (...params: any[]) => T): T;
 
 export declare function extract(obj: any, keys: any[]): any;
 
