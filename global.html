@@ -3474,7 +3474,7 @@ some.body.hand === false // original data changed</code></pre>
 
     
 
-    <h4 class="name" id="define"><span class="type-signature"></span>define<span class="signature">(obj, key, value)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="define"><span class="type-signature"></span>define<span class="signature">(obj, key, descriptor)</span><span class="type-signature"> &rarr; {object}</span></h4>
 
     
 
@@ -3560,7 +3560,7 @@ some.body.hand === false // original data changed</code></pre>
 
         <tr>
             
-                <td class="name"><code>value</code></td>
+                <td class="name"><code>descriptor</code></td>
             
 
             <td class="type">
@@ -16386,7 +16386,7 @@ if enumerable=true, it will check:</li>
 
     
 
-    <h4 class="name" id="merge"><span class="type-signature"></span>merge<span class="signature">(obj1, obj2, concatArray<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="merge"><span class="type-signature"></span>merge<span class="signature">(obj1, obj2, mixArr<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {object}</span></h4>
 
     
 
@@ -16490,13 +16490,19 @@ if enumerable=true, it will check:</li>
 
         <tr>
             
-                <td class="name"><code>concatArray</code></td>
+                <td class="name"><code>mixArr</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">0</span>
+|
+
+<span class="param-type">1</span>
+|
+
+<span class="param-type">2</span>
 
 
             
@@ -16516,7 +16522,7 @@ if enumerable=true, it will check:</li>
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>0: extend array as object, 1: push into array, 2: replace all items</p></td>
         </tr>
 
     
