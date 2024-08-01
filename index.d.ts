@@ -361,9 +361,22 @@ export declare function map(obj: any | any[], fn: (...params: any[]) => any): an
 
 export declare function filter(obj: any | any[], fn: (...params: any[]) => any): any;
 
-export declare function iterate(obj: any | any[], fn: (...params: any[]) => any): void;
+/**
+ * 对对象进行迭代，支持异步
+ * @param obj
+ * @param fn
+ */
+export declare function iterate(obj: any | any[], fn: (value: any, key: string, next: () => void) => boolean): void;
 
-export declare function find<T>(obj: any | any[], fn: (...params: any[]) => T): T;
+/**
+ * 在对象中查找，fn返回true表示找到，返回false表示没有找到继续找，找到后返回该属性的key，通过key就可以方便的获取value
+ */
+export declare function find(obj: any | any[], fn: (value: any, key: string) => boolean): string;
+
+/**
+ * 在对象中搜索，当fn返回结果为undefined时，表示未搜索到结果，继续搜索，当返回其他内容时，表示已经找到内容，并将该内容作为结果返回
+ */
+export declare function search(obj: any | any[], fn: (value: any, key: string) => T): T;
 
 export declare function extract(obj: any, keys: any[]): any;
 

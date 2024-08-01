@@ -401,9 +401,40 @@ export function filter(obj, fn) {
  */
 export function iterate(obj, fn) {
   if (isArray(obj)) {
+    let i = 0
+    const next = () => {
+      if (i >= obj.length) {
+        return
+      }
+      const item = obj[i]
+      fn(item, i, next)
+    }
+    next()
+  }
+  else {
+    const keys = Object.keys(obj)
+    let i = 0
+    const next = () => {
+      if (i >= keys.length) {
+        return
+      }
+      const key = keys[i]
+      const value = obj[key]
+      fn(value, key, next)
+    }
+    next()
+  }
+}
+
+/**
+ * @param {object|array} obj
+ * @param {function} fn
+ */
+export function search(obj, fn) {
+  if (isArray(obj)) {
     for (let i = 0, len = obj.length; i < len; i ++) {
       const item = obj[i]
-      const res = fn(item, i, obj)
+      const res = fn(item, i)
       if (!isUndefined(res)) {
         return res
       }
@@ -427,10 +458,10 @@ export function iterate(obj, fn) {
  * @param {function} fn
  */
 export function find(obj, fn) {
-  return iterate(obj, (value, key) => {
-    const res = fn(value, key, obj)
-    if (typeof res !== 'undefined') {
-      return res
+  return search(obj, (value, key) => {
+    const res = fn(value, key)
+    if (res) {
+      return key
     }
   })
 }
