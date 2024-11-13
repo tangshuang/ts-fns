@@ -468,7 +468,7 @@ export function find(obj, fn) {
 
 /**
  * @param {object} obj
- * @param {array} keys
+ * @param {array[]} keys
  * @returns {object}
  */
 export function extract(obj, keys) {
@@ -479,6 +479,16 @@ export function extract(obj, keys) {
     }
   })
   return results
+}
+
+/**
+ * @alias extract
+ * @param {object} obj
+ * @param {string[]} keys
+ * @returns {object}
+ */
+export function pick(obj, keys) {
+  return extract(obj, keys);
 }
 
 /**

@@ -1,4 +1,4 @@
-import { parse, assign, makeKeyPath, makeKeyChain, keyin } from '../es/key-path.js'
+import { parse, parseAs, assign, makeKeyPath, makeKeyChain, keyin } from '../es/key-path.js'
 
 describe('key-path', () => {
   test('deep array item object', () => {
@@ -128,5 +128,28 @@ describe('key-path', () => {
     expect(keyin('books[0]', data)).toBe(true)
     expect(keyin('books[0].name', data)).toBe(true)
     expect(keyin('books[2].name', data)).toBe(false)
-  })
-})
+  });
+
+  test('parseAs', () => {
+    const data = {
+      name: 'data',
+      books: [
+        {
+          name: 'book1',
+          price: 1.2,
+        },
+        {
+          name: 'book2',
+          price: 2.3,
+        },
+      ],
+    };
+    const result = parseAs(data, 'books[*].name');
+    expect(result).toEqual({
+      books: [
+        { name: 'book1' },
+        { name: 'book2' },
+      ],
+    });
+  });
+});

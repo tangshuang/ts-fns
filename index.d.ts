@@ -363,8 +363,6 @@ export declare function filter(obj: any | any[], fn: (...params: any[]) => any):
 
 /**
  * 对对象进行迭代，支持异步
- * @param obj
- * @param fn
  */
 export declare function iterate(obj: any | any[], fn: (value: any, key: string, next: () => void) => boolean): void;
 
@@ -379,6 +377,11 @@ export declare function find(obj: any | any[], fn: (value: any, key: string) => 
 export declare function search(obj: any | any[], fn: (value: any, key: string) => T): T;
 
 export declare function extract(obj: any, keys: any[]): any;
+
+/**
+ * @alias extract
+ */
+export declare function pick(obj: any, keys: any[]): any;
 
 /**
  * deep freeze

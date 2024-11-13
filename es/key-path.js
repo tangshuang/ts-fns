@@ -124,6 +124,59 @@ export function parse(obj, key) {
 }
 
 /**
+ * parse into an object
+ * @example
+ * var a = { a: 1, b: 2, c: 3 };
+ * var b = parseAs(a, 'b'); // -> { b: 2 }
+ * @param {object|array} obj
+ * @param {string|array} key
+ */
+export function parseAs(obj, key) {
+  const chain = isArray(key) ? [...key] : makeKeyChain(key);
+
+  if (!chain.length) {
+    return obj;
+  }
+
+  const results = isArray(obj) ? [] : {};
+  const keyPath = [];
+
+  let target = obj
+  for (let i = 0, len = chain.length; i < len; i ++) {
+    // fallback, without error
+    if (!target || typeof target !== 'object') {
+      return results;
+    }
+
+    const key = chain[i];
+
+    // want an array
+    if (key === '*') {
+      if (!isArray(target)) {
+        return results;
+      }
+      if (i + 1 >= len) {
+        return results;
+      }
+
+      const restChain = chain.slice(i + 1);
+      target.forEach((item, i) => {
+        const ret = parseAs(item, restChain);
+        assign(results, [keyPath, i], ret);
+      });
+      return results;
+    }
+
+    // want a value
+    keyPath.push(key);
+    const node = target[key]
+    target = node
+  }
+  assign(results, keyPath, target)
+  return results
+}
+
+/**
  * assign a property's value by its keyPath
  * @param {object|array} obj
  * @param {string|array} key
