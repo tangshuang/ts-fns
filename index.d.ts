@@ -285,6 +285,11 @@ export declare function makeKey(keyPath: IKeyPath): string;
 export declare function parse(obj: object | any[], keyPath: IKeyPath): any;
 
 /**
+ * parse a deep property into a thin object
+ */
+export declare function parseAs(obj: object | any[], keyPath: IKeyPath): any;
+
+/**
  * assign a property's value by its keyPath
  */
 export declare function assign<T>(obj: T, keyPath: IKeyPath, value: any): T;
@@ -374,7 +379,7 @@ export declare function find(obj: any | any[], fn: (value: any, key: string) => 
 /**
  * 在对象中搜索，当fn返回结果为undefined时，表示未搜索到结果，继续搜索，当返回其他内容时，表示已经找到内容，并将该内容作为结果返回
  */
-export declare function search(obj: any | any[], fn: (value: any, key: string) => T): T;
+export declare function search<T>(obj: any | any[], fn: (value: any, key: string) => T): T;
 
 export declare function extract(obj: any, keys: any[]): any;
 
