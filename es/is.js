@@ -454,6 +454,16 @@ export function inArray(item, arr) {
 }
 
 /**
+ * all items in shortArr are in longArr
+ * @param {*} shortArr
+ * @param {*} longArr
+ * @returns
+ */
+export function isArrayInArray(shortArr, longArr) {
+  return shortArr.every(item => longArr.includes(item))
+}
+
+/**
  * @param {object} objA
  * @param {object} objB
  * @param {number} deepth how many deepth to check

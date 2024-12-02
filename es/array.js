@@ -175,8 +175,13 @@ export function splitArray(arr, split) {
  */
 export function joinArray(arr, join) {
   const results = []
-  arr.forEach((items) => {
-    results.push(...items, join)
+  arr.forEach((items, i) => {
+    if (i < arr.length - 1) {
+      results.push(...items, join)
+    }
+    else {
+      results.push(...items)
+    }
   })
   return results
 }

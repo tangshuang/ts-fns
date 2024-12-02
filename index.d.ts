@@ -253,6 +253,8 @@ export declare function hasOwnKey(obj: any | any[], key: string, enumerable?: bo
 
 export declare function inArray(item: any, arr: any[]): boolean;
 
+export declare function isArrayInArray(shortArr: any[], longArr: any[]): boolean;
+
 /**
  * compare two value whether they are shallow equal
  * @param objA
