@@ -2,7 +2,7 @@ import { createArray } from './array.js'
 
 // the order could never be changed, becuase we use it for number convertion
 export function getAllChars() {
-  return '0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ'
+  return '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 }
 
 /**
