@@ -4,6 +4,10 @@
   "description": "Public Functions.",
   "main": "cjs/index.js",
   "module": "es/index.js",
+  "exports": {
+    "import": "./es/index.js",
+    "require": "./cjs/index.js"
+  },
   "typings": "index.d.ts",
   "sideEffects": false,
   "scripts": {
