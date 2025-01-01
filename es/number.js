@@ -1081,12 +1081,15 @@ export function formatNum1000(input, formatdecimal = false) {
 }
 
 // http://www.softwhy.com/article-4813-1.html
+
 /**
- * @param {number|string} num
- * @returns {string}
+ * convert base10 number to string
+ * @param {number} num
+ * @param {number} base
+ * @returns
  */
-export function num10to62(num) {
-  const CHARS = getAllChars()
+export function num10To(num, base) {
+  const CHARS = getAllChars(base)
   const chars = CHARS.split('')
   const radix = chars.length
   const arr = []
@@ -1102,11 +1105,13 @@ export function num10to62(num) {
 }
 
 /**
+ * convert string to base10 number
  * @param {string} code
- * @returns {number}
+ * @param {number} base
+ * @returns
  */
-export function num62to10(code) {
-  const CHARS = getAllChars()
+export function numTo10(code, base) {
+  const CHARS = getAllChars(base)
   const radix = CHARS.length
   const len = code.length
   let i = 0
@@ -1115,4 +1120,36 @@ export function num62to10(code) {
     num += Math.pow(radix, i++) * CHARS.indexOf(code.charAt(len - i) || 0)
   }
   return num
+}
+
+/**
+ * @param {number|string} num
+ * @returns {string}
+ */
+export function num10to62(num) {
+  return num10To(num, 62);
+}
+
+/**
+ * @param {string} code
+ * @returns {number}
+ */
+export function num62to10(code) {
+  return numTo10(code, 62);
+}
+
+/**
+ * @param {number|string} num
+ * @returns {string}
+ */
+export function num10to36(num) {
+  return num10To(num, 36);
+}
+
+/**
+ * @param {string} code
+ * @returns {number}
+ */
+export function num36to10(code) {
+  return numTo10(code, 36);
 }

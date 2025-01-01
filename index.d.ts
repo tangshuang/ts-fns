@@ -344,6 +344,14 @@ export declare function num10to62(num: number | string): string;
 
 export declare function num62to10(code: string): number;
 
+export declare function num10to36(num: number | string): string;
+
+export declare function num36to10(code: string): number;
+
+export declare function num10To(num: number | string, base: number): string;
+
+export declare function numTo10(code: string, base: number): number;
+
 export declare function clone<T extends any>(obj: T): T;
 
 /**
@@ -552,7 +560,12 @@ export declare function padRight(str: string, len: number, pad: boolean): string
 
 export declare function getStringHash(str: string): string;
 
-export declare function createRandomString(len: number): string;
+/**
+ *
+ * @param len length of random string
+ * @param charSet random character set, 10: 0-9, 36: 0-9a-z, 62: 0-9a-zA-Z. default is 62
+ */
+export declare function createRandomString(len: number, charSet?: number): string;
 
 export declare function interpolate(template: string, data: any, opts?: any): string;
 

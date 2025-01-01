@@ -1,8 +1,12 @@
 import { createArray } from './array.js'
 
 // the order could never be changed, becuase we use it for number convertion
-export function getAllChars() {
-  return '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+export function getAllChars(len) {
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  if (len) {
+    return chars.substring(0, len);
+  }
+  return chars;
 }
 
 /**
@@ -110,10 +114,11 @@ export function getStringHash(str) {
 
 /**
  * @param {number} len
+ * @param {10|36|62} [charSet]
  * @returns {string}
  */
-export function createRandomString(len = 16) {
-  const CHARS = getAllChars()
+export function createRandomString(len = 16, charSet = 62) {
+  const CHARS = getAllChars(charSet);
   let text = ''
   for (let i = 0; i < len; i++) {
     text += CHARS.charAt(Math.floor(Math.random() * CHARS.length))
