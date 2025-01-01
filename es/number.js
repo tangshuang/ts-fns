@@ -1086,7 +1086,7 @@ export function formatNum1000(input, formatdecimal = false) {
  * convert base10 number to string
  * @param {number} num
  * @param {number} base
- * @returns
+ * @returns {string}
  */
 export function num10To(num, base) {
   const CHARS = getAllChars(base)
@@ -1108,7 +1108,7 @@ export function num10To(num, base) {
  * convert string to base10 number
  * @param {string} code
  * @param {number} base
- * @returns
+ * @returns {number}
  */
 export function numTo10(code, base) {
   const CHARS = getAllChars(base)
