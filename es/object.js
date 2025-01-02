@@ -429,10 +429,9 @@ export function iterate(obj, fn) {
 }
 
 /**
- * @template T
  * @param {object|array} obj
- * @param {(value: any, key: string) => T} fn
- * @returns {T}
+ * @param {Function} fn
+ * @returns {any}
  */
 export function search(obj, fn) {
   if (isArray(obj)) {

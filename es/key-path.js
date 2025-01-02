@@ -1,5 +1,5 @@
 /**
- * @typedef {string | number | (string|symbol|number)[]} KeyPath
+ * @typedef {string|number|Array<string|symbol|number>} KeyPath
  */
 
 import { isObject, isSymbol, isArray, isUndefined, isNumber, isString } from './is.js'
