@@ -158,7 +158,7 @@ export function padRight(str, len, pad) {
 
 /**
  * @param {string} str
- * @returns {string}
+ * @returns {number}
  */
 export function getStringHash(str) {
   let hash = 5381
@@ -173,7 +173,7 @@ export function getStringHash(str) {
 
 /**
  * @param {number} len
- * @param {10|36|62} [charSet]
+ * @param {10|36|62} [charSet] 10: 0-9, 36: 0-9a-z, 62: 0-9a-zA-Z. default is 62
  * @returns {string}
  */
 export function createRandomString(len = 16, charSet = 62) {
