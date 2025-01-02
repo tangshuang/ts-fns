@@ -4,11 +4,18 @@
   "description": "Public Functions.",
   "main": "cjs/index.js",
   "module": "es/index.js",
-  "exports": {
-    "import": "./es/index.js",
-    "require": "./cjs/index.js"
-  },
   "typings": "index.d.ts",
+  "types": "index.d.ts",
+  "exports": {
+    "import": {
+      "types": "./index.d.ts",
+      "default": "./es/index.js"
+    },
+    "require": {
+      "types": "./index.d.ts",
+      "default": "./cjs/index.js"
+    }
+  },
   "sideEffects": false,
   "scripts": {
     "build": "node gulpfile.js && webpack && npm run tsd && node scripts/gen-exports-json.mjs",

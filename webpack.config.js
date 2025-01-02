@@ -9,7 +9,7 @@ const config = {
   entry: path.resolve(root, 'es/index.js'),
   output: {
     path: path.resolve(root, 'dist'),
-    filename: 'ts-fns.js',
+    filename: 'index.js',
     library: 'ts-fns',
     libraryTarget: 'umd',
     globalObject: `typeof global !== 'undefined' ? global : typeof window !== 'undefined' ? window : typeof self !== 'undefined' ? self : this`,
