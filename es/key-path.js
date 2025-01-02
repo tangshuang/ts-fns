@@ -1,3 +1,7 @@
+/**
+ * @typedef {string | number | (string|symbol|number)[]} KeyPath
+ */
+
 import { isObject, isSymbol, isArray, isUndefined, isNumber, isString } from './is.js'
 
 /**
@@ -7,6 +11,10 @@ import { isObject, isSymbol, isArray, isUndefined, isNumber, isString } from './
  * @returns {array}
  */
 export function makeKeyChain(path, isStrict) {
+  if (typeof path === 'number') {
+    return [path];
+  }
+
   const mapping = []
   const text = path.replace(/\[.*?\]/g, (matched, position) => {
     const index = mapping.length
@@ -73,7 +81,7 @@ export function makeKeyPath(chain, isStrict) {
 
 /**
  * convert a keyPath array or string to be a keyPath string
- * @param {string|array} keyPath
+ * @param {KeyPath} keyPath
  * @returns {string}
  */
 export function makeKey(keyPath) {
@@ -85,7 +93,7 @@ export function makeKey(keyPath) {
 /**
  * parse a property's value by its keyPath
  * @param {object|array} obj
- * @param {string|array} key
+ * @param {KeyPath} key
  */
 export function parse(obj, key) {
   const chain = isArray(key) ? [...key] : makeKeyChain(key)
@@ -124,12 +132,12 @@ export function parse(obj, key) {
 }
 
 /**
- * parse into an object
+ * parse a property into a new object which contains only the parsed property
  * @example
  * var a = { a: 1, b: 2, c: 3 };
  * var b = parseAs(a, 'b'); // -> { b: 2 }
  * @param {object|array} obj
- * @param {string|array} key
+ * @param {KeyPath} key
  */
 export function parseAs(obj, key) {
   const chain = isArray(key) ? [...key] : makeKeyChain(key);
@@ -179,7 +187,7 @@ export function parseAs(obj, key) {
 /**
  * assign a property's value by its keyPath
  * @param {object|array} obj
- * @param {string|array} key
+ * @param {KeyPath} key
  * @returns {object|array}
  */
 export function assign(obj, key, value) {
@@ -227,7 +235,7 @@ export function assign(obj, key, value) {
 /**
  * remove a property by its keyPath
  * @param {object|array} obj
- * @param {string|array} key
+ * @param {KeyPath} key
  * @returns {object|array}
  */
 export function remove(obj, key) {
@@ -262,7 +270,7 @@ export function remove(obj, key) {
  * if enumerable=true, it will check:
  *  - only enumerable properties;
  *  - only own properties;
- * @param {*} key
+ * @param {KeyPath} key
  * @param {*} obj
  * @param {*} [enumerable]
  * @returns {boolean}

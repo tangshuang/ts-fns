@@ -3,7 +3,9 @@ import { isArray, isObject, isFile, isDate, isFunction, inArray, isSymbol, inObj
 import { decideby } from './syntax.js'
 
 /**
- * @param {any} obj
+ * @template T
+ * @param {T} obj
+ * @returns {T}
  */
 export function clone(obj) {
   const parents = []
@@ -42,7 +44,7 @@ export function clone(obj) {
  * @param {object} obj1
  * @param {object} obj2
  * @param {0|1|2} [mixArr] 0: extend array as object, 1: push into array, 2: replace all items
- * @returns {object}
+ * @returns {object} obj1
  */
 export function extend(obj1, obj2, mixArr = 0) {
   const exists = []
@@ -122,7 +124,7 @@ export function extend(obj1, obj2, mixArr = 0) {
  * @param {object} obj1
  * @param {object} obj2
  * @param {0|1|2} [mixArr] 0: extend array as object, 1: push into array, 2: replace all items
- * @returns {object}
+ * @returns {object} a new object
  */
 export function merge(obj1, obj2, mixArr = 0) {
   obj1 = clone(obj1)
@@ -249,7 +251,7 @@ export function stringify(obj) {
 
 /**
  * @param {object} obj
- * @returns {string}
+ * @returns {number}
  */
 export function getObjectHash(obj) {
   if (typeof obj !== 'object') {
@@ -427,8 +429,10 @@ export function iterate(obj, fn) {
 }
 
 /**
+ * @template T
  * @param {object|array} obj
- * @param {function} fn
+ * @param {(value: any, key: string) => T} fn
+ * @returns {T}
  */
 export function search(obj, fn) {
   if (isArray(obj)) {
@@ -454,8 +458,10 @@ export function search(obj, fn) {
 }
 
 /**
+ * 在对象中查找，fn返回true表示找到，返回false表示没有找到继续找，找到后返回该属性的key，通过key就可以方便的获取value
  * @param {object|array} obj
  * @param {function} fn
+ * @returns {string} 返回key，找不到返回undefined
  */
 export function find(obj, fn) {
   return search(obj, (value, key) => {

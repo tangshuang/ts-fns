@@ -4,17 +4,9 @@
   "description": "Public Functions.",
   "main": "cjs/index.js",
   "module": "es/index.js",
-  "typings": "index.d.ts",
-  "types": "index.d.ts",
   "exports": {
-    "import": {
-      "types": "./index.d.ts",
-      "default": "./es/index.js"
-    },
-    "require": {
-      "types": "./index.d.ts",
-      "default": "./cjs/index.js"
-    }
+    "import": "./es/index.js",
+    "require": "./cjs/index.js"
   },
   "sideEffects": false,
   "scripts": {
