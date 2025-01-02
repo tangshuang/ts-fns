@@ -1203,7 +1203,7 @@ const ProxySymbol = Symbol('Proxy')
  * @param {function} options.set to modify input value of each node, receive (keyPath, nextValue), nextValue is the given passed value, the return value will be transformed to be reactive object/array as if
  * @param {function} options.dispatch to notify change with keyPath, receive (keypath, next, prev), it will be called after value is set into
  * @param {function} options.writable whether be able to change value, return false to disable writable, default is true
- * @returns {Proxy}
+ * @returns {any}
  * @example
  * const some = {
  *   body: {
