@@ -22,7 +22,7 @@
     "build": "node gulpfile.js && webpack && npm run tsd && node scripts/gen-exports-json.mjs",
     "test": "cross-env NODE_ENV=test jest",
     "docs": "jsdoc -c ./jsdoc.json",
-    "tsd": "jsdoc -c ./declare.jsdoc.json"
+    "tsd": "jsdoc -c ./declare.jsdoc.json && node scripts/reexport-tsd.mjs"
   },
   "author": "tangshuang",
   "license": "ISC",
