@@ -7,5 +7,6 @@ webpack.config.js
 jsdoc.json
 declare.jsdoc.json
 .github/
-types.d.ts
 scripts/
+exports.json
+loader.js

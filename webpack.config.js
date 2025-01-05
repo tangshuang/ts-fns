@@ -41,7 +41,7 @@ const mini = {
   mode: 'production',
   output: {
     ...config.output,
-    filename: 'ts-fns.min.js',
+    filename: 'index.min.js',
   },
   optimization: {
     ...config.optimization,
