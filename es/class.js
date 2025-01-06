@@ -3,7 +3,7 @@ import { inObject } from './is.js'
 
 /**
  * @param {any} ins
- * @returns {boolean}
+ * @returns {any}
  */
 export function getConstructorOf(ins) {
   return Object.getPrototypeOf(ins).constructor

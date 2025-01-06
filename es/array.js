@@ -11,36 +11,36 @@ export function createArray(value, count = 1) {
 }
 
 /**
- * @param {array} a
- * @param {array} b
- * @returns {array}
+ * @param {any[]} a
+ * @param {any[]} b
+ * @returns {any[]}
  */
 export function unionArray(a, b) {
   return a.concat(b.filter(v => !inArray(v, a)))
 }
 
 /**
- * @param {array} a
- * @param {array} b
- * @returns {array}
+ * @param {any[]} a
+ * @param {any[]} b
+ * @returns {any[]}
  */
 export function interArray(a, b) {
   return a.filter(v => b.includes(v))
 }
 
 /**
- * @param {array} a
- * @param {array} b
- * @returns {array}
+ * @param {any[]} a
+ * @param {any[]} b
+ * @returns {any[]}
  */
 export function diffArray(a, b) {
   return a.filter(v => !b.includes(v))
 }
 
 /**
- * @param {array} a
- * @param {array} b
- * @returns {array}
+ * @param {any[]} a
+ * @param {any[]} b
+ * @returns {any[]}
  */
 export function compArray(a, b) {
   const diffa = diffArray(a, b)
@@ -49,9 +49,9 @@ export function compArray(a, b) {
 }
 
 /**
- * @param {array} arr
+ * @param {any[]} arr
  * @param {string} [prop] unique by which property
- * @returns {array}
+ * @returns {any[]}
  */
 export function uniqueArray(arr, prop) {
   const exists = []
@@ -79,10 +79,10 @@ export function uniqueArray(arr, prop) {
 }
 
 /**
- * @param {array} items
+ * @param {any[]} items
  * @param {string} [by] which property sort by
  * @param {boolean} [decs]
- * @returns {array}
+ * @returns {any[]}
  */
 export function sortArray(items, by, decs = false) {
   const res = [].concat(items)
@@ -108,7 +108,7 @@ export function sortArray(items, by, decs = false) {
 
 /**
  * @param {any} arr
- * @returns {array}
+ * @returns {any[]}
  */
 export function toArray(arr) {
   return Array.from(arr)
@@ -129,7 +129,7 @@ export function flatArray(arr) {
 
 /**
  * slice an array into [count] sub-array
- * @param {array} arr
+ * @param {any[]} arr
  * @param {number} count
  * @returns {array[]}
  */
@@ -145,16 +145,16 @@ export function groupArray(arr, count) {
 
 /**
  * split an array to sevral
- * @param {array} arr
- * @param {*|function} split
+ * @param {any[]} arr
+ * @param {*|function} splitter
  * @returns {array[]}
  * @ts_declare function splitArray(arr: any[], split: any | ((item: any, i: number) => boolean)): any[]
  */
-export function splitArray(arr, split) {
+export function splitArray(arr, splitter) {
   const results = []
   let temp = []
   arr.forEach((item, i) => {
-    if (split === item || (isFunction(split) && split(item, i))) {
+    if (splitter === item || (isFunction(splitter) && splitter(item, i))) {
       results.push(temp)
       temp = []
     }

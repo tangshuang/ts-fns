@@ -188,6 +188,7 @@ export function parseAs(obj, key) {
  * assign a property's value by its keyPath
  * @param {object|array} obj
  * @param {KeyPath} key
+ * @param {any} value
  * @returns {object|array}
  */
 export function assign(obj, key, value) {

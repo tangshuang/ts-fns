@@ -325,7 +325,7 @@ export function flat(obj, determine) {
 /**
  * @param {object|array} obj
  * @param {function} fn
- * @param {boolean} descriptor
+ * @param {boolean} [descriptor]
  * @returns {object|array}
  */
 export function each(obj, fn, descriptor) {

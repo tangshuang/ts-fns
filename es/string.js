@@ -13,7 +13,7 @@ export function getAllChars(len) {
  * @param {string} input
  * @param {string} separator
  * @param {array} segments
- * @param {boolean} alignright
+ * @param {boolean} [alignright]
  * @returns {string}
  */
 export function formatString(input, separator, segments, alignright) {
@@ -66,7 +66,7 @@ export function formatString(input, separator, segments, alignright) {
 /**
  * @param {string} str
  * @param {number} len
- * @param {boolean} pad
+ * @param {string} pad
  * @returns {string}
  */
 export function padLeft(str, len, pad) {
@@ -83,7 +83,7 @@ export function padLeft(str, len, pad) {
 /**
  * @param {string} str
  * @param {number} len
- * @param {boolean} pad
+ * @param {string} pad
  * @returns {string}
  */
 export function padRight(str, len, pad) {

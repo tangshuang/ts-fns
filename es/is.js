@@ -278,7 +278,8 @@ export function isFalsy(value) {
 }
 
 /**
- * @param {any} value
+ * @param {any} val1
+ * @param {any} val2
  * @returns {boolean}
  */
 export function isEqual(val1, val2) {
@@ -456,7 +457,8 @@ export function inArray(item, arr) {
 /**
  * @param {object} objA
  * @param {object} objB
- * @param {number} deepth how many deepth to check
+ * @param {number} [deepth] how many deepth to check
+ * @returns {boolean}
  */
 export function isShallowEqual(objA, objB, deepth){
   if(objA === objB) {
@@ -505,14 +507,25 @@ export function isShallowEqual(objA, objB, deepth){
   return true
 }
 
+/**
+ * is one of items in array arr
+ * @param {any[]} items
+ * @param {any[]} arr
+ * @returns {boolean}
+ */
 export function isOneInArray(items, arr) {
   return arr.some(one => items.includes(one))
 }
 
+/**
+ * is all items in array arr
+ * @param {any[]} items
+ * @param {any[]} arr
+ * @returns {boolean}
+ */
 export function isAllInArray(items, arr) {
   return !arr.some(one => !items.includes(one))
 }
-
 
 /**
  * all items in shortArr are in longArr
