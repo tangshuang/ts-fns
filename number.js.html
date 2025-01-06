@@ -74,7 +74,7 @@ export function numerify(num) {
 	}
 	else if (isNumber(num)) {
 		let value = num.toString()
-		if (value.indexOf('e')) {
+		if (value.indexOf('e') > -1) {
 			return enumerify(value)
 		}
 		else {
@@ -1087,11 +1087,11 @@ export function fixNum(input, decimal = 2, pad = false, floor = false) {
  * @returns {string}
  */
 export function formatNum(input, separator, count, formatdecimal = false) {
-  if (!input) {
+  let num = numerify(input);
+
+  if (!num) {
     return '';
   }
-
-  let num = input.toString();
 
   if (!/^\-{0,1}[0-9]+(\.{0,1}[0-9]+){0,1}$/.test(num)) {
     return '';
