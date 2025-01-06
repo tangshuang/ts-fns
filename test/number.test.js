@@ -1,4 +1,4 @@
-import { fixNum, num10to62, num62to10, divideby, multiplyby } from '../es/number.js'
+import { fixNum, num10to62, num62to10, divideby, multiplyby, formatNum1000 } from '../es/number.js'
 
 describe('number', () => {
   it('fixNum', () => {
@@ -29,5 +29,11 @@ describe('number', () => {
     expect(divideby(1.2, 0.1)).toBe('12')
     expect(divideby(1.2, 0.01)).toBe('120')
     expect(divideby(123, 0.01)).toBe('12300')
+  })
+
+  it('formatNum1000(0)', () => {
+    expect(formatNum1000(0)).toBe('0')
+    expect(formatNum1000('0')).toBe('0')
+    expect(formatNum1000(null)).toBe('')
   })
 })
