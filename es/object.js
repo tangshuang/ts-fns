@@ -473,10 +473,20 @@ export function find(obj, fn) {
 
 /**
  * @param {object} obj
- * @param {array[]} keys
+ * @param {string[]} keys
  * @returns {object}
+ * @deprecated use pick instead
  */
 export function extract(obj, keys) {
+  return pick(obj, keys)
+}
+
+/**
+ * @param {object} obj
+ * @param {string[]} keys
+ * @returns {object}
+ */
+export function pick(obj, keys) {
   const results = {}
   keys.forEach((key) => {
     if (hasOwnKey(obj, key)) {
@@ -484,16 +494,6 @@ export function extract(obj, keys) {
     }
   })
   return results
-}
-
-/**
- * @alias extract
- * @param {object} obj
- * @param {string[]} keys
- * @returns {object}
- */
-export function pick(obj, keys) {
-  return extract(obj, keys);
 }
 
 /**
