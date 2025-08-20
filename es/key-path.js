@@ -2,12 +2,12 @@
  * @typedef {string|number|Array<string|symbol|number>} KeyPath
  */
 
-import { isObject, isSymbol, isArray, isUndefined, isNumber, isString } from './is.js'
+import { isObject, isSymbol, isArray, isUndefined, isNumber, isString, isNumeric } from './is.js'
 
 /**
  * convert a keyPath string to be an array
  * @param {string} path
- * @param {boolean} [isStrict] whether to keep square bracket keys
+ * @param {boolean} [isStrict] whether to keep square bracket keys. i.e. a[1] => ['a', '[1]']
  * @returns {array}
  */
 export function makeKeyChain(path, isStrict) {
@@ -28,7 +28,7 @@ export function makeKeyChain(path, isStrict) {
       const index = item.substring(1, item.length - 1)
       const str = mapping[index]
       const key = isStrict ? str : str.substring(1, str.length - 1)
-      chain[i] = key
+      chain[i] = isNumeric(key) ? +key : key
     }
   })
 
