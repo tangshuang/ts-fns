@@ -64,7 +64,8 @@ describe('key-path', () => {
   })
 
   test('strict', () => {
-    expect(makeKeyChain('body.hand[1].finger')).toEqual(['body', 'hand', '1', 'finger'])
+    // notice here, the key [1] where be convert to be number 1
+    expect(makeKeyChain('body.hand[1].finger')).toEqual(['body', 'hand', 1, 'finger'])
     expect(makeKeyChain('body.hand[1].finger', true)).toEqual(['body', 'hand', '[1]', 'finger'])
 
     expect(makeKeyPath(['body', 'hand', '[1]', 'finger'])).toBe('body.hand.[1].finger')
