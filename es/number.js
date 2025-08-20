@@ -925,10 +925,10 @@ export function calculate(exp, decimal) {
  * @param {number|string} input
  * @param {number} [decimal]
  * @param {boolean} [pad]
- * @param {boolean} [floor]
+ * @param {number} [round] -1:floor, 1:ceil, 0:auto
  * @returns {string}
  */
-export function fixNum(input, decimal = 2, pad = false, floor = false) {
+export function fixNum(input, decimal = 2, pad = false, round = 0) {
   let num = parseFloat(input)
   if (isNaN(num)) {
     return ''
@@ -945,8 +945,11 @@ export function fixNum(input, decimal = 2, pad = false, floor = false) {
     return value
   }
 
-  if (decimal === 0 && floor) {
-    if (decimalPart && num < 0) {
+  if (decimal === 0 && round) {
+    if (decimalPart && num > 0 && round > 0) {
+      integerPart = plusby(integerPart, '1')
+    }
+    else if (decimalPart && num < 0 && round < 0) {
       integerPart = minusby(integerPart, '1')
     }
     value = integerPart
@@ -962,16 +965,15 @@ export function fixNum(input, decimal = 2, pad = false, floor = false) {
     }
     value = integerPart
   }
-  else if (decimal > 0 && floor) {
-    let isNegative = num < 0
+  else if (decimal > 0 && round) {
     if (decimalPart) {
-      if (isNegative) {
+      if (num < 0) {
         let usePart = decimalPart.substring(0, decimal)
         let dropPart = decimalPart.substring(decimal)
 
         usePart = '0.' + usePart
 
-        if (dropPart) {
+        if (dropPart && round > 0) {
           usePart = plusOneToTail(usePart)
         }
 
