@@ -60,7 +60,8 @@
             <pre class="prettyprint source linenums"><code>/**
  * get value by using a function
  * @param {function} decide
- * @param {...any} args
+ * @param {*} args
+ * @returns {*}
  */
 export function decideby(decide, ...args) {
   return decide(...args)
