@@ -1,7 +1,7 @@
 /**
  * get value by using a function
  * @param {function} decide
- * @param {*} args
+ * @param {*} [args]
  * @returns {*}
  */
 export function decideby(decide, ...args) {
@@ -11,7 +11,7 @@ export function decideby(decide, ...args) {
 /**
  * get value by different conditions
  * @param {any[]} entries [[condition, getter]]
- * @param {*} args
+ * @param {*} [args]
  * @returns {*}
  */
 export function caseby(entries, ...args) {
