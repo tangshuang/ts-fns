@@ -10,7 +10,7 @@ export function decideby(decide, ...args) {
 
 /**
  * get value by different conditions
- * @param {Array<[function,function]>} entries [[condition, getter]]
+ * @param {any[]} entries [[condition, getter]]
  * @param {*} args
  * @returns {*}
  */
