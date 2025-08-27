@@ -10,7 +10,9 @@ export function decideby(decide, ...args) {
 
 /**
  * get value by different conditions
- * @param {Array<Function,Function>} entries [[condition, getter]]
+ * @param {Array<[function,function]>} entries [[condition, getter]]
+ * @param {*} args
+ * @returns {*}
  */
 export function caseby(entries, ...args) {
   for (let [cond, get] of entries) {

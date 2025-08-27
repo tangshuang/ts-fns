@@ -51,6 +51,7 @@ export function inherit(Parent, proptotypes, statics) {
  * @param {any} Source
  * @param {any} Extend
  * @param {any}
+ * @returns {any}
  */
 export function mixin(Source, Extend) {
   each(Extend, (descriptor, key) => {

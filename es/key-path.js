@@ -94,6 +94,7 @@ export function makeKey(keyPath) {
  * parse a property's value by its keyPath
  * @param {object|array} obj
  * @param {KeyPath} key
+ * @returns {*}
  */
 export function parse(obj, key) {
   const chain = isArray(key) ? [...key] : makeKeyChain(key)
@@ -138,6 +139,7 @@ export function parse(obj, key) {
  * var b = parseAs(a, 'b'); // -> { b: 2 }
  * @param {object|array} obj
  * @param {KeyPath} key
+ * @returns {*}
  */
 export function parseAs(obj, key) {
   const chain = isArray(key) ? [...key] : makeKeyChain(key);
