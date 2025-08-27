@@ -1,7 +1,10 @@
 /**
  * get value by using a function
- * @param {function} decide
- * @param {...any} args
+ * @template {any} T
+ * @template {any[]} U
+ * @param {(...args: U) => T} decide
+ * @param {U} args
+ * @returns {T}
  */
 export function decideby(decide, ...args) {
   return decide(...args)
